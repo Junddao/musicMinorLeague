@@ -98,73 +98,79 @@ class _LoungePageState extends State<LoungePage>
       child: Column(
         children: [
           PlayWidget(),
-          Expanded(
-            child: ListView.builder(
-                itemCount: 10,
-                itemBuilder: (context, index) {
-                  return Container(
-                    height: 72,
-                    child: ListTile(
-                      leading: CircleAvatar(),
-                      title: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'aaa',
-                            style: MTextStyles.bold14Grey06,
-                          ),
-                          SizedBox(
-                            width: 6,
-                          ),
-                          Text(
-                            'bbb',
-                            maxLines: 1,
-                            style: MTextStyles.regular12WarmGrey_underline,
-                          ),
-                        ],
-                      ),
-                      trailing: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            DateTime.now().month.toString() +
-                                '월 ' +
-                                DateTime.now().day.toString() +
-                                '일',
-                            style: MTextStyles.medium10PinkishGrey,
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }),
-          ),
+          PlayListOfThisWeek(),
         ],
       ),
     );
   }
 
   _buildBestTwenty() {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Column(
-              children: [
-                IconButton(icon: Icon(Icons.check), onPressed: null),
-                Text(
-                  '모두 선택',
-                  style: MTextStyles.bold12PinkishGrey,
-                ),
-              ],
-            ),
-          ],
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.only(left: 10, right: 10),
+      child: Column(
+        children: [
+          PlayWidget(),
+          // PlayListOfThisWeek(),
+        ],
+      ),
     );
   }
   // _buildMyPickPage() {}
+}
+
+class PlayListOfThisWeek extends StatelessWidget {
+  const PlayListOfThisWeek({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: ListView.builder(
+          itemCount: 10,
+          itemBuilder: (context, index) {
+            return Container(
+              height: 72,
+              child: ListTile(
+                leading: CircleAvatar(),
+                title: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'aaa',
+                      style: MTextStyles.bold14Grey06,
+                    ),
+                    SizedBox(
+                      width: 6,
+                    ),
+                    Text(
+                      'bbb',
+                      maxLines: 1,
+                      style: MTextStyles.regular12WarmGrey_underline,
+                    ),
+                  ],
+                ),
+                trailing: Wrap(
+                  children: [
+                    IconButton(
+                        icon: Icon(
+                          Icons.play_arrow_outlined,
+                        ),
+                        onPressed: null),
+                    IconButton(
+                        icon: Icon(
+                          Icons.favorite,
+                          size: 16,
+                        ),
+                        onPressed: null),
+                  ],
+                ),
+              ),
+            );
+          }),
+    );
+  }
 }
 
 class PlayWidget extends StatelessWidget {
@@ -199,7 +205,8 @@ class PlayWidget extends StatelessWidget {
             ),
             Column(
               children: [
-                IconButton(icon: Icon(Icons.play_arrow), onPressed: null),
+                IconButton(
+                    icon: Icon(Icons.play_arrow_outlined), onPressed: null),
                 Text(
                   '전체재생',
                   style: MTextStyles.bold12PinkishGrey,
