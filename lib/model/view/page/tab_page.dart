@@ -1,4 +1,4 @@
-import 'package:music_minorleague/model/view/page/lounge_page.dart';
+import 'package:music_minorleague/model/view/page/lounge/lounge_page.dart';
 import 'package:music_minorleague/model/view/page/search_page.dart';
 import 'package:music_minorleague/model/view/page/user_profile_page.dart';
 import 'package:music_minorleague/model/view/page/write_page.dart';
@@ -28,19 +28,17 @@ class _TabPageState extends State<TabPage> {
 
   @override
   Widget build(BuildContext context) {
-    final GoogleSignIn _gSignIn = GoogleSignIn();
-
     return Consumer<TabStates>(
         builder: (context, value, child) => Scaffold(
-            appBar: AppBar(
-              automaticallyImplyLeading: false,
-              leading: IconButton(
-                icon: Icon(Icons.menu_outlined),
-              ),
-              title: getTitleText(),
-              backgroundColor: Colors.transparent,
-              elevation: 0.0,
-            ),
+            // appBar: AppBar(
+            //   automaticallyImplyLeading: false,
+            //   leading: IconButton(
+            //     icon: Icon(Icons.menu_outlined),
+            //   ),
+            //   title: getTitleText(),
+            //   backgroundColor: Colors.transparent,
+            //   elevation: 0.0,
+            // ),
             body: _tabs[Provider.of<TabStates>(context).selectedIndex],
             bottomNavigationBar: new Theme(
                 data: Theme.of(context).copyWith(

@@ -581,6 +581,13 @@ class MTextStyles {
       fontStyle: FontStyle.normal,
       fontSize: 12.0);
 
+  static const bold14PinkishGrey = const TextStyle(
+      color: MColors.pinkish_grey,
+      fontWeight: FontWeight.w400,
+      fontFamily: "NotoSansKR",
+      fontStyle: FontStyle.normal,
+      fontSize: 14.0);
+
   static const bold20GrapeFruit = const TextStyle(
       color: MColors.grapefruit,
       fontWeight: FontWeight.w700,
