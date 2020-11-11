@@ -9,7 +9,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   Future<bool> _mockCheckForSession() async {
     await Future.delayed(Duration(milliseconds: 2000), () {});
-    return true;
+    return false;
   }
 
   @override

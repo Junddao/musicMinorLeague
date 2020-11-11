@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:music_minorleague/route.dart';
 import 'package:music_minorleague/splash_screen.dart';
 import 'package:music_minorleague/tabstates.dart';
@@ -7,7 +8,9 @@ import 'package:provider/provider.dart';
 import 'model/provider/user_profile_provider.dart';
 import 'model/view/style/colors.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(
     new MyApp(),
   );

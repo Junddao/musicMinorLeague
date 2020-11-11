@@ -5,7 +5,6 @@ import 'package:music_minorleague/model/view/page/write_page.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 import 'package:music_minorleague/tabstates.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 
 class TabPage extends StatefulWidget {

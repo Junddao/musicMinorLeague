@@ -23,13 +23,12 @@ class _LoginPageState extends State<LoginPage> {
     final GoogleSignInAuthentication googleAuth =
         await googleUser.authentication;
 
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
+    final AuthCredential credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
 
-    final FirebaseUser user =
-        (await _auth.signInWithCredential(credential)).user;
+    final User user = (await _auth.signInWithCredential(credential)).user;
 
     UserProfileData userProfileData = new UserProfileData(
       user.displayName,
@@ -40,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
     Provider.of<UserProfileProvider>(context, listen: false).userProfileData =
         userProfileData;
 
-    Navigator.of(context).pushNamed('/TabPage');
+    Navigator.of(context).pushNamed('TabPage');
   }
 
   @override

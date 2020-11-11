@@ -1,4 +1,4 @@
-package com.example.music_minorleague
+package com.jtb.musicMinorleague
 
 import io.flutter.embedding.android.FlutterActivity
 
