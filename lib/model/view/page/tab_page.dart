@@ -62,33 +62,20 @@ class _TabPageState extends State<TabPage> {
                         icon: Icon(Icons.home),
                         title: Text('라운지'),
                       ), //
+
                       BottomNavigationBarItem(
-                        icon: Icon(Icons.create),
-                        title: Text('글쓰기'),
-                      ), // 계약서 작성 페이지
+                        icon: Icon(Icons.queue_music_outlined),
+                        title: Text('내 재생목록'),
+                      ),
                       BottomNavigationBarItem(
-                        icon: Icon(Icons.search),
-                        title: Text('찾기'),
-                      ), // 내 계정 확인, 작성 문서찾기
+                        icon: Icon(Icons.add_circle_outline_outlined),
+                        title: Text('등록하기'),
+                      ),
                       BottomNavigationBarItem(
                         icon: Icon(Icons.person),
                         title: Text('프로필'),
-                      ), // 내 계정 확인, 작성 문서찾기
+                      ),
                     ]))));
-  }
-
-  Text getTitleText() {
-    String titleText;
-
-    if (Provider.of<TabStates>(context).selectedIndex == 0) titleText = '라운지';
-    if (Provider.of<TabStates>(context).selectedIndex == 1) titleText = '글쓰기';
-    if (Provider.of<TabStates>(context).selectedIndex == 2) titleText = '찾기';
-    if (Provider.of<TabStates>(context).selectedIndex == 3) titleText = '프로필';
-
-    return Text(
-      titleText,
-      style: MTextStyles.bold18Black,
-    );
   }
 
   void _onItemTapped(int value) {
