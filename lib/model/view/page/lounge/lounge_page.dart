@@ -32,13 +32,15 @@ class _LoungePageState extends State<LoungePage>
   MusicInfoData dummy1 = new MusicInfoData(
       dateTime: '123',
       favorite: true,
-      path: 'path',
+      imagePath: 'imagepath',
+      musicPath: 'path',
       title: 'title',
       userProfileData: UserProfileProvider().userProfileData);
   MusicInfoData dummy2 = new MusicInfoData(
       dateTime: '234',
       favorite: true,
-      path: 'path2',
+      imagePath: 'imagepath',
+      musicPath: 'path',
       title: 'title2',
       userProfileData: UserProfileProvider().userProfileData);
 
@@ -162,7 +164,7 @@ class _LoungePageState extends State<LoungePage>
                 return Container(
                   height: 72,
                   color: selectedList[index] == true
-                      ? Colors.grey
+                      ? Colors.grey[300]
                       : Colors.transparent,
                   child: ListTile(
                     onTap: () {

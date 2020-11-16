@@ -1,8 +1,8 @@
 import 'package:music_minorleague/model/view/page/lounge/lounge_page.dart';
+import 'package:music_minorleague/model/view/page/playlist/my_play_list_page.dart';
 import 'package:music_minorleague/model/view/page/search_page.dart';
+import 'package:music_minorleague/model/view/page/upload/upload_music_page.dart';
 import 'package:music_minorleague/model/view/page/user_profile_page.dart';
-import 'package:music_minorleague/model/view/page/write_page.dart';
-import 'package:music_minorleague/model/view/style/textstyles.dart';
 import 'package:music_minorleague/tabstates.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -15,8 +15,8 @@ class TabPage extends StatefulWidget {
 class _TabPageState extends State<TabPage> {
   final List<Widget> _tabs = [
     LoungePage(),
-    WritePage(),
-    SearchPage(),
+    MyPlayListPage(),
+    UploadMusicPage(),
     UserProfilePage(),
   ];
 
@@ -41,9 +41,7 @@ class _TabPageState extends State<TabPage> {
             body: _tabs[Provider.of<TabStates>(context).selectedIndex],
             bottomNavigationBar: new Theme(
                 data: Theme.of(context).copyWith(
-                    // sets the background color of the `BottomNavigationBar`
                     canvasColor: Colors.white,
-                    // sets the active color of the `BottomNavigationBar` if `Brightness` is light
                     primaryColor: Colors.red,
                     textTheme: Theme.of(context).textTheme.copyWith(
                         caption: new TextStyle(
@@ -62,7 +60,6 @@ class _TabPageState extends State<TabPage> {
                         icon: Icon(Icons.home),
                         title: Text('라운지'),
                       ), //
-
                       BottomNavigationBarItem(
                         icon: Icon(Icons.queue_music_outlined),
                         title: Text('내 재생목록'),
