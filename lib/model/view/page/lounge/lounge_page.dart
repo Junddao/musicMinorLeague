@@ -1,6 +1,7 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
+import 'package:music_minorleague/model/data/music_info_data.dart';
+import 'package:music_minorleague/model/data/user_profile_data.dart';
+import 'package:music_minorleague/model/provider/user_profile_provider.dart';
 import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
@@ -13,11 +14,17 @@ class LoungePage extends StatefulWidget {
 class _LoungePageState extends State<LoungePage>
     with SingleTickerProviderStateMixin {
   TabController tabController;
+  bool isPlay;
+  bool isTabThisWeekMusicListItem;
+
+  List<MusicInfoData> musicInfoList = new List<MusicInfoData>();
 
   @override
   void initState() {
     super.initState();
     tabController = TabController(vsync: this, length: 2);
+    isPlay = false;
+    isTabThisWeekMusicListItem = false;
   }
 
   @override
@@ -85,6 +92,7 @@ class _LoungePageState extends State<LoungePage>
       body: TabBarView(controller: tabController, children: [
         _buildThisWeekNewPage(),
         _buildBestTwenty(),
+
         // _buildMyPickPage(),
         // _buildItemPage(),
         // Center(child:Text('준비중 입니다.')),
@@ -98,7 +106,14 @@ class _LoungePageState extends State<LoungePage>
       child: Column(
         children: [
           PlayWidget(),
-          PlayListOfThisWeek(),
+          Expanded(
+            child: Stack(
+              children: [
+                playListOfThisWeek(),
+                // SmallPlayListWidget(isPlay: isPlay),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -110,21 +125,13 @@ class _LoungePageState extends State<LoungePage>
       child: Column(
         children: [
           PlayWidget(),
-          // PlayListOfThisWeek(),
+          playListOfThisWeek(),
         ],
       ),
     );
   }
-  // _buildMyPickPage() {}
-}
 
-class PlayListOfThisWeek extends StatelessWidget {
-  const PlayListOfThisWeek({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
+  Expanded playListOfThisWeek() {
     return Expanded(
       child: ListView.builder(
           itemCount: 10,
@@ -132,6 +139,28 @@ class PlayListOfThisWeek extends StatelessWidget {
             return Container(
               height: 72,
               child: ListTile(
+                onTap: () {
+                  // TODO : need to input real data.
+
+                  UserProfileData userData =
+                      UserProfileProvider().userProfileData;
+                  MusicInfoData musicInfoData = new MusicInfoData(
+                    title: 'aaa',
+                    dateTime: 'time',
+                    favorite: true,
+                    path: 'path',
+                    userProfileData: userData,
+                  );
+                  musicInfoList.add(musicInfoData);
+
+                  setState(() {
+                    Visibility(
+                      visible: musicInfoList.length > 0 ? true : false,
+                      child:
+                          SmallSelectListWidget(musicInfoList: musicInfoList),
+                    );
+                  });
+                },
                 leading: CircleAvatar(),
                 title: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -157,10 +186,14 @@ class PlayListOfThisWeek extends StatelessWidget {
                         icon: Icon(
                           Icons.play_arrow_outlined,
                         ),
-                        onPressed: null),
+                        onPressed: () {
+                          setState(() {
+                            isPlay = true;
+                          });
+                        }),
                     IconButton(
                         icon: Icon(
-                          Icons.favorite,
+                          Icons.favorite_border_outlined,
                           size: 16,
                         ),
                         onPressed: null),
@@ -169,6 +202,172 @@ class PlayListOfThisWeek extends StatelessWidget {
               ),
             );
           }),
+    );
+  }
+  // _buildMyPickPage() {}
+}
+
+class SmallSelectListWidget extends StatefulWidget {
+  const SmallSelectListWidget({
+    Key key,
+    List<MusicInfoData> musicInfoList,
+  })  : _musicInfoList = musicInfoList,
+        super(key: key);
+
+  final List<MusicInfoData> _musicInfoList;
+
+  @override
+  _SmallSelectListWidgetState createState() => _SmallSelectListWidgetState();
+}
+
+class _SmallSelectListWidgetState extends State<SmallSelectListWidget> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      bottom: 0,
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: Container(
+              height: 80,
+              width: SizeConfig.screenWidth - 20,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(16),
+                ),
+                border: Border.all(color: Colors.black12, width: 1),
+                color: Colors.white,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Column(
+                    children: [
+                      IconButton(
+                          icon: Icon(Icons.play_arrow_outlined),
+                          onPressed: null),
+                      Text(
+                        '선택 항목 재생',
+                        style: MTextStyles.bold12PinkishGrey,
+                      ),
+                    ],
+                  ),
+                  VerticalDivider(
+                    thickness: 1,
+                    indent: 5,
+                    endIndent: 5,
+                  ),
+                  Column(
+                    children: [
+                      IconButton(icon: Icon(Icons.add), onPressed: null),
+                      Text(
+                        '재생 목록 추가',
+                        style: MTextStyles.bold12PinkishGrey,
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ),
+          Positioned(
+            left: 10,
+            child: widget._musicInfoList == null
+                ? SizedBox.shrink()
+                : CircleAvatar(
+                    radius: 15,
+                    backgroundColor: MColors.tomato,
+                    child: Text(
+                      widget._musicInfoList.length.toString(),
+                      style: MTextStyles.bold14White,
+                    ),
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SmallPlayListWidget extends StatefulWidget {
+  const SmallPlayListWidget({
+    Key key,
+    isPlay,
+  })  : _isPlay = isPlay,
+        super(key: key);
+
+  final bool _isPlay;
+
+  @override
+  _SmallPlayListWidgetState createState() => _SmallPlayListWidgetState();
+}
+
+class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
+  @override
+  void initState() {
+    // TODO: implement initState
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      bottom: 0,
+      child: Container(
+          height: 80,
+          width: SizeConfig.screenWidth - 20,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(
+              Radius.circular(16),
+            ),
+            border: Border.all(color: Colors.black12, width: 1),
+            color: Colors.white,
+          ),
+          child: ListTile(
+            leading: CircleAvatar(),
+            title: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'aaa',
+                  style: MTextStyles.bold14Grey06,
+                ),
+                SizedBox(
+                  width: 6,
+                ),
+                Text(
+                  'bbb',
+                  maxLines: 1,
+                  style: MTextStyles.regular12WarmGrey_underline,
+                ),
+              ],
+            ),
+            trailing: Wrap(
+              children: [
+                IconButton(
+                    icon: Icon(
+                      Icons.skip_previous,
+                    ),
+                    onPressed: null),
+                IconButton(
+                    icon: Icon(
+                      Icons.play_arrow_outlined,
+                    ),
+                    onPressed: null),
+                IconButton(
+                    icon: Icon(
+                      Icons.skip_next,
+                    ),
+                    onPressed: null),
+              ],
+            ),
+          )),
     );
   }
 }

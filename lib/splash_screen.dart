@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 import 'package:flutter/material.dart';
 
@@ -8,8 +9,12 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   Future<bool> _mockCheckForSession() async {
-    await Future.delayed(Duration(milliseconds: 2000), () {});
-    return false;
+    bool result = false;
+    await Future.delayed(Duration(milliseconds: 2000), () {
+      User _user = FirebaseAuth.instance.currentUser;
+      _user != null ? result = true : result = false;
+    });
+    return result;
   }
 
   @override
