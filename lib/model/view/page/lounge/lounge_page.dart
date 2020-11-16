@@ -82,13 +82,16 @@ class _LoungePageState extends State<LoungePage>
           ),
         ),
       ),
-      body: TabBarView(controller: tabController, children: [
-        _buildThisWeekNewPage(),
-        _buildBestTwenty(),
-        // _buildMyPickPage(),
-        // _buildItemPage(),
-        // Center(child:Text('준비중 입니다.')),
-      ]),
+      body: TabBarView(
+        controller: tabController,
+        children: [
+          _buildThisWeekNewPage(),
+          _buildBestTwenty(),
+          // _buildMyPickPage(),
+          // _buildItemPage(),
+          // Center(child:Text('준비중 입니다.')),
+        ],
+      ),
     );
   }
 
