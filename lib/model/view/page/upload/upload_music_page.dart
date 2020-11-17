@@ -9,6 +9,7 @@ import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 
 import 'component/cancel_Dialog.dart';
+import 'component/choice_chip_widget.dart';
 
 class UploadMusicPage extends StatefulWidget {
   @override
@@ -19,6 +20,7 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
   TextEditingController _titleController = new TextEditingController();
 
   String _coverFile;
+  bool _isSelected = false;
 
   @override
   void dispose() {
@@ -88,7 +90,7 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
 
   _body() {
     List<MusicTypeEnum> typeOfMusicList = List.generate(
-        MusicTypeEnum.etc.index, (index) => MusicTypeEnum.values[index]);
+        MusicTypeEnum.values.length, (index) => MusicTypeEnum.values[index]);
     return SingleChildScrollView(
       physics: new ClampingScrollPhysics(),
       child: Padding(
@@ -137,8 +139,7 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
               runSpacing: 5.0, // gap between lines
 
               children: [
-                // for (MusicTypeEnum value in typeOfMusicList)
-                choiceChips(typeOfMusicList),
+                choiceChipWidget(typeOfMusicList),
               ],
             ),
             SizedBox(height: 30),
@@ -191,27 +192,20 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
     );
   }
 
-  Widget choiceChips(List<MusicTypeEnum> chipList) {
-    return Expanded(
-      child: ListView.builder(
-        itemCount: chipList.length,
-        itemBuilder: (BuildContext context, int index) {
-          return ChoiceChip(
-            label: Text(getLabelTypeOfMusicList(chipList[index])),
-            selected: _defaultChoiceIndex == index,
-            selectedColor: Colors.green,
-            onSelected: (bool selected) {
-              setState(() {
-                _defaultChoiceIndex = selected ? index : 0;
-              });
-            },
-            backgroundColor: Colors.blue,
-            labelStyle: TextStyle(color: Colors.white),
-          );
-        },
-      ),
-    );
-  }
+  // Widget choiceChips(MusicTypeEnum chip) {
+  //   return ChoiceChip(
+  //     label: Text(getLabelTypeOfMusicList(chip)),
+  //     selected: _isSelected,
+  //     selectedColor: Colors.green,
+  //     onSelected: (selected) {
+  //       setState(() {
+  //         _isSelected = !_isSelected;
+  //       });
+  //     },
+  //     backgroundColor: Colors.blue,
+  //     labelStyle: TextStyle(color: Colors.white),
+  //   );
+  // }
 
   getMusicFileContainer() {
     return Container(
@@ -306,46 +300,5 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
         backgroundColor: Colors.black.withOpacity(0.8),
       ),
     );
-  }
-
-  String getLabelTypeOfMusicList(MusicTypeEnum value) {
-    String returnString;
-    switch (value) {
-      case MusicTypeEnum.classical:
-        returnString = '클래식';
-        break;
-      case MusicTypeEnum.contry:
-        returnString = '컨트리';
-        break;
-      case MusicTypeEnum.dance:
-        returnString = '댄스';
-        break;
-      case MusicTypeEnum.electronic:
-        returnString = '일렉트로닉';
-        break;
-
-      case MusicTypeEnum.folk:
-        returnString = '포크';
-        break;
-      case MusicTypeEnum.hiphop:
-        returnString = '힙합';
-        break;
-      case MusicTypeEnum.jazz:
-        returnString = '재즈';
-        break;
-      case MusicTypeEnum.pop:
-        returnString = '팝';
-        break;
-      case MusicTypeEnum.rap:
-        returnString = '랩';
-        break;
-      case MusicTypeEnum.rock:
-        returnString = '락';
-        break;
-      case MusicTypeEnum.etc:
-        returnString = '기타';
-        break;
-    }
-    return returnString;
   }
 }
