@@ -1,8 +1,10 @@
+import 'package:flutter_svg/svg.dart';
 import 'package:music_minorleague/model/view/page/lounge/lounge_page.dart';
 import 'package:music_minorleague/model/view/page/playlist/my_play_list_page.dart';
-import 'package:music_minorleague/model/view/page/search_page.dart';
-import 'package:music_minorleague/model/view/page/upload/upload_music_page.dart';
 import 'package:music_minorleague/model/view/page/user_profile_page.dart';
+import 'package:music_minorleague/model/view/style/colors.dart';
+import 'package:music_minorleague/model/view/style/size_config.dart';
+import 'package:music_minorleague/model/view/style/textstyles.dart';
 import 'package:music_minorleague/tabstates.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +18,7 @@ class _TabPageState extends State<TabPage> {
   final List<Widget> _tabs = [
     LoungePage(),
     MyPlayListPage(),
-    UploadMusicPage(),
+    SizedBox.shrink(), // empty widget
     UserProfilePage(),
   ];
 
@@ -58,24 +60,99 @@ class _TabPageState extends State<TabPage> {
                       //     title: Text('녹음')), // 뭘 보여줘야 할까...
                       BottomNavigationBarItem(
                         icon: Icon(Icons.home),
-                        title: Text('라운지'),
+                        label: '라운지',
                       ), //
                       BottomNavigationBarItem(
                         icon: Icon(Icons.queue_music_outlined),
-                        title: Text('내 재생목록'),
+                        label: '내 재생목록',
                       ),
                       BottomNavigationBarItem(
                         icon: Icon(Icons.add_circle_outline_outlined),
-                        title: Text('등록하기'),
+                        label: '등록하기',
                       ),
                       BottomNavigationBarItem(
                         icon: Icon(Icons.person),
-                        title: Text('프로필'),
+                        label: '프로필',
                       ),
                     ]))));
   }
 
-  void _onItemTapped(int value) {
-    Provider.of<TabStates>(context, listen: false).selectedIndex = value;
+  void _onItemTapped(int index) {
+    if (index == 2) {
+      _settingModalBottomSheet(context, index);
+    } else {
+      Provider.of<TabStates>(context, listen: false).selectedIndex = index;
+    }
+  }
+
+  void _settingModalBottomSheet(parentContext, index) {
+    showModalBottomSheet(
+      context: parentContext,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(16), topRight: Radius.circular(16))),
+      builder: (BuildContext context) {
+        return Container(
+          height: SizeConfig.screenHeight * 0.18,
+          child: new Row(
+            children: <Widget>[
+              Expanded(
+                flex: 1,
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      Navigator.pop(context);
+                      _noneNaviBarPage('UploadMusicPage');
+                    });
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset('assets/icons/cloud_upload.svg'),
+                      SizedBox(height: 10),
+                      Text(
+                        '업로드',
+                        style: MTextStyles.medium14Grey06,
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                height: SizeConfig.screenHeight * 0.14,
+                width: 2,
+                decoration: BoxDecoration(
+                    border: Border.all(
+                  color: MColors.white_three,
+                )),
+              ),
+              Expanded(
+                flex: 1,
+                child: InkWell(
+                  onTap: () async {},
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset('assets/icons/cloud_download.svg'),
+                      SizedBox(height: 10),
+                      Text(
+                        '다운로드',
+                        style: MTextStyles.medium14Grey06,
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _noneNaviBarPage(String page) {
+    Navigator.of(context).pushNamed(page);
   }
 }

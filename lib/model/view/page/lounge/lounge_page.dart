@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
-import 'package:music_minorleague/model/data/user_profile_data.dart';
 import 'package:music_minorleague/model/provider/user_profile_provider.dart';
 import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/size_config.dart';
