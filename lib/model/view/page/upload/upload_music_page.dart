@@ -1,8 +1,9 @@
 import 'dart:io';
 
-import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:music_minorleague/model/enum/music_type_enum.dart';
 import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/size_config.dart';
@@ -10,6 +11,8 @@ import 'package:music_minorleague/model/view/style/textstyles.dart';
 
 import 'component/cancel_Dialog.dart';
 import 'component/choice_chip_widget.dart';
+
+import 'package:firebase_storage/firebase_storage.dart';
 
 class UploadMusicPage extends StatefulWidget {
   @override
@@ -19,8 +22,19 @@ class UploadMusicPage extends StatefulWidget {
 class _UploadMusicPageState extends State<UploadMusicPage> {
   TextEditingController _titleController = new TextEditingController();
 
-  String _coverFile;
-  bool _isSelected = false;
+  String _coverImagePath;
+
+  File _coverImage;
+  String imagePath;
+  Reference ref;
+
+  List<Asset> _coverImageList;
+
+  @override
+  void initState() {
+    _coverImageList = List<Asset>();
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -65,7 +79,9 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
             ),
           ),
           FlatButton(
-            onPressed: () async {},
+            onPressed: () async {
+              _coverImage != null ? uploadImageFile(_coverImage) : null;
+            },
             child: Container(
               height: 30,
               alignment: Alignment.center,
@@ -99,113 +115,18 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 30),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('노래 제목', style: MTextStyles.bold16Black),
-                SizedBox(height: 40),
-              ],
-            ),
-            Container(
-              height: 54,
-              padding: EdgeInsets.only(left: 16, right: 16, bottom: 4),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
-                  border: Border.all(color: MColors.pinkish_grey, width: 1)),
-              child: TextField(
-                controller: _titleController,
-                decoration: InputDecoration(
-                  hintText: "노래 제목을 입력해주세요..",
-                  hintStyle: MTextStyles.medium16WhiteThree,
-                  labelStyle: TextStyle(color: Colors.transparent),
-                  border: UnderlineInputBorder(
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
-            ),
+            musicTitle(),
             SizedBox(height: 30),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('장르 선택', style: MTextStyles.bold16Black),
-                SizedBox(height: 40),
-              ],
-            ),
-            Wrap(
-              alignment: WrapAlignment.start,
-              direction: Axis.horizontal,
-              spacing: 5.0, // gap between adjacent chips
-              runSpacing: 5.0, // gap between lines
-
-              children: [
-                choiceChipWidget(typeOfMusicList),
-              ],
-            ),
+            musicType(typeOfMusicList),
             SizedBox(height: 30),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('음악 파일 선택', style: MTextStyles.bold16Black),
-                SizedBox(height: 40),
-              ],
-            ),
-            Container(
-              height: 180,
-              width: SizeConfig.screenWidth - 40,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
-                  border: Border.all(color: MColors.pinkish_grey, width: 1)),
-              //width: SizeConfig.screenWidth - 40,
-              child: Center(
-                child: InkWell(
-                  onTap: () async {},
-                  child: getMusicFileContainer(),
-                ),
-              ),
-            ),
+            selectMusic(),
             SizedBox(height: 30),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('커버 사진 선택', style: MTextStyles.bold16Black),
-                SizedBox(height: 40),
-              ],
-            ),
-            Container(
-              height: 180,
-              width: SizeConfig.screenWidth - 40,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
-                  border: Border.all(color: MColors.pinkish_grey, width: 1)),
-              //width: SizeConfig.screenWidth - 40,
-              child: Center(
-                child: InkWell(
-                  onTap: () async {},
-                  child: getCoverImageContainer(),
-                ),
-              ),
-            ),
+            selectCoverImage(),
           ],
         ),
       ),
     );
   }
-
-  // Widget choiceChips(MusicTypeEnum chip) {
-  //   return ChoiceChip(
-  //     label: Text(getLabelTypeOfMusicList(chip)),
-  //     selected: _isSelected,
-  //     selectedColor: Colors.green,
-  //     onSelected: (selected) {
-  //       setState(() {
-  //         _isSelected = !_isSelected;
-  //       });
-  //     },
-  //     backgroundColor: Colors.blue,
-  //     labelStyle: TextStyle(color: Colors.white),
-  //   );
-  // }
 
   getMusicFileContainer() {
     return Container(
@@ -235,7 +156,7 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
 
   getCoverImageContainer() {
     Widget contentsWidget;
-    if (_coverFile == null) {
+    if (_coverImagePath == null) {
       contentsWidget = Container(
         height: 40,
         width: 150,
@@ -263,7 +184,7 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
       contentsWidget = RawMaterialButton(
         onPressed: () {
           setState(() {
-            _coverFile = null;
+            _coverImagePath = null;
           });
         },
         child: Stack(
@@ -271,7 +192,7 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Image.file(
-                File(_coverFile),
+                File(_coverImagePath),
                 fit: BoxFit.cover,
               ),
             ),
@@ -300,5 +221,175 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
         backgroundColor: Colors.black.withOpacity(0.8),
       ),
     );
+  }
+
+  musicTitle() {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('노래 제목', style: MTextStyles.bold16Black),
+            SizedBox(height: 40),
+          ],
+        ),
+        Container(
+          height: 54,
+          padding: EdgeInsets.only(left: 16, right: 16, bottom: 4),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+              border: Border.all(color: MColors.pinkish_grey, width: 1)),
+          child: TextField(
+            controller: _titleController,
+            decoration: InputDecoration(
+              hintText: "노래 제목을 입력해주세요..",
+              hintStyle: MTextStyles.medium16WhiteThree,
+              labelStyle: TextStyle(color: Colors.transparent),
+              border: UnderlineInputBorder(
+                borderSide: BorderSide.none,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  musicType(typeOfMusicList) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('장르 선택', style: MTextStyles.bold16Black),
+            SizedBox(height: 40),
+          ],
+        ),
+        Wrap(
+          alignment: WrapAlignment.start,
+          direction: Axis.horizontal,
+          spacing: 5.0, // gap between adjacent chips
+          runSpacing: 5.0, // gap between lines
+
+          children: [
+            choiceChipWidget(typeOfMusicList),
+          ],
+        ),
+      ],
+    );
+  }
+
+  selectMusic() {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('음악 파일 선택', style: MTextStyles.bold16Black),
+            SizedBox(height: 40),
+          ],
+        ),
+        Container(
+          height: 180,
+          width: SizeConfig.screenWidth - 40,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+              border: Border.all(color: MColors.pinkish_grey, width: 1)),
+          //width: SizeConfig.screenWidth - 40,
+          child: Center(
+            child: InkWell(
+              onTap: () async {},
+              child: getMusicFileContainer(),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  selectCoverImage() {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('커버 사진 선택', style: MTextStyles.bold16Black),
+            SizedBox(height: 40),
+          ],
+        ),
+        Container(
+          height: 180,
+          width: SizeConfig.screenWidth - 40,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+              border: Border.all(color: MColors.pinkish_grey, width: 1)),
+          //width: SizeConfig.screenWidth - 40,
+          child: Center(
+            child: InkWell(
+              onTap: () async {
+                await getImage();
+              },
+              child: getCoverImageContainer(),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> getImage() async {
+    String error = 'No Error Dectected';
+    List<Asset> resultList = List<Asset>();
+    try {
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: 1,
+        enableCamera: true,
+        selectedAssets: _coverImageList,
+        cupertinoOptions: CupertinoOptions(
+          selectionFillColor: "#e73331",
+          selectionTextColor: "#ffffff",
+        ),
+        // andorid 용 UI 변경해야함
+        materialOptions: MaterialOptions(
+          actionBarTitle: "사전 선택",
+          allViewTitle: "전체 사진",
+          actionBarColor: "#e73331",
+          actionBarTitleColor: "#ffffff",
+          lightStatusBar: true,
+          statusBarColor: '#e73331',
+          startInAllView: false,
+          selectCircleStrokeColor: "#ffffff",
+          selectionLimitReachedText: "사진은 2장 까지만 선택가능 합니다.",
+        ),
+      );
+    } on Exception catch (e) {
+      error = e.toString();
+    }
+
+    if (!mounted) return;
+    _coverImageList = resultList;
+    for (Asset asset in _coverImageList) {
+      _coverImagePath =
+          await FlutterAbsolutePath.getAbsolutePath(asset.identifier);
+      _coverImage = File(_coverImagePath);
+    }
+    setState(() {});
+  }
+
+  Future<String> uploadImageFile(File imageFile) async {
+    ref = FirebaseStorage.instance
+        .ref()
+        .child('post')
+        .child('${DateTime.now().millisecondsSinceEpoch}.png');
+
+    UploadTask uploadTask = ref.putFile(imageFile);
+
+    String url;
+    await uploadTask.whenComplete(() {
+      ref.getDownloadURL().then((fileUrl) {
+        url = fileUrl;
+      });
+    });
+    return url;
   }
 }
