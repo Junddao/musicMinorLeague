@@ -1,6 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'model/data/user_profile_data.dart';
+import 'model/provider/user_profile_provider.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -8,10 +12,12 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  User _user;
   Future<bool> _mockCheckForSession() async {
     bool result = false;
+
     await Future.delayed(Duration(milliseconds: 2000), () {
-      User _user = FirebaseAuth.instance.currentUser;
+      _user = FirebaseAuth.instance.currentUser;
       _user != null ? result = true : result = false;
     });
     return result;
@@ -31,6 +37,16 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _navigatorToHome() {
+    UserProfileData userProfileData = new UserProfileData(
+      _user.displayName,
+      _user.photoURL,
+      _user.email,
+      _user.email.substring(0, _user.email.indexOf('@')), // id
+    );
+
+    Provider.of<UserProfileProvider>(context, listen: false).userProfileData =
+        userProfileData;
+
     Navigator.of(context).pushNamed('TabPage');
   }
 

@@ -30,14 +30,14 @@ class _LoungePageState extends State<LoungePage>
 
   MusicInfoData dummy1 = new MusicInfoData(
       dateTime: '123',
-      favorite: true,
+      favoriteCnt: 0,
       imagePath: 'imagepath',
       musicPath: 'path',
       title: 'title',
       userProfileData: UserProfileProvider().userProfileData);
   MusicInfoData dummy2 = new MusicInfoData(
       dateTime: '234',
-      favorite: true,
+      favoriteCnt: 0,
       imagePath: 'imagepath',
       musicPath: 'path',
       title: 'title2',

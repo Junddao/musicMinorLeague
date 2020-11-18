@@ -3,21 +3,27 @@ import 'package:music_minorleague/model/enum/music_type_enum.dart';
 import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 
-class choiceChipWidget extends StatefulWidget {
-  final List<MusicTypeEnum> reportList;
-
-  choiceChipWidget(this.reportList);
+class ChoiceChipWidget extends StatefulWidget {
+  const ChoiceChipWidget({
+    Key key,
+    List<MusicTypeEnum> typeOfMusicList,
+    Function returnDataFunc,
+  })  : _typeOfMusicList = typeOfMusicList,
+        _returnDataFunc = returnDataFunc,
+        super(key: key);
+  final List<MusicTypeEnum> _typeOfMusicList;
+  final Function _returnDataFunc;
 
   @override
-  _choiceChipWidgetState createState() => new _choiceChipWidgetState();
+  _ChoiceChipWidgetState createState() => new _ChoiceChipWidgetState();
 }
 
-class _choiceChipWidgetState extends State<choiceChipWidget> {
+class _ChoiceChipWidgetState extends State<ChoiceChipWidget> {
   MusicTypeEnum selectedChoice;
 
   _buildChoiceList() {
     List<Widget> choices = List();
-    widget.reportList.forEach((item) {
+    widget._typeOfMusicList.forEach((item) {
       choices.add(Container(
         padding: const EdgeInsets.all(2.0),
         child: ChoiceChip(
@@ -30,6 +36,7 @@ class _choiceChipWidgetState extends State<choiceChipWidget> {
           selectedColor: MColors.tomato,
           selected: selectedChoice == item,
           onSelected: (selected) {
+            widget._returnDataFunc(item);
             setState(() {
               selectedChoice = item;
             });

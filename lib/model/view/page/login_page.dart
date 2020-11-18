@@ -34,6 +34,7 @@ class _LoginPageState extends State<LoginPage> {
       user.displayName,
       user.photoURL,
       user.email,
+      user.email.substring(0, user.email.indexOf('@')), // id
     );
 
     Provider.of<UserProfileProvider>(context, listen: false).userProfileData =

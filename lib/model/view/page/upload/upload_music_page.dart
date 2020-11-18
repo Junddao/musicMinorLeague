@@ -1,13 +1,18 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:music_minorleague/model/enum/music_type_enum.dart';
+import 'package:music_minorleague/model/provider/user_profile_provider.dart';
 import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
+import 'package:enum_to_string/enum_to_string.dart';
+import 'package:provider/provider.dart';
 
 import 'component/cancel_Dialog.dart';
 import 'component/choice_chip_widget.dart';
@@ -24,11 +29,16 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
 
   String _coverImagePath;
 
-  File _coverImage;
+  File _coverImage, _musicFile;
+  String imageFileUrl, musicFileUrl;
   String imagePath;
+  String _artist;
   Reference ref;
+  MusicTypeEnum _typeOfMusic;
 
   List<Asset> _coverImageList;
+
+  final firestoreinstance = FirebaseFirestore.instance;
 
   @override
   void initState() {
@@ -80,7 +90,8 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
           ),
           FlatButton(
             onPressed: () async {
-              _coverImage != null ? uploadImageFile(_coverImage) : null;
+              // must attach image and music file.
+              _coverImage != null && _musicFile != null ? await upload() : null;
             },
             child: Container(
               height: 30,
@@ -105,6 +116,7 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
   }
 
   _body() {
+    _artist = Provider.of<UserProfileProvider>(context).userProfileData.id;
     List<MusicTypeEnum> typeOfMusicList = List.generate(
         MusicTypeEnum.values.length, (index) => MusicTypeEnum.values[index]);
     return SingleChildScrollView(
@@ -119,7 +131,7 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
             SizedBox(height: 30),
             musicType(typeOfMusicList),
             SizedBox(height: 30),
-            selectMusic(),
+            selectMusicWidget(),
             SizedBox(height: 30),
             selectCoverImage(),
           ],
@@ -272,14 +284,23 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
           runSpacing: 5.0, // gap between lines
 
           children: [
-            choiceChipWidget(typeOfMusicList),
+            ChoiceChipWidget(
+              typeOfMusicList: typeOfMusicList,
+              returnDataFunc: returnDataFunc,
+            ),
           ],
         ),
       ],
     );
   }
 
-  selectMusic() {
+  void returnDataFunc(MusicTypeEnum selectedData) {
+    setState(() {
+      _typeOfMusic = selectedData;
+    });
+  }
+
+  selectMusicWidget() {
     return Column(
       children: [
         Row(
@@ -298,7 +319,9 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
           //width: SizeConfig.screenWidth - 40,
           child: Center(
             child: InkWell(
-              onTap: () async {},
+              onTap: () async {
+                await getMusic();
+              },
               child: getMusicFileContainer(),
             ),
           ),
@@ -351,7 +374,7 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
         ),
         // andorid 용 UI 변경해야함
         materialOptions: MaterialOptions(
-          actionBarTitle: "사전 선택",
+          actionBarTitle: "사진 선택",
           allViewTitle: "전체 사진",
           actionBarColor: "#e73331",
           actionBarTitleColor: "#ffffff",
@@ -359,7 +382,7 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
           statusBarColor: '#e73331',
           startInAllView: false,
           selectCircleStrokeColor: "#ffffff",
-          selectionLimitReachedText: "사진은 2장 까지만 선택가능 합니다.",
+          selectionLimitReachedText: "사진은 1장만 선택가능 합니다.",
         ),
       );
     } on Exception catch (e) {
@@ -376,11 +399,39 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
     setState(() {});
   }
 
+  Future<void> getMusic() async {
+    FilePickerResult result = await FilePicker.platform.pickFiles();
+
+    if (result != null) {
+      _musicFile = File(result.files.single.path);
+    } else {
+      // User canceled the picker
+    }
+  }
+
+  Future<void> upload() async {
+    Future.wait([
+      uploadImageFile(_coverImage).then((value) {
+        imageFileUrl = value;
+      }),
+      uploadMusicFile(_musicFile).then((value) {
+        musicFileUrl = value;
+      }),
+    ]).then((value) {
+      if (value[0] != null && value[1] != null) updateDatabase();
+    });
+  }
+
   Future<String> uploadImageFile(File imageFile) async {
+    var now = DateTime.now();
+    String filename = _titleController.text + '_image';
+    String date =
+        now.year.toString() + now.month.toString() + now.day.toString();
     ref = FirebaseStorage.instance
         .ref()
-        .child('post')
-        .child('${DateTime.now().millisecondsSinceEpoch}.png');
+        .child(date)
+        .child(_artist)
+        .child(filename);
 
     UploadTask uploadTask = ref.putFile(imageFile);
 
@@ -391,5 +442,63 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
       });
     });
     return url;
+  }
+
+  Future<String> uploadMusicFile(File _musicFile) async {
+    var now = DateTime.now();
+    String filename = _titleController.text + '_music';
+    String date =
+        now.year.toString() + now.month.toString() + now.day.toString();
+    ref = FirebaseStorage.instance
+        .ref()
+        .child(date)
+        .child(_artist)
+        .child(filename);
+
+    UploadTask uploadTask = ref.putFile(_musicFile);
+
+    String url;
+    await uploadTask.whenComplete(() {
+      ref.getDownloadURL().then((fileUrl) {
+        url = fileUrl;
+      });
+    });
+    return url;
+  }
+
+  updateDatabase() {
+    if (_titleController.text != null &&
+        musicFileUrl != null &&
+        imageFileUrl != null) {
+      var data = {
+        "title": _titleController.text,
+        "artist": _artist,
+        "musicType": EnumToString.convertToString(_typeOfMusic),
+        "musicPath": musicFileUrl,
+        "imagePath": imageFileUrl,
+        "dateTime": DateTime.now().toIso8601String(),
+        "favorite": 0,
+      };
+
+      firestoreinstance
+          .collection('allMusic')
+          .doc(_artist)
+          .set(data)
+          .whenComplete(() => showDialog(
+                context: context,
+                builder: (context) =>
+                    _onTapButton(context, "Files Uploaded Successfully :)"),
+              ));
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) =>
+            _onTapButton(context, "Please Enter All Details :("),
+      );
+    }
+  }
+
+  _onTapButton(BuildContext context, data) {
+    return AlertDialog(title: Text(data));
   }
 }

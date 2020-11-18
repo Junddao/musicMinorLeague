@@ -3,10 +3,11 @@ import 'package:music_minorleague/model/enum/music_type_enum.dart';
 
 class MusicInfoData {
   String title;
+  String artist;
   String musicPath;
   String imagePath;
   String dateTime;
-  bool favorite;
+  int favoriteCnt;
   MusicTypeEnum musicTypeEnum;
   UserProfileData userProfileData;
   MusicInfoData({
@@ -14,7 +15,7 @@ class MusicInfoData {
     this.musicPath,
     this.imagePath,
     this.dateTime,
-    this.favorite,
+    this.favoriteCnt,
     this.userProfileData,
   });
 }

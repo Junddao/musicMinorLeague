@@ -56,5 +56,14 @@
 	<string>Example usage description</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Example usage description</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>Explain why your app uses music</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Explain why your app uses photo library</string>
 </dict>
 </plist>
