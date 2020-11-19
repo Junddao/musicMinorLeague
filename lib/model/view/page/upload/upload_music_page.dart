@@ -410,16 +410,8 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
   }
 
   Future<void> upload() async {
-    Future.wait([
-      uploadImageFile(_coverImage).then((value) {
-        imageFileUrl = value;
-      }),
-      uploadMusicFile(_musicFile).then((value) {
-        musicFileUrl = value;
-      }),
-    ]).then((value) {
-      if (value[0] != null && value[1] != null) updateDatabase();
-    });
+    await uploadImageFile(_coverImage);
+    await uploadMusicFile(_musicFile);
   }
 
   Future<String> uploadImageFile(File imageFile) async {
@@ -438,13 +430,14 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
     String url;
     await uploadTask.then((TaskSnapshot snapshot) {
       snapshot.ref.getDownloadURL().then((fileUrl) {
-        url = fileUrl;
+        imageFileUrl = fileUrl;
+        if (musicFileUrl != null) updateDatabase();
       });
     });
     return url;
   }
 
-  Future<String> uploadMusicFile(File _musicFile) async {
+  Future<void> uploadMusicFile(File _musicFile) async {
     var now = DateTime.now();
     String filename = _titleController.text + '_music';
     String date =
@@ -457,13 +450,12 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
 
     UploadTask uploadTask = ref.putFile(_musicFile);
 
-    String url;
     await uploadTask.then((TaskSnapshot snapshot) {
       snapshot.ref.getDownloadURL().then((fileUrl) {
-        url = fileUrl;
+        musicFileUrl = fileUrl;
+        if (imageFileUrl != null) updateDatabase();
       });
     });
-    return url;
   }
 
   updateDatabase() {
