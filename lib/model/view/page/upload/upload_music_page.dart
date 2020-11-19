@@ -436,8 +436,8 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
     UploadTask uploadTask = ref.putFile(imageFile);
 
     String url;
-    await uploadTask.whenComplete(() {
-      ref.getDownloadURL().then((fileUrl) {
+    await uploadTask.then((TaskSnapshot snapshot) {
+      snapshot.ref.getDownloadURL().then((fileUrl) {
         url = fileUrl;
       });
     });
@@ -458,8 +458,8 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
     UploadTask uploadTask = ref.putFile(_musicFile);
 
     String url;
-    await uploadTask.whenComplete(() {
-      ref.getDownloadURL().then((fileUrl) {
+    await uploadTask.then((TaskSnapshot snapshot) {
+      snapshot.ref.getDownloadURL().then((fileUrl) {
         url = fileUrl;
       });
     });
