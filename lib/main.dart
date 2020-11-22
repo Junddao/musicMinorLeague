@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:music_minorleague/model/provider/now_play_music_provider.dart';
 import 'package:music_minorleague/route.dart';
 import 'package:music_minorleague/splash_screen.dart';
 import 'package:music_minorleague/tabstates.dart';
@@ -26,6 +27,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<TabStates>(
           create: (_) => TabStates(),
+        ),
+        ChangeNotifierProvider<NowPlayMusicProvider>(
+          create: (_) => NowPlayMusicProvider(),
         ),
       ],
       child: MaterialApp(

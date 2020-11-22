@@ -9,13 +9,14 @@ class MusicInfoData {
   String dateTime;
   int favoriteCnt;
   MusicTypeEnum musicTypeEnum;
-  UserProfileData userProfileData;
   MusicInfoData({
     this.title,
+    this.artist,
     this.musicPath,
     this.imagePath,
     this.dateTime,
     this.favoriteCnt,
-    this.userProfileData,
+    this.musicTypeEnum,
+    // UserProfileData userProfileData;
   });
 }

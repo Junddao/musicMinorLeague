@@ -28,15 +28,18 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
   TextEditingController _titleController = new TextEditingController();
 
   String _coverImagePath;
+  String _musicPath;
 
   File _coverImage, _musicFile;
   String imageFileUrl, musicFileUrl;
-  String imagePath;
+
   String _artist;
   Reference ref;
   MusicTypeEnum _typeOfMusic;
 
   List<Asset> _coverImageList;
+
+  bool isPlay = false;
 
   final firestoreinstance = FirebaseFirestore.instance;
 
@@ -141,35 +144,76 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
   }
 
   getMusicFileContainer() {
-    return Container(
-      height: 40,
-      width: 150,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(24)),
-          border: Border.all(color: MColors.white_three, width: 1),
-          color: MColors.white),
-      child: Padding(
-        padding: const EdgeInsets.only(left: 10, right: 10),
-        child: Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SvgPicture.asset('assets/icons/library_music.svg'),
-              SizedBox(
-                width: 6,
-              ),
-              Text('음악 등록하기', style: MTextStyles.medium12BrownishGrey),
-            ],
+    Widget musicContentsWidget;
+    if (_musicPath == null) {
+      musicContentsWidget = Container(
+        height: 40,
+        width: 150,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(24)),
+            border: Border.all(color: MColors.white_three, width: 1),
+            color: MColors.white),
+        child: Padding(
+          padding: const EdgeInsets.only(left: 10, right: 10),
+          child: Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset('assets/icons/library_music.svg'),
+                SizedBox(
+                  width: 6,
+                ),
+                Text('음악 등록하기', style: MTextStyles.medium12BrownishGrey),
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    } else {
+      musicContentsWidget = RawMaterialButton(
+        onPressed: () {},
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    isPlay = !isPlay;
+                  });
+                },
+                child: SvgPicture.asset(
+                  isPlay == true
+                      ? 'assets/icons/pause.svg'
+                      : 'assets/icons/play.svg',
+                  fit: BoxFit.cover,
+                  color: MColors.tomato,
+                ),
+              ),
+            ),
+            Positioned(
+              right: 4,
+              top: 4,
+              child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      _musicPath = null;
+                    });
+                  },
+                  child: _getSelectedPhotoEraseCircle()),
+            )
+          ],
+        ),
+      );
+    }
+
+    return musicContentsWidget;
   }
 
   getCoverImageContainer() {
-    Widget contentsWidget;
+    Widget imageContentsWidget;
     if (_coverImagePath == null) {
-      contentsWidget = Container(
+      imageContentsWidget = Container(
         height: 40,
         width: 150,
         decoration: BoxDecoration(
@@ -193,12 +237,8 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
         ),
       );
     } else {
-      contentsWidget = RawMaterialButton(
-        onPressed: () {
-          setState(() {
-            _coverImagePath = null;
-          });
-        },
+      imageContentsWidget = RawMaterialButton(
+        onPressed: () {},
         child: Stack(
           children: [
             Padding(
@@ -211,13 +251,19 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
             Positioned(
               right: 4,
               top: 4,
-              child: _getSelectedPhotoEraseCircle(),
+              child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      _coverImagePath = null;
+                    });
+                  },
+                  child: _getSelectedPhotoEraseCircle()),
             )
           ],
         ),
       );
     }
-    return contentsWidget;
+    return imageContentsWidget;
   }
 
   Widget _getSelectedPhotoEraseCircle() {
@@ -403,10 +449,14 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
     FilePickerResult result = await FilePicker.platform.pickFiles();
 
     if (result != null) {
-      _musicFile = File(result.files.single.path);
+      _musicPath = result.files.single.path;
+      _musicFile = File(_musicPath);
     } else {
       // User canceled the picker
+      _musicPath = null;
+      _musicFile = null;
     }
+    setState(() {});
   }
 
   Future<void> upload() async {
@@ -474,7 +524,7 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
 
       firestoreinstance
           .collection('allMusic')
-          .doc(_artist)
+          .doc()
           .set(data)
           .whenComplete(() => showDialog(
                 context: context,
