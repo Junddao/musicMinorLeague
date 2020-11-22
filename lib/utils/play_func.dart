@@ -2,11 +2,15 @@ import 'package:assets_audio_player/assets_audio_player.dart';
 
 class PlayMusic {
   static AssetsAudioPlayer assetsAudioPlayer = new AssetsAudioPlayer();
-  static playFunc(String filePath) {
+  static playUrlFunc(String filePath) {
     assetsAudioPlayer.open(Audio.liveStream(filePath));
   }
 
-  static pauseFunc(String filePath) {
+  static playFileFunc(String filePath) {
+    assetsAudioPlayer.open(Audio.file(filePath));
+  }
+
+  static pauseFunc() {
     assetsAudioPlayer.pause();
   }
 }

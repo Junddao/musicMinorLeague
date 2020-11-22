@@ -160,12 +160,18 @@ class _LoungePageState extends State<LoungePage>
                   child: CircularProgressIndicator(),
                 );
               } else {
-                if (selectedList == null)
+                if (selectedList?.length != snapshot.data.docs.length) {
+                  selectedList = null;
                   selectedList = List.generate(
                       snapshot.data.docs.length, (index) => false);
-                if (isPlayList == null)
+                }
+
+                if (isPlayList?.length != snapshot.data.docs.length) {
+                  isPlayList = null;
                   isPlayList = List.generate(
                       snapshot.data.docs.length, (index) => false);
+                }
+
                 return ListView.builder(
                   itemCount: snapshot.data.docs.length,
                   itemBuilder: (context, index) {
@@ -234,10 +240,9 @@ class _LoungePageState extends State<LoungePage>
                                   playMusicIndex = index;
                                   isPlayList[index] = !isPlayList[index];
                                   isPlayList[index] == true
-                                      ? PlayMusic.playFunc(snapshot
-                                          .data.docs[index]['musicPath'])
-                                      : PlayMusic.pauseFunc(snapshot
-                                          .data.docs[index]['musicPath']);
+                                      ? PlayMusic.playUrlFunc(
+                                          musicInfoData.musicPath)
+                                      : PlayMusic.pauseFunc();
                                   setState(() {
                                     bottomWidget = BottomWidgets.miniPlayer;
                                   });

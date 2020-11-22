@@ -12,6 +12,7 @@ import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 import 'package:enum_to_string/enum_to_string.dart';
+import 'package:music_minorleague/utils/play_func.dart';
 import 'package:provider/provider.dart';
 
 import 'component/cancel_Dialog.dart';
@@ -180,6 +181,9 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
                 onTap: () {
                   setState(() {
                     isPlay = !isPlay;
+                    isPlay == true
+                        ? PlayMusic.playFileFunc(_musicPath)
+                        : PlayMusic.pauseFunc();
                   });
                 },
                 child: SvgPicture.asset(
@@ -542,5 +546,6 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
 
   _onTapButton(BuildContext context, data) {
     return AlertDialog(title: Text(data));
+    //  Navigator.of(context).pop();  // 여기에 ok 버튼 누러서 pop 추가해야함
   }
 }
