@@ -50,11 +50,9 @@ class _SmallSelectListWidgetState extends State<SmallSelectListWidget> {
                 children: [
                   Column(
                     children: [
-                      IconButton(
-                          icon: Icon(Icons.play_arrow_outlined),
-                          onPressed: null),
+                      IconButton(icon: Icon(Icons.add), onPressed: null),
                       Text(
-                        '선택 항목 재생',
+                        '재생 목록 추가',
                         style: MTextStyles.bold12PinkishGrey,
                       ),
                     ],
@@ -66,13 +64,15 @@ class _SmallSelectListWidgetState extends State<SmallSelectListWidget> {
                   ),
                   Column(
                     children: [
-                      IconButton(icon: Icon(Icons.add), onPressed: null),
+                      IconButton(
+                          icon: Icon(Icons.play_arrow_outlined),
+                          onPressed: null),
                       Text(
-                        '재생 목록 추가',
+                        '선택 항목 재생',
                         style: MTextStyles.bold12PinkishGrey,
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),

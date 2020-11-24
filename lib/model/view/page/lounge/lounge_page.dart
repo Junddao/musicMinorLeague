@@ -29,7 +29,7 @@ class _LoungePageState extends State<LoungePage>
     with SingleTickerProviderStateMixin {
   TabController tabController;
 
-  int playMusicIndex;
+  int selectedPlayMusicIndex;
   BottomWidgets bottomWidget = BottomWidgets.none;
   bool isTabThisWeekMusicListItem;
 
@@ -42,7 +42,7 @@ class _LoungePageState extends State<LoungePage>
   @override
   void initState() {
     super.initState();
-    tabController = TabController(vsync: this, length: 2);
+    // tabController = TabController(vsync: this, length: 2);
 
     isTabThisWeekMusicListItem = false;
     musicInfoList = new List<MusicInfoData>();
@@ -76,57 +76,58 @@ class _LoungePageState extends State<LoungePage>
         ),
         backgroundColor: Colors.transparent,
         elevation: 0.0,
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(43),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: TabBar(
-              labelPadding: EdgeInsets.only(left: 10, right: 10),
-              labelStyle: MTextStyles.bold14Tomato,
-              unselectedLabelStyle: MTextStyles.bold14PinkishGrey,
-              controller: tabController,
-              indicator: UnderlineTabIndicator(
-                borderSide: BorderSide(width: 2.0, color: MColors.tomato),
-                insets: EdgeInsets.only(
-                  left: 16,
-                  right: 16,
-                ),
-              ),
-              indicatorSize: TabBarIndicatorSize.tab,
-              labelColor: MColors.tomato,
-              unselectedLabelColor: MColors.pinkish_grey,
-//                      isScrollable: true,
-              tabs: [
-                Container(
-                    alignment: Alignment.bottomCenter,
-                    padding: EdgeInsets.only(bottom: 11.0),
-                    child: Text(
-                      '이번주 음악',
-                    )),
-                Container(
-                    alignment: Alignment.bottomCenter,
-                    padding: EdgeInsets.only(bottom: 11.0),
-                    child: Text(
-                      '베스트 20',
-                    )),
-                // Container(
-                //     alignment: Alignment.bottomCenter,
-                //     padding: EdgeInsets.only(bottom: 11.0),
-                //     child: Text(
-                //       '내가 찜한 음악',
-                //     )),
-              ],
-            ),
-          ),
-        ),
+//         bottom: PreferredSize(
+//           preferredSize: Size.fromHeight(43),
+//           child: Align(
+//             alignment: Alignment.centerLeft,
+//             child: TabBar(
+//               labelPadding: EdgeInsets.only(left: 10, right: 10),
+//               labelStyle: MTextStyles.bold14Tomato,
+//               unselectedLabelStyle: MTextStyles.bold14PinkishGrey,
+//               controller: tabController,
+//               indicator: UnderlineTabIndicator(
+//                 borderSide: BorderSide(width: 2.0, color: MColors.tomato),
+//                 insets: EdgeInsets.only(
+//                   left: 16,
+//                   right: 16,
+//                 ),
+//               ),
+//               indicatorSize: TabBarIndicatorSize.tab,
+//               labelColor: MColors.tomato,
+//               unselectedLabelColor: MColors.pinkish_grey,
+// //                      isScrollable: true,
+//               tabs: [
+//                 Container(
+//                     alignment: Alignment.bottomCenter,
+//                     padding: EdgeInsets.only(bottom: 11.0),
+//                     child: Text(
+//                       '이번주 음악',
+//                     )),
+//                 Container(
+//                     alignment: Alignment.bottomCenter,
+//                     padding: EdgeInsets.only(bottom: 11.0),
+//                     child: Text(
+//                       '베스트 20',
+//                     )),
+//                 // Container(
+//                 //     alignment: Alignment.bottomCenter,
+//                 //     padding: EdgeInsets.only(bottom: 11.0),
+//                 //     child: Text(
+//                 //       '내가 찜한 음악',
+//                 //     )),
+//               ],
+//             ),
+//           ),
+//         ),
       ),
-      body: TabBarView(
-        controller: tabController,
-        children: [
-          _buildThisWeekNewPage(),
-          _buildBestTwenty(),
-        ],
-      ),
+      body: _buildThisWeekNewPage(),
+      // TabBarView(
+      //   controller: tabController,
+      //   children: [
+      //     _buildThisWeekNewPage(),
+      //     _buildBestTwenty(),
+      //   ],
+      // ),
     );
   }
 
@@ -148,137 +149,153 @@ class _LoungePageState extends State<LoungePage>
     );
   }
 
-  Expanded playListOfThisWeek() {
-    return Expanded(
-      child: Stack(
-        children: [
-          StreamBuilder(
-            stream: getData(),
-            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else {
-                if (selectedList?.length != snapshot.data.docs.length) {
-                  selectedList = null;
-                  selectedList = List.generate(
-                      snapshot.data.docs.length, (index) => false);
-                }
-
-                if (isPlayList?.length != snapshot.data.docs.length) {
-                  isPlayList = null;
-                  isPlayList = List.generate(
-                      snapshot.data.docs.length, (index) => false);
-                }
-
-                return ListView.builder(
-                  itemCount: snapshot.data.docs.length,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      height: 72,
-                      color: selectedList[index] == true
-                          ? Colors.grey[300]
-                          : Colors.transparent,
-                      child: ListTile(
-                        onTap: () {
-                          setState(() {
-                            selectedList[index] = !selectedList[index];
-                            selectedList.contains(true)
-                                ? bottomWidget = BottomWidgets.miniSelectList
-                                : bottomWidget = BottomWidgets.none;
-                          });
-                        },
-                        leading: CircleAvatar(),
-                        title: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              snapshot.data.docs[index]['title'],
-                              style: MTextStyles.bold14Grey06,
-                            ),
-                            SizedBox(
-                              width: 6,
-                            ),
-                            Text(
-                              snapshot.data.docs[index]['artist'],
-                              maxLines: 1,
-                              style: MTextStyles.regular12WarmGrey_underline,
-                            ),
-                          ],
-                        ),
-                        trailing: Wrap(
-                          children: [
-                            IconButton(
-                                icon: Icon(
-                                  isPlayList[index] == true
-                                      ? Icons.pause
-                                      : Icons.play_arrow_outlined,
-                                ),
-                                onPressed: () {
-                                  MusicInfoData musicInfoData =
-                                      new MusicInfoData(
-                                    title: snapshot.data.docs[index]['title'],
-                                    artist: snapshot.data.docs[index]['artist'],
-                                    musicPath: snapshot.data.docs[index]
-                                        ['musicPath'],
-                                    imagePath: snapshot.data.docs[index]
-                                        ['imagePath'],
-                                    dateTime: snapshot.data.docs[index]
-                                        ['dateTime'],
-                                    favoriteCnt: snapshot.data.docs[index]
-                                        ['favorite'],
-                                    musicTypeEnum: EnumToString.fromString(
-                                        MusicTypeEnum.values,
-                                        snapshot.data.docs[index]['musicType']),
-                                  );
-                                  Provider.of<NowPlayMusicProvider>(context,
-                                          listen: false)
-                                      .musicInfoData = musicInfoData;
-
-                                  playMusicIndex = index;
-                                  isPlayList[index] = !isPlayList[index];
-                                  isPlayList[index] == true
-                                      ? PlayMusic.playUrlFunc(
-                                          musicInfoData.musicPath)
-                                      : PlayMusic.pauseFunc();
-                                  setState(() {
-                                    bottomWidget = BottomWidgets.miniPlayer;
-                                  });
-                                }),
-                            IconButton(
-                                icon: Icon(
-                                  Icons.favorite_border_outlined,
-                                  size: 16,
-                                ),
-                                onPressed: null),
-                          ],
-                        ),
-                      ),
+  Widget playListOfThisWeek() {
+    return Flex(
+      direction: Axis.vertical,
+      children: [
+        Expanded(
+          child: Stack(
+            children: [
+              StreamBuilder(
+                stream: getData(),
+                builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(),
                     );
-                  },
-                );
-              }
-            },
+                  } else {
+                    if (selectedList?.length != snapshot.data.docs.length) {
+                      selectedList = null;
+                      selectedList = List.generate(
+                          snapshot.data.docs.length, (index) => false);
+                    }
+
+                    if (isPlayList?.length != snapshot.data.docs.length) {
+                      isPlayList = null;
+                      isPlayList = List.generate(
+                          snapshot.data.docs.length, (index) => false);
+                    }
+
+                    return ListView.builder(
+                      itemCount: snapshot.data.docs.length,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          height: 72,
+                          color: selectedList[index] == true
+                              ? Colors.grey[300]
+                              : Colors.transparent,
+                          child: ListTile(
+                            onTap: () {
+                              setState(() {
+                                selectedList[index] = !selectedList[index];
+                                selectedList.contains(true)
+                                    ? bottomWidget =
+                                        BottomWidgets.miniSelectList
+                                    : bottomWidget = BottomWidgets.none;
+                              });
+                            },
+                            leading: CircleAvatar(
+                              backgroundImage: NetworkImage(
+                                  snapshot.data.docs[index]['imagePath']),
+                            ),
+                            title: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  snapshot.data.docs[index]['title'],
+                                  style: MTextStyles.bold14Grey06,
+                                ),
+                                SizedBox(
+                                  width: 6,
+                                ),
+                                Text(
+                                  snapshot.data.docs[index]['artist'],
+                                  maxLines: 1,
+                                  style:
+                                      MTextStyles.regular12WarmGrey_underline,
+                                ),
+                              ],
+                            ),
+                            trailing: Wrap(
+                              children: [
+                                IconButton(
+                                    icon: Icon(
+                                      isPlayList[index] == true &&
+                                              index == selectedPlayMusicIndex
+                                          ? Icons.pause
+                                          : Icons.play_arrow_outlined,
+                                    ),
+                                    onPressed: () {
+                                      MusicInfoData musicInfoData =
+                                          new MusicInfoData(
+                                        title: snapshot.data.docs[index]
+                                            ['title'],
+                                        artist: snapshot.data.docs[index]
+                                            ['artist'],
+                                        musicPath: snapshot.data.docs[index]
+                                            ['musicPath'],
+                                        imagePath: snapshot.data.docs[index]
+                                            ['imagePath'],
+                                        dateTime: snapshot.data.docs[index]
+                                            ['dateTime'],
+                                        favoriteCnt: snapshot.data.docs[index]
+                                            ['favorite'],
+                                        musicTypeEnum: EnumToString.fromString(
+                                            MusicTypeEnum.values,
+                                            snapshot.data.docs[index]
+                                                ['musicType']),
+                                      );
+                                      Provider.of<NowPlayMusicProvider>(context,
+                                              listen: false)
+                                          .musicInfoData = musicInfoData;
+
+                                      selectedPlayMusicIndex = index;
+                                      isPlayList[index] = !isPlayList[index];
+                                      isPlayList[index] == true
+                                          ? PlayMusic.playUrlFunc(
+                                              musicInfoData.musicPath)
+                                          : PlayMusic.pauseFunc();
+                                      setState(() {
+                                        bottomWidget = BottomWidgets.miniPlayer;
+                                      });
+                                    }),
+                                IconButton(
+                                    icon: Icon(
+                                      Icons.favorite_border_outlined,
+                                      size: 16,
+                                    ),
+                                    onPressed: null),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
+              Visibility(
+                visible:
+                    bottomWidget == BottomWidgets.miniSelectList ? true : false,
+                child: SmallSelectListWidget(
+                    thisWeekMusicList: thisWeekMusicList,
+                    selectedList: selectedList),
+              ),
+              Visibility(
+                visible:
+                    bottomWidget == BottomWidgets.miniPlayer ? true : false,
+                child: SmallPlayListWidget(
+                  isPlayList: isPlayList,
+                  thisWeekMusicList: thisWeekMusicList,
+                  playMusicIndex: selectedPlayMusicIndex,
+                  playOrPauseFunc: playOrPauseFunc,
+                ),
+              ),
+            ],
           ),
-          Visibility(
-            visible:
-                bottomWidget == BottomWidgets.miniSelectList ? true : false,
-            child: SmallSelectListWidget(
-                thisWeekMusicList: thisWeekMusicList,
-                selectedList: selectedList),
-          ),
-          Visibility(
-            visible: bottomWidget == BottomWidgets.miniPlayer ? true : false,
-            child: SmallPlayListWidget(
-              isPlayList: isPlayList,
-              thisWeekMusicList: thisWeekMusicList,
-              playMusicIndex: playMusicIndex,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -292,6 +309,12 @@ class _LoungePageState extends State<LoungePage>
         ],
       ),
     );
+  }
+
+  playOrPauseFunc() {
+    setState(() {
+      isPlayList[selectedPlayMusicIndex] = !isPlayList[selectedPlayMusicIndex];
+    });
   }
 }
 
@@ -314,29 +337,29 @@ class PlayWidget extends StatelessWidget {
             ),
           ],
         ),
-        Row(
-          children: [
-            Column(
-              children: [
-                IconButton(icon: Icon(Icons.shuffle), onPressed: null),
-                Text(
-                  '셔플재생',
-                  style: MTextStyles.bold12PinkishGrey,
-                ),
-              ],
-            ),
-            Column(
-              children: [
-                IconButton(
-                    icon: Icon(Icons.play_arrow_outlined), onPressed: null),
-                Text(
-                  '전체재생',
-                  style: MTextStyles.bold12PinkishGrey,
-                ),
-              ],
-            ),
-          ],
-        ),
+        // Row(
+        //   children: [
+        //     Column(
+        //       children: [
+        //         IconButton(icon: Icon(Icons.shuffle), onPressed: null),
+        //         Text(
+        //           '셔플재생',
+        //           style: MTextStyles.bold12PinkishGrey,
+        //         ),
+        //       ],
+        //     ),
+        //     Column(
+        //       children: [
+        //         IconButton(
+        //             icon: Icon(Icons.play_arrow_outlined), onPressed: null),
+        //         Text(
+        //           '전체재생',
+        //           style: MTextStyles.bold12PinkishGrey,
+        //         ),
+        //       ],
+        //     ),
+        //   ],
+        // ),
       ],
     );
   }

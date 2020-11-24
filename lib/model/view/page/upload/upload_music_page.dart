@@ -528,7 +528,7 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
 
       firestoreinstance
           .collection('allMusic')
-          .doc()
+          .doc(DateTime.now().toIso8601String())
           .set(data)
           .whenComplete(() => showDialog(
                 context: context,
