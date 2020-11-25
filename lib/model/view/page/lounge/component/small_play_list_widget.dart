@@ -13,20 +13,11 @@ import 'package:provider/provider.dart';
 class SmallPlayListWidget extends StatefulWidget {
   const SmallPlayListWidget({
     Key key,
-    playMusicIndex,
     List<MusicInfoData> thisWeekMusicList,
-    List<bool> isPlayList,
-    Function playOrPauseFunc,
-  })  : _playMusicIndex = playMusicIndex,
-        _thisWeekMusicList = thisWeekMusicList,
-        _isPlayList = isPlayList,
-        _playOrPauseFunc = playOrPauseFunc,
+  })  : _thisWeekMusicList = thisWeekMusicList,
         super(key: key);
 
-  final int _playMusicIndex;
   final List<MusicInfoData> _thisWeekMusicList;
-  final List<bool> _isPlayList;
-  final Function _playOrPauseFunc;
 
   @override
   _SmallPlayListWidgetState createState() => _SmallPlayListWidgetState();
@@ -38,39 +29,41 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
   final List<StreamSubscription> _subscriptions = [];
   AssetsAudioPlayer _assetsAudioPlayer;
 
+  int oldMusicIndex = -1;
+
   @override
   void initState() {
-    _assetsAudioPlayer = PlayMusic.assetsAudioPlayer();
-    // _assetsAudioPlaye
+    // _assetsAudioPlayer = PlayMusic.assetsAudioPlayer();
+    // // _assetsAudioPlaye
 
-    _subscriptions.add(_assetsAudioPlayer.playlistFinished.listen((data) {
-      print("finished : $data");
-    }));
-    _subscriptions.add(_assetsAudioPlayer.playlistAudioFinished.listen((data) {
-      print("playlistAudioFinished : $data");
-    }));
-    _subscriptions.add(_assetsAudioPlayer.audioSessionId.listen((sessionId) {
-      print("audioSessionId : $sessionId");
-    }));
-    _subscriptions.add(_assetsAudioPlayer.current.listen((data) {
-      print("current : $data");
-    }));
-    _subscriptions.add(_assetsAudioPlayer.onReadyToPlay.listen((audio) {
-      print("onReadyToPlay : $audio");
-    }));
-    _subscriptions.add(_assetsAudioPlayer.isBuffering.listen((isBuffering) {
-      print("isBuffering : $isBuffering");
-    }));
-    _subscriptions.add(_assetsAudioPlayer.playerState.listen((playerState) {
-      print("playerState : $playerState");
-    }));
-    _subscriptions.add(_assetsAudioPlayer.isPlaying.listen((isplaying) {
-      print("isplaying : $isplaying");
-    }));
-    _subscriptions
-        .add(AssetsAudioPlayer.addNotificationOpenAction((notification) {
-      return false;
-    }));
+    // _subscriptions.add(_assetsAudioPlayer.playlistFinished.listen((data) {
+    //   print("finished : $data");
+    // }));
+    // _subscriptions.add(_assetsAudioPlayer.playlistAudioFinished.listen((data) {
+    //   print("playlistAudioFinished : $data");
+    // }));
+    // _subscriptions.add(_assetsAudioPlayer.audioSessionId.listen((sessionId) {
+    //   print("audioSessionId : $sessionId");
+    // }));
+    // _subscriptions.add(_assetsAudioPlayer.current.listen((data) {
+    //   print("current : $data");
+    // }));
+    // _subscriptions.add(_assetsAudioPlayer.onReadyToPlay.listen((audio) {
+    //   print("onReadyToPlay : $audio");
+    // }));
+    // _subscriptions.add(_assetsAudioPlayer.isBuffering.listen((isBuffering) {
+    //   print("isBuffering : $isBuffering");
+    // }));
+    // _subscriptions.add(_assetsAudioPlayer.playerState.listen((playerState) {
+    //   print("playerState : $playerState");
+    // }));
+    // _subscriptions.add(_assetsAudioPlayer.isPlaying.listen((isplaying) {
+    //   print("isplaying : $isplaying");
+    // }));
+    // _subscriptions
+    //     .add(AssetsAudioPlayer.addNotificationOpenAction((notification) {
+    //   return false;
+    // }));
 
     super.initState();
   }
@@ -139,22 +132,21 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
                           ),
                           onPressed: null),
                       IconButton(
-                          icon: Icon(widget._playMusicIndex != null
-                              ? widget._isPlayList[widget._playMusicIndex]
+                          icon: Icon(Provider.of<NowPlayMusicProvider>(context,
+                                          listen: false)
+                                      .nowMusicIndex !=
+                                  null
+                              ? Provider.of<NowPlayMusicProvider>(context,
+                                              listen: false)
+                                          .isPlay ==
+                                      true
                                   ? Icons.pause
                                   : Icons.play_arrow_outlined
                               : Icons.play_arrow_outlined),
                           onPressed: () {
                             setState(() {
-                              widget._playOrPauseFunc();
+                              PlayMusic.playOrPauseFunc();
                             });
-                            widget._isPlayList[widget._playMusicIndex] == true
-                                ? PlayMusic.playUrlFunc(
-                                    Provider.of<NowPlayMusicProvider>(context,
-                                            listen: false)
-                                        .musicInfoData
-                                        .musicPath)
-                                : PlayMusic.pauseFunc();
                           }),
                       IconButton(
                           icon: Icon(
@@ -169,90 +161,97 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
                 height: 40,
                 child: Padding(
                   padding: const EdgeInsets.only(left: 15, right: 15),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                  child: StreamBuilder<Object>(
+                    stream: PlayMusic.getCurrentStream(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return SizedBox.shrink();
+                      }
+                      final Playing playing = snapshot.data;
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              SizedBox(
+                                height: 20,
+                                child: Row(
+                                  children: [
+                                    StreamBuilder(
+                                      stream: PlayMusic.getPositionStream(),
+                                      builder: (context, snapshot) {
+                                        if (!snapshot.hasData) {
+                                          return SizedBox.shrink();
+                                        }
+                                        position = snapshot.data;
+                                        return Text(
+                                          durationToString(snapshot.data),
+                                          style: MTextStyles.regular12Grey06,
+                                        );
+                                      },
+                                    ),
+                                    Text(' / '),
+                                    StreamBuilder(
+                                      stream: PlayMusic.getSongLengthStream(),
+                                      builder: (context, snapshot) {
+                                        if (!snapshot.hasData) {
+                                          return SizedBox.shrink();
+                                        }
+                                        final RealtimePlayingInfos infos =
+                                            snapshot.data;
+                                        musicLength = infos.duration;
+                                        return Text(
+                                          durationToString(infos.duration),
+                                          style: MTextStyles.regular10WarmGrey,
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                           SizedBox(
                             height: 20,
-                            child: StreamBuilder<Object>(
-                                stream: PlayMusic.getCurrentStream(),
+                            child: SliderTheme(
+                              data: SliderTheme.of(context).copyWith(
+                                activeTrackColor: MColors.tomato,
+                                inactiveTrackColor: MColors.warm_grey,
+                                trackHeight: 2.0,
+                                thumbColor: MColors.kakao_yellow,
+                                thumbShape: RoundSliderThumbShape(
+                                    enabledThumbRadius: 8.0),
+                                overlayColor: Colors.purple.withAlpha(32),
+                                overlayShape: RoundSliderOverlayShape(
+                                    overlayRadius: 14.0),
+                              ),
+                              child: StreamBuilder(
+                                stream: PlayMusic.getPositionStream(),
                                 builder: (context, snapshot) {
                                   if (!snapshot.hasData) {
                                     return SizedBox.shrink();
                                   }
-                                  final Playing playing = snapshot.data;
-                                  return Row(
-                                    children: [
-                                      StreamBuilder(
-                                        stream: PlayMusic.getPositionStream(),
-                                        builder: (context, snapshot) {
-                                          return Text(
-                                            snapshot.data
-                                                .toString()
-                                                .substring(2, 7),
-                                            style: MTextStyles.regular12Grey06,
-                                          );
-                                        },
-                                      ),
-                                      Text(' / '),
-                                      StreamBuilder(
-                                        stream: PlayMusic.getSongLengthStream(),
-                                        builder: (context, snapshot) {
-                                          if (!snapshot.hasData) {
-                                            return SizedBox.shrink();
-                                          }
-                                          final RealtimePlayingInfos infos =
-                                              snapshot.data;
-                                          return Text(
-                                            infos.duration
-                                                .toString()
-                                                .substring(2, 7),
-                                            style:
-                                                MTextStyles.regular10WarmGrey,
-                                          );
-                                        },
-                                      ),
-                                    ],
+
+                                  return Slider(
+                                    min: 0,
+                                    max: musicLength.inMilliseconds.toDouble(),
+                                    value:
+                                        snapshot.data.inMilliseconds.toDouble(),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        PlayMusic.seekFunc(Duration(
+                                            milliseconds: value.floor()));
+                                      });
+                                    },
                                   );
-                                }),
+                                },
+                              ),
+                            ),
                           ),
                         ],
-                      ),
-                      SizedBox(
-                        height: 20,
-                        child: SliderTheme(
-                          data: SliderTheme.of(context).copyWith(
-                            activeTrackColor: MColors.tomato,
-                            inactiveTrackColor: MColors.warm_grey,
-                            trackHeight: 2.0,
-                            thumbColor: MColors.kakao_yellow,
-                            thumbShape:
-                                RoundSliderThumbShape(enabledThumbRadius: 8.0),
-                            overlayColor: Colors.purple.withAlpha(32),
-                            overlayShape:
-                                RoundSliderOverlayShape(overlayRadius: 14.0),
-                          ),
-                          child: StreamBuilder(
-                            stream:
-                                PlayMusic.assetsAudioPlayer().currentPosition,
-                            builder: (context, snapshot) {
-                              return Slider(
-                                  min: 0,
-                                  max: musicLength.inSeconds.toDouble(),
-                                  value: position.inSeconds.toDouble(),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      seekToSec(value.toInt());
-                                    });
-                                  });
-                            },
-                          ),
-                        ),
-                      )
-                    ],
+                      );
+                    },
                   ),
                 ),
               ),
@@ -261,8 +260,16 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
     );
   }
 
-  void seekToSec(int sec) {
-    Duration newPos = Duration(seconds: sec);
-    PlayMusic.seekFunc(newPos);
+  String durationToString(Duration duration) {
+    String twoDigits(int n) {
+      if (n >= 10) return "$n";
+      return "0$n";
+    }
+
+    String twoDigitMinutes =
+        twoDigits(duration.inMinutes.remainder(Duration.minutesPerHour));
+    String twoDigitSeconds =
+        twoDigits(duration.inSeconds.remainder(Duration.secondsPerMinute));
+    return "$twoDigitMinutes:$twoDigitSeconds";
   }
 }

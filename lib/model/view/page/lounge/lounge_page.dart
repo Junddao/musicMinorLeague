@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +32,6 @@ class _LoungePageState extends State<LoungePage>
     with SingleTickerProviderStateMixin {
   TabController tabController;
 
-  int selectedPlayMusicIndex;
   BottomWidgets bottomWidget = BottomWidgets.none;
   bool isTabThisWeekMusicListItem;
 
@@ -37,7 +39,10 @@ class _LoungePageState extends State<LoungePage>
 
   List<MusicInfoData> thisWeekMusicList;
   List<bool> selectedList;
-  List<bool> isPlayList;
+  // List<bool> isPlayList;
+
+  final List<StreamSubscription> _subscriptions = [];
+  AssetsAudioPlayer _assetsAudioPlayer;
 
   @override
   void initState() {
@@ -50,8 +55,44 @@ class _LoungePageState extends State<LoungePage>
     //TODO: get music list from firebase store
     thisWeekMusicList = new List<MusicInfoData>();
 
-    // selectedList = List.generate(thisWeekMusicList.length, (index) => false);
-    // isPlayList = List.generate(thisWeekMusicList.length, (index) => false);
+    _assetsAudioPlayer = PlayMusic.assetsAudioPlayer();
+    // _assetsAudioPlaye
+
+    _subscriptions.add(_assetsAudioPlayer.playlistFinished.listen((data) {
+      print("finished : $data");
+    }));
+    _subscriptions.add(_assetsAudioPlayer.playlistAudioFinished.listen((data) {
+      print("playlistAudioFinished : $data");
+    }));
+    _subscriptions.add(_assetsAudioPlayer.audioSessionId.listen((sessionId) {
+      print("audioSessionId : $sessionId");
+    }));
+    _subscriptions.add(_assetsAudioPlayer.current.listen((data) {
+      print("current : $data");
+    }));
+    _subscriptions.add(_assetsAudioPlayer.onReadyToPlay.listen((audio) {
+      print("onReadyToPlay : $audio");
+    }));
+    _subscriptions.add(_assetsAudioPlayer.isBuffering.listen((isBuffering) {
+      print("isBuffering : $isBuffering");
+    }));
+    _subscriptions.add(_assetsAudioPlayer.playerState.listen((playerState) {
+      print("playerState : $playerState");
+      if (playerState == PlayerState.pause) {
+        Provider.of<NowPlayMusicProvider>(context, listen: false).isPlay =
+            false;
+      } else if (playerState == PlayerState.play) {
+        Provider.of<NowPlayMusicProvider>(context, listen: false).isPlay = true;
+      }
+      setState(() {});
+    }));
+    _subscriptions.add(_assetsAudioPlayer.isPlaying.listen((isplaying) {
+      print("isplaying : $isplaying");
+    }));
+    _subscriptions
+        .add(AssetsAudioPlayer.addNotificationOpenAction((notification) {
+      return false;
+    }));
   }
 
   @override
@@ -170,108 +211,201 @@ class _LoungePageState extends State<LoungePage>
                           snapshot.data.docs.length, (index) => false);
                     }
 
-                    if (isPlayList?.length != snapshot.data.docs.length) {
-                      isPlayList = null;
-                      isPlayList = List.generate(
-                          snapshot.data.docs.length, (index) => false);
-                    }
+                    // if (isPlayList?.length != snapshot.data.docs.length) {
+                    //   isPlayList = null;
+                    //   isPlayList = List.generate(
+                    //       snapshot.data.docs.length, (index) => false);
+                    // }
 
-                    return ListView.builder(
-                      itemCount: snapshot.data.docs.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          height: 72,
-                          color: selectedList[index] == true
-                              ? Colors.grey[300]
-                              : Colors.transparent,
-                          child: ListTile(
-                            onTap: () {
-                              setState(() {
-                                selectedList[index] = !selectedList[index];
-                                selectedList.contains(true)
-                                    ? bottomWidget =
-                                        BottomWidgets.miniSelectList
-                                    : bottomWidget = BottomWidgets.none;
-                              });
+                    return StreamBuilder<Object>(
+                        stream: _assetsAudioPlayer.current,
+                        builder: (context, snapshotCurrent) {
+                          return ListView.builder(
+                            itemCount: snapshot.data.docs.length,
+                            itemBuilder: (context, index) {
+                              return Container(
+                                height: 72,
+                                color: selectedList[index] == true
+                                    ? Colors.grey[300]
+                                    : Colors.transparent,
+                                child: ListTile(
+                                  onTap: () {
+                                    setState(() {
+                                      selectedList[index] =
+                                          !selectedList[index];
+                                      selectedList.contains(true)
+                                          ? bottomWidget =
+                                              BottomWidgets.miniSelectList
+                                          : bottomWidget = BottomWidgets.none;
+                                    });
+                                  },
+                                  leading: CircleAvatar(
+                                    backgroundImage: NetworkImage(
+                                        snapshot.data.docs[index]['imagePath']),
+                                  ),
+                                  title: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        snapshot.data.docs[index]['title'],
+                                        style: MTextStyles.bold14Grey06,
+                                      ),
+                                      SizedBox(
+                                        width: 6,
+                                      ),
+                                      Text(
+                                        snapshot.data.docs[index]['artist'],
+                                        maxLines: 1,
+                                        style: MTextStyles
+                                            .regular12WarmGrey_underline,
+                                      ),
+                                    ],
+                                  ),
+                                  trailing: Wrap(
+                                    children: [
+                                      IconButton(
+                                          icon: Icon(
+                                            Provider.of<NowPlayMusicProvider>(
+                                                                context,
+                                                                listen: false)
+                                                            .isPlay ==
+                                                        true &&
+                                                    index ==
+                                                        Provider.of<NowPlayMusicProvider>(
+                                                                context,
+                                                                listen: false)
+                                                            .nowMusicIndex
+                                                ? Icons.pause
+                                                : Icons.play_arrow_outlined,
+                                          ),
+                                          onPressed: () {
+                                            MusicInfoData musicInfoData =
+                                                new MusicInfoData(
+                                              title: snapshot.data.docs[index]
+                                                  ['title'],
+                                              artist: snapshot.data.docs[index]
+                                                  ['artist'],
+                                              musicPath: snapshot.data
+                                                  .docs[index]['musicPath'],
+                                              imagePath: snapshot.data
+                                                  .docs[index]['imagePath'],
+                                              dateTime: snapshot
+                                                  .data.docs[index]['dateTime'],
+                                              favoriteCnt: snapshot
+                                                  .data.docs[index]['favorite'],
+                                              musicTypeEnum:
+                                                  EnumToString.fromString(
+                                                      MusicTypeEnum.values,
+                                                      snapshot.data.docs[index]
+                                                          ['musicType']),
+                                            );
+                                            Provider.of<NowPlayMusicProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .musicInfoData = musicInfoData;
+
+                                            // play 선택한 항목이 이전 선택한 항목이 아니면 oldmusicindex 에 복사 후 재생/정지 변경
+                                            int oldIndex = Provider.of<
+                                                        NowPlayMusicProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .oldMusicIndex;
+                                            int nowIndex = Provider.of<
+                                                        NowPlayMusicProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .nowMusicIndex;
+
+                                            int selectedValue; // 0 : first Selected , 1: same song selected, 2: different song selected
+
+                                            // first selected
+                                            if (nowIndex < 0) {
+                                              nowIndex = index;
+                                              selectedValue = 0;
+                                            }
+                                            // same song selected
+                                            else if (nowIndex == index) {
+                                              Provider.of<NowPlayMusicProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .isPlay = false;
+
+                                              selectedValue = 1;
+                                            }
+
+                                            // different song selected
+                                            else if (nowIndex >= 0 &&
+                                                nowIndex != index) {
+                                              oldIndex = nowIndex;
+                                              nowIndex = index;
+                                              selectedValue = 2;
+                                            }
+                                            Provider.of<NowPlayMusicProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .nowMusicIndex = nowIndex;
+
+                                            Provider.of<NowPlayMusicProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .oldMusicIndex = oldIndex;
+
+                                            setState(() {
+                                              if (selectedValue == 0) {
+                                                PlayMusic.playUrlFunc(Provider
+                                                        .of<NowPlayMusicProvider>(
+                                                            context,
+                                                            listen: false)
+                                                    .musicInfoData
+                                                    .musicPath);
+                                                Provider.of<NowPlayMusicProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .oldMusicIndex = Provider
+                                                        .of<NowPlayMusicProvider>(
+                                                            context,
+                                                            listen: false)
+                                                    .nowMusicIndex;
+                                              } else if (selectedValue == 2) {
+                                                PlayMusic.stopFunc();
+                                                _clearSubscriptions();
+
+                                                PlayMusic.playUrlFunc(Provider
+                                                        .of<NowPlayMusicProvider>(
+                                                            context,
+                                                            listen: false)
+                                                    .musicInfoData
+                                                    .musicPath);
+                                                Provider.of<NowPlayMusicProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .oldMusicIndex = Provider
+                                                        .of<NowPlayMusicProvider>(
+                                                            context,
+                                                            listen: false)
+                                                    .nowMusicIndex;
+                                              } else if (selectedValue == 1) {
+                                                PlayMusic.playOrPauseFunc();
+                                              }
+                                              bottomWidget =
+                                                  BottomWidgets.miniPlayer;
+                                            });
+                                          }),
+                                      IconButton(
+                                          icon: Icon(
+                                            Icons.favorite_border_outlined,
+                                            size: 16,
+                                          ),
+                                          onPressed: null),
+                                    ],
+                                  ),
+                                ),
+                              );
                             },
-                            leading: CircleAvatar(
-                              backgroundImage: NetworkImage(
-                                  snapshot.data.docs[index]['imagePath']),
-                            ),
-                            title: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  snapshot.data.docs[index]['title'],
-                                  style: MTextStyles.bold14Grey06,
-                                ),
-                                SizedBox(
-                                  width: 6,
-                                ),
-                                Text(
-                                  snapshot.data.docs[index]['artist'],
-                                  maxLines: 1,
-                                  style:
-                                      MTextStyles.regular12WarmGrey_underline,
-                                ),
-                              ],
-                            ),
-                            trailing: Wrap(
-                              children: [
-                                IconButton(
-                                    icon: Icon(
-                                      isPlayList[index] == true &&
-                                              index == selectedPlayMusicIndex
-                                          ? Icons.pause
-                                          : Icons.play_arrow_outlined,
-                                    ),
-                                    onPressed: () {
-                                      MusicInfoData musicInfoData =
-                                          new MusicInfoData(
-                                        title: snapshot.data.docs[index]
-                                            ['title'],
-                                        artist: snapshot.data.docs[index]
-                                            ['artist'],
-                                        musicPath: snapshot.data.docs[index]
-                                            ['musicPath'],
-                                        imagePath: snapshot.data.docs[index]
-                                            ['imagePath'],
-                                        dateTime: snapshot.data.docs[index]
-                                            ['dateTime'],
-                                        favoriteCnt: snapshot.data.docs[index]
-                                            ['favorite'],
-                                        musicTypeEnum: EnumToString.fromString(
-                                            MusicTypeEnum.values,
-                                            snapshot.data.docs[index]
-                                                ['musicType']),
-                                      );
-                                      Provider.of<NowPlayMusicProvider>(context,
-                                              listen: false)
-                                          .musicInfoData = musicInfoData;
-
-                                      selectedPlayMusicIndex = index;
-                                      isPlayList[index] = !isPlayList[index];
-                                      isPlayList[index] == true
-                                          ? PlayMusic.playUrlFunc(
-                                              musicInfoData.musicPath)
-                                          : PlayMusic.pauseFunc();
-                                      setState(() {
-                                        bottomWidget = BottomWidgets.miniPlayer;
-                                      });
-                                    }),
-                                IconButton(
-                                    icon: Icon(
-                                      Icons.favorite_border_outlined,
-                                      size: 16,
-                                    ),
-                                    onPressed: null),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    );
+                          );
+                        });
                   }
                 },
               ),
@@ -286,10 +420,7 @@ class _LoungePageState extends State<LoungePage>
                 visible:
                     bottomWidget == BottomWidgets.miniPlayer ? true : false,
                 child: SmallPlayListWidget(
-                  isPlayList: isPlayList,
                   thisWeekMusicList: thisWeekMusicList,
-                  playMusicIndex: selectedPlayMusicIndex,
-                  playOrPauseFunc: playOrPauseFunc,
                 ),
               ),
             ],
@@ -311,10 +442,12 @@ class _LoungePageState extends State<LoungePage>
     );
   }
 
-  playOrPauseFunc() {
-    setState(() {
-      isPlayList[selectedPlayMusicIndex] = !isPlayList[selectedPlayMusicIndex];
-    });
+  void _clearSubscriptions() {
+    for (var s in _subscriptions) {
+      s?.cancel();
+      s = null;
+    }
+    _subscriptions.clear();
   }
 }
 
