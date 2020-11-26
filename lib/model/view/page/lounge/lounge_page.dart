@@ -55,6 +55,11 @@ class _LoungePageState extends State<LoungePage>
     //TODO: get music list from firebase store
     thisWeekMusicList = new List<MusicInfoData>();
 
+    _initSubscription();
+  }
+
+  _initSubscription() {
+    _clearSubscriptions();
     _assetsAudioPlayer = PlayMusic.assetsAudioPlayer();
     // _assetsAudioPlaye
 
@@ -84,6 +89,7 @@ class _LoungePageState extends State<LoungePage>
       } else if (playerState == PlayerState.play) {
         Provider.of<NowPlayMusicProvider>(context, listen: false).isPlay = true;
       }
+
       setState(() {});
     }));
     _subscriptions.add(_assetsAudioPlayer.isPlaying.listen((isplaying) {
@@ -370,7 +376,10 @@ class _LoungePageState extends State<LoungePage>
                                                     .nowMusicIndex;
                                               } else if (selectedValue == 2) {
                                                 PlayMusic.stopFunc();
-                                                _clearSubscriptions();
+
+                                                // _clearSubscriptions();
+                                                PlayMusic.makeNewPlayer();
+                                                _initSubscription();
 
                                                 PlayMusic.playUrlFunc(Provider
                                                         .of<NowPlayMusicProvider>(

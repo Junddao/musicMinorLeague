@@ -2,21 +2,12 @@ import 'package:assets_audio_player/assets_audio_player.dart';
 
 class PlayMusic {
   static AssetsAudioPlayer _assetsAudioPlayer = new AssetsAudioPlayer();
-  static clearPlayList() {
-    _assetsAudioPlayer.stop();
-
-    _assetsAudioPlayer = new AssetsAudioPlayer();
+  static makeNewPlayer() {
+    _assetsAudioPlayer = AssetsAudioPlayer.newPlayer();
   }
 
   static stopFunc() {
     _assetsAudioPlayer.stop();
-  }
-
-  static stopAndPlayFunc(String filePath) {
-    _assetsAudioPlayer.stop().then((value) {
-      playUrlFunc(filePath);
-    });
-    Future.delayed(Duration(milliseconds: 500));
   }
 
   static playUrlFunc(String filePath) {
