@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
 import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/size_config.dart';
@@ -8,13 +9,13 @@ import 'package:music_minorleague/model/view/style/textstyles.dart';
 class SmallSelectListWidget extends StatefulWidget {
   const SmallSelectListWidget({
     Key key,
-    List<MusicInfoData> thisWeekMusicList,
+    List<MusicInfoData> musicList,
     List<bool> selectedList,
-  })  : _thisWeekMusicList = thisWeekMusicList,
+  })  : _musicList = musicList,
         _selectedList = selectedList,
         super(key: key);
 
-  final List<MusicInfoData> _thisWeekMusicList;
+  final List<MusicInfoData> _musicList;
   final List<bool> _selectedList;
 
   @override
@@ -65,8 +66,7 @@ class _SmallSelectListWidgetState extends State<SmallSelectListWidget> {
                   Column(
                     children: [
                       IconButton(
-                          icon: Icon(Icons.play_arrow_outlined),
-                          onPressed: null),
+                          icon: Icon(FontAwesomeIcons.play), onPressed: null),
                       Text(
                         '선택 항목 재생',
                         style: MTextStyles.bold12PinkishGrey,
@@ -79,7 +79,7 @@ class _SmallSelectListWidgetState extends State<SmallSelectListWidget> {
           ),
           Positioned(
             left: 10,
-            child: widget._thisWeekMusicList == null
+            child: widget._musicList == null
                 ? SizedBox.shrink()
                 : CircleAvatar(
                     radius: 15,

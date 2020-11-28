@@ -42,6 +42,7 @@ class _SplashScreenState extends State<SplashScreen> {
       _user.photoURL,
       _user.email,
       _user.email.substring(0, _user.email.indexOf('@')), // id
+      '',
     );
 
     Provider.of<UserProfileProvider>(context, listen: false).userProfileData =

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
 import 'package:music_minorleague/model/provider/now_play_music_provider.dart';
 import 'package:music_minorleague/model/view/style/colors.dart';
@@ -13,11 +14,11 @@ import 'package:provider/provider.dart';
 class SmallPlayListWidget extends StatefulWidget {
   const SmallPlayListWidget({
     Key key,
-    List<MusicInfoData> thisWeekMusicList,
-  })  : _thisWeekMusicList = thisWeekMusicList,
+    List<MusicInfoData> musicList,
+  })  : _musicList = musicList,
         super(key: key);
 
-  final List<MusicInfoData> _thisWeekMusicList;
+  final List<MusicInfoData> _musicList;
 
   @override
   _SmallPlayListWidgetState createState() => _SmallPlayListWidgetState();
@@ -132,6 +133,7 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
                           ),
                           onPressed: null),
                       IconButton(
+                          iconSize: 12,
                           icon: Icon(Provider.of<NowPlayMusicProvider>(context,
                                           listen: false)
                                       .nowMusicIndex !=
@@ -140,9 +142,9 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
                                               listen: false)
                                           .isPlay ==
                                       true
-                                  ? Icons.pause
-                                  : Icons.play_arrow_outlined
-                              : Icons.play_arrow_outlined),
+                                  ? FontAwesomeIcons.pause
+                                  : FontAwesomeIcons.play
+                              : FontAwesomeIcons.play),
                           onPressed: () {
                             setState(() {
                               PlayMusic.playOrPauseFunc();
@@ -212,43 +214,40 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
                               ),
                             ],
                           ),
-                          SizedBox(
-                            height: 20,
-                            child: SliderTheme(
-                              data: SliderTheme.of(context).copyWith(
-                                activeTrackColor: MColors.tomato,
-                                inactiveTrackColor: MColors.warm_grey,
-                                trackHeight: 2.0,
-                                thumbColor: MColors.kakao_yellow,
-                                thumbShape: RoundSliderThumbShape(
-                                    enabledThumbRadius: 8.0),
-                                overlayColor: Colors.purple.withAlpha(32),
-                                overlayShape: RoundSliderOverlayShape(
-                                    overlayRadius: 14.0),
-                              ),
-                              child: StreamBuilder(
-                                stream: PlayMusic.getPositionStream(),
-                                builder: (context, snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return SizedBox.shrink();
-                                  }
-
-                                  return Slider(
-                                    min: 0,
-                                    max: musicLength.inMilliseconds.toDouble(),
-                                    value:
-                                        snapshot.data.inMilliseconds.toDouble(),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        PlayMusic.seekFunc(Duration(
-                                            milliseconds: value.floor()));
-                                      });
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
+                          StreamBuilder(
+                              stream: PlayMusic.getPositionStream(),
+                              builder: (context, snapshot) {
+                                if (!snapshot.hasData) {
+                                  return SizedBox.shrink();
+                                }
+                                return Expanded(
+                                  child: SliderTheme(
+                                    data: SliderTheme.of(context).copyWith(
+                                      activeTrackColor: MColors.tomato,
+                                      inactiveTrackColor: MColors.warm_grey,
+                                      trackHeight: 2.0,
+                                      thumbColor: MColors.kakao_yellow,
+                                      thumbShape: RoundSliderThumbShape(
+                                          enabledThumbRadius: 8.0),
+                                      overlayColor: Colors.purple.withAlpha(32),
+                                      overlayShape: RoundSliderOverlayShape(
+                                          overlayRadius: 14.0),
+                                    ),
+                                    child: Slider(
+                                      min: 0,
+                                      max:
+                                          musicLength.inMilliseconds.toDouble(),
+                                      value: position.inMilliseconds.toDouble(),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          PlayMusic.seekFunc(Duration(
+                                              milliseconds: value.floor()));
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                );
+                              }),
                         ],
                       );
                     },

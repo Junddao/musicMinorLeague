@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:music_minorleague/model/data/user_profile_data.dart';
 import 'package:music_minorleague/model/provider/user_profile_provider.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
@@ -18,6 +19,8 @@ class _LoginPageState extends State<LoginPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = new GoogleSignIn();
 
+  final firestoreinstance = FirebaseFirestore.instance;
+
   Future<void> signInWithGoogle() async {
     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
     final GoogleSignInAuthentication googleAuth =
@@ -35,10 +38,13 @@ class _LoginPageState extends State<LoginPage> {
       user.photoURL,
       user.email,
       user.email.substring(0, user.email.indexOf('@')), // id
+      '',
     );
 
     Provider.of<UserProfileProvider>(context, listen: false).userProfileData =
         userProfileData;
+
+    updateDatabase(userProfileData);
 
     Navigator.of(context).pushNamed('TabPage');
   }
@@ -98,5 +104,20 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  updateDatabase(UserProfileData userProfileData) {
+    String _id = userProfileData.userEmail
+        .substring(0, userProfileData.userEmail.indexOf('@'));
+    var data = {
+      "userName": userProfileData.userName,
+      "photoUrl": userProfileData.photoUrl,
+      "userEmail": userProfileData.userEmail,
+      "id": _id, // id
+      'JoinDate': DateTime.now().toIso8601String(),
+      "youtubeUrl": '',
+    };
+
+    firestoreinstance.collection('User').doc(_id).set(data);
   }
 }

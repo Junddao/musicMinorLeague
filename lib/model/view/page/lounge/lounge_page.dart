@@ -4,10 +4,12 @@ import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
 import 'package:music_minorleague/model/enum/music_type_enum.dart';
 import 'package:music_minorleague/model/provider/now_play_music_provider.dart';
 import 'package:music_minorleague/model/provider/user_profile_provider.dart';
+import 'package:music_minorleague/model/view/page/lounge/component/select_buttons_widget.dart';
 import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
@@ -16,6 +18,7 @@ import 'package:provider/provider.dart';
 
 import 'component/small_play_list_widget.dart';
 import 'component/small_select_list_widget.dart';
+import 'component/top_twenty_music_widget.dart';
 
 enum BottomWidgets {
   miniSelectList,
@@ -35,9 +38,8 @@ class _LoungePageState extends State<LoungePage>
   BottomWidgets bottomWidget = BottomWidgets.none;
   bool isTabThisWeekMusicListItem;
 
-  List<MusicInfoData> musicInfoList;
-
-  List<MusicInfoData> thisWeekMusicList;
+  List<MusicInfoData> musicList;
+  List<MusicInfoData> topTwentyMusicList;
   List<bool> selectedList;
   // List<bool> isPlayList;
 
@@ -50,10 +52,8 @@ class _LoungePageState extends State<LoungePage>
     // tabController = TabController(vsync: this, length: 2);
 
     isTabThisWeekMusicListItem = false;
-    musicInfoList = new List<MusicInfoData>();
-
-    //TODO: get music list from firebase store
-    thisWeekMusicList = new List<MusicInfoData>();
+    musicList = new List<MusicInfoData>();
+    topTwentyMusicList = new List<MusicInfoData>();
 
     _initSubscription();
   }
@@ -101,6 +101,29 @@ class _LoungePageState extends State<LoungePage>
     }));
   }
 
+  List<MusicInfoData> _getBestTwentyMusicDatabase(QuerySnapshot qs) {
+    List<MusicInfoData> topTwentyMusicList = new List<MusicInfoData>();
+    for (int idx = 0; idx < qs.docs.length; idx++) {
+      MusicInfoData musicInfoData = new MusicInfoData();
+
+      musicInfoData.artist = qs.docs[idx].data()['artist'];
+      musicInfoData.dateTime = qs.docs[idx].data()['dateTime'];
+      musicInfoData.favoriteCnt = qs.docs[idx].data()['favorite'];
+      musicInfoData.imagePath = qs.docs[idx].data()['imagePath'];
+      musicInfoData.musicPath = qs.docs[idx].data()['musicPath'];
+
+      musicInfoData.musicTypeEnum = EnumToString.fromString(
+          MusicTypeEnum.values, qs.docs[idx].data()['musicType']);
+      musicInfoData.title = qs.docs[idx].data()['title'];
+      topTwentyMusicList.add(musicInfoData);
+
+      int favoriteNum = qs.docs[idx].data()['favorite'];
+      print(favoriteNum);
+    }
+
+    return topTwentyMusicList;
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -123,58 +146,8 @@ class _LoungePageState extends State<LoungePage>
         ),
         backgroundColor: Colors.transparent,
         elevation: 0.0,
-//         bottom: PreferredSize(
-//           preferredSize: Size.fromHeight(43),
-//           child: Align(
-//             alignment: Alignment.centerLeft,
-//             child: TabBar(
-//               labelPadding: EdgeInsets.only(left: 10, right: 10),
-//               labelStyle: MTextStyles.bold14Tomato,
-//               unselectedLabelStyle: MTextStyles.bold14PinkishGrey,
-//               controller: tabController,
-//               indicator: UnderlineTabIndicator(
-//                 borderSide: BorderSide(width: 2.0, color: MColors.tomato),
-//                 insets: EdgeInsets.only(
-//                   left: 16,
-//                   right: 16,
-//                 ),
-//               ),
-//               indicatorSize: TabBarIndicatorSize.tab,
-//               labelColor: MColors.tomato,
-//               unselectedLabelColor: MColors.pinkish_grey,
-// //                      isScrollable: true,
-//               tabs: [
-//                 Container(
-//                     alignment: Alignment.bottomCenter,
-//                     padding: EdgeInsets.only(bottom: 11.0),
-//                     child: Text(
-//                       '이번주 음악',
-//                     )),
-//                 Container(
-//                     alignment: Alignment.bottomCenter,
-//                     padding: EdgeInsets.only(bottom: 11.0),
-//                     child: Text(
-//                       '베스트 20',
-//                     )),
-//                 // Container(
-//                 //     alignment: Alignment.bottomCenter,
-//                 //     padding: EdgeInsets.only(bottom: 11.0),
-//                 //     child: Text(
-//                 //       '내가 찜한 음악',
-//                 //     )),
-//               ],
-//             ),
-//           ),
-//         ),
       ),
       body: _buildThisWeekNewPage(),
-      // TabBarView(
-      //   controller: tabController,
-      //   children: [
-      //     _buildThisWeekNewPage(),
-      //     _buildBestTwenty(),
-      //   ],
-      // ),
     );
   }
 
@@ -183,7 +156,20 @@ class _LoungePageState extends State<LoungePage>
       padding: const EdgeInsets.only(left: 10, right: 10),
       child: Column(
         children: [
-          PlayWidget(),
+          StreamBuilder(
+            stream: getData(),
+            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else {
+                return TopTwentyMusicWidget(
+                    _getBestTwentyMusicDatabase(snapshot.data));
+              }
+            },
+          ),
+          SelectButtonsWidget(selectAllMusicFunc: selectAllMusicFunc),
           Expanded(
             child: Stack(
               children: [
@@ -272,6 +258,7 @@ class _LoungePageState extends State<LoungePage>
                                   trailing: Wrap(
                                     children: [
                                       IconButton(
+                                          iconSize: 14,
                                           icon: Icon(
                                             Provider.of<NowPlayMusicProvider>(
                                                                 context,
@@ -283,8 +270,8 @@ class _LoungePageState extends State<LoungePage>
                                                                 context,
                                                                 listen: false)
                                                             .nowMusicIndex
-                                                ? Icons.pause
-                                                : Icons.play_arrow_outlined,
+                                                ? FontAwesomeIcons.pause
+                                                : FontAwesomeIcons.play,
                                           ),
                                           onPressed: () {
                                             MusicInfoData musicInfoData =
@@ -422,14 +409,13 @@ class _LoungePageState extends State<LoungePage>
                 visible:
                     bottomWidget == BottomWidgets.miniSelectList ? true : false,
                 child: SmallSelectListWidget(
-                    thisWeekMusicList: thisWeekMusicList,
-                    selectedList: selectedList),
+                    musicList: musicList, selectedList: selectedList),
               ),
               Visibility(
                 visible:
                     bottomWidget == BottomWidgets.miniPlayer ? true : false,
                 child: SmallPlayListWidget(
-                  thisWeekMusicList: thisWeekMusicList,
+                  musicList: musicList,
                 ),
               ),
             ],
@@ -444,7 +430,7 @@ class _LoungePageState extends State<LoungePage>
       padding: const EdgeInsets.only(left: 10, right: 10),
       child: Column(
         children: [
-          PlayWidget(),
+          SelectButtonsWidget(selectAllMusicFunc: selectAllMusicFunc),
           playListOfThisWeek(),
         ],
       ),
@@ -458,51 +444,20 @@ class _LoungePageState extends State<LoungePage>
     }
     _subscriptions.clear();
   }
-}
 
-class PlayWidget extends StatelessWidget {
-  const PlayWidget({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          children: [
-            IconButton(icon: Icon(Icons.check), onPressed: null),
-            Text(
-              '전체선택',
-              style: MTextStyles.bold12PinkishGrey,
-            ),
-          ],
-        ),
-        // Row(
-        //   children: [
-        //     Column(
-        //       children: [
-        //         IconButton(icon: Icon(Icons.shuffle), onPressed: null),
-        //         Text(
-        //           '셔플재생',
-        //           style: MTextStyles.bold12PinkishGrey,
-        //         ),
-        //       ],
-        //     ),
-        //     Column(
-        //       children: [
-        //         IconButton(
-        //             icon: Icon(Icons.play_arrow_outlined), onPressed: null),
-        //         Text(
-        //           '전체재생',
-        //           style: MTextStyles.bold12PinkishGrey,
-        //         ),
-        //       ],
-        //     ),
-        //   ],
-        // ),
-      ],
-    );
+  void selectAllMusicFunc() {
+    setState(() {
+      if (selectedList.every((element) {
+        return element;
+      })) {
+        for (int i = 0; i < selectedList.length; i++) {
+          selectedList[i] = false;
+        }
+      } else {
+        for (int i = 0; i < selectedList.length; i++) {
+          selectedList[i] = true;
+        }
+      }
+    });
   }
 }

@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:music_minorleague/model/provider/now_play_music_provider.dart';
+import 'package:music_minorleague/model/provider/user_profile_provider.dart';
+import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/size_config.dart';
+import 'package:music_minorleague/model/view/style/textstyles.dart';
+import 'package:provider/provider.dart';
 
 class MyMusicPlayerPage extends StatefulWidget {
   @override
@@ -17,7 +22,23 @@ class _MyMusicPlayerPageState extends State<MyMusicPlayerPage> {
     );
   }
 
-  _appBar() {}
+  _appBar() {
+    return AppBar(
+      title: Text(
+        "Player",
+        style: MTextStyles.bold16Black,
+      ),
+      centerTitle: true,
+      leading: IconButton(
+        icon: Icon(
+          Icons.arrow_back_ios,
+          color: Colors.black,
+        ),
+        onPressed: () => Navigator.of(context).pop(),
+      ),
+      elevation: 0.0,
+    );
+  }
 
   _body() {
     return Container(
@@ -25,19 +46,19 @@ class _MyMusicPlayerPageState extends State<MyMusicPlayerPage> {
       child: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            SizedBox(
-              height: 50,
-            ),
-            Container(
-              alignment: Alignment.topLeft,
-              margin: EdgeInsets.only(
-                left: 10,
-              ),
-              child: IconButton(
-                onPressed: () {},
-                icon: Icon(FontAwesomeIcons.chevronDown),
-              ),
-            ),
+            // SizedBox(
+            //   height: 50,
+            // ),
+            // Container(
+            //   alignment: Alignment.topLeft,
+            //   margin: EdgeInsets.only(
+            //     left: 10,
+            //   ),
+            //   child: IconButton(
+            //     onPressed: () {},
+            //     icon: Icon(FontAwesomeIcons.chevronDown),
+            //   ),
+            // ),
             SizedBox(
               height: 20,
             ),
@@ -63,8 +84,17 @@ class _MyMusicPlayerPageState extends State<MyMusicPlayerPage> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: Image(
-                  image: NetworkImage(
-                      "https://images.pexels.com/photos/3552948/pexels-photo-3552948.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"),
+                  image:
+                      Provider.of<NowPlayMusicProvider>(context, listen: false)
+                                  .musicInfoData
+                                  .imagePath ==
+                              null
+                          ? Image.asset('assets/images/default_image.jpg')
+                          : NetworkImage(Provider.of<NowPlayMusicProvider>(
+                                  context,
+                                  listen: false)
+                              .musicInfoData
+                              .imagePath),
                   width: MediaQuery.of(context).size.width * 0.7,
                   height: MediaQuery.of(context).size.width * 0.7,
                   fit: BoxFit.cover,
@@ -72,22 +102,35 @@ class _MyMusicPlayerPageState extends State<MyMusicPlayerPage> {
               ),
             ),
             Text(
-              "Album Title",
-              style: TextStyle(
-                fontSize: 20,
-              ),
+              Provider.of<NowPlayMusicProvider>(context, listen: false)
+                  .musicInfoData
+                  .title,
+              style: MTextStyles.bold20Black36,
             ),
-            Text("Singer Name, Label"),
+            Text(Provider.of<NowPlayMusicProvider>(context, listen: false)
+                .musicInfoData
+                .artist),
             SizedBox(
               height: 20,
             ),
-            Slider(
-              onChanged: (v) {},
-              value: 10,
-              max: 100,
-              min: 0,
-              activeColor: Color(0xFF5E35B1),
+            SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                activeTrackColor: MColors.tomato,
+                inactiveTrackColor: MColors.warm_grey,
+                trackHeight: 2.0,
+                thumbColor: MColors.kakao_yellow,
+                thumbShape: RoundSliderThumbShape(enabledThumbRadius: 8.0),
+                overlayColor: Colors.purple.withAlpha(32),
+                overlayShape: RoundSliderOverlayShape(overlayRadius: 14.0),
+              ),
+              child: Slider(
+                onChanged: (v) {},
+                value: 10,
+                max: 100,
+                min: 0,
+              ),
             ),
+
             SizedBox(
               height: 40,
             ),
@@ -107,7 +150,7 @@ class _MyMusicPlayerPageState extends State<MyMusicPlayerPage> {
                   },
                   icon: Icon(
                     _isPlaying ? FontAwesomeIcons.pause : FontAwesomeIcons.play,
-                    color: Color(0xFF5E35B1),
+                    // color: MColors.tomato,
                   ),
                 ),
                 IconButton(

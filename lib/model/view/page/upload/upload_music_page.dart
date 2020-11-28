@@ -8,6 +8,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:music_minorleague/model/enum/music_type_enum.dart';
 import 'package:music_minorleague/model/provider/user_profile_provider.dart';
+import 'package:music_minorleague/model/view/page/upload/component/upload_result_Dialog.dart';
 import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
@@ -26,6 +27,7 @@ class UploadMusicPage extends StatefulWidget {
 }
 
 class _UploadMusicPageState extends State<UploadMusicPage> {
+  final _scaffoldKey = new GlobalKey<ScaffoldState>();
   TextEditingController _titleController = new TextEditingController();
 
   String _coverImagePath;
@@ -60,6 +62,7 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
+      key: _scaffoldKey,
       appBar: _appBar(),
       body: _body(),
     );
@@ -530,22 +533,38 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
           .collection('allMusic')
           .doc(DateTime.now().toIso8601String())
           .set(data)
-          .whenComplete(() => showDialog(
-                context: context,
-                builder: (context) =>
-                    _onTapButton(context, "Files Uploaded Successfully :)"),
-              ));
+          .whenComplete(
+            () =>
+                UploadResultDialog.showUploadResultDialog(context, '파일 업로드 성공')
+                    .then((value) {
+              setState(() {
+                if (value == true) Navigator.pop(context);
+              });
+            }),
+            // showDialog(
+            //   context: context,
+            //   builder: (context) =>
+            //       _onTapButton(context, "Files Uploaded Successfully :)"),
+            // ),
+          );
     } else {
-      showDialog(
-        context: context,
-        builder: (context) =>
-            _onTapButton(context, "Please Enter All Details :("),
-      );
+      UploadResultDialog.showUploadResultDialog(context, '파일 업로드 실패')
+          .then((value) {
+        setState(() {
+          if (value == true) Navigator.pop(context);
+        });
+      });
+      // showDialog(
+      //   context: context,
+      //   builder: (context) =>
+      //       _onTapButton(context, "Please Enter All Details :("),
+      // );
     }
   }
 
-  _onTapButton(BuildContext context, data) {
-    return AlertDialog(title: Text(data));
-    //  Navigator.of(context).pop();  // 여기에 ok 버튼 누러서 pop 추가해야함
-  }
+  // _onTapButton(BuildContext context, data) {
+  //   return AlertDialog(title: Text(data));
+  //   //  Navigator.of(context).pop();  // 여기에 ok 버튼 누러서 pop 추가해야함
+
+  // }
 }
