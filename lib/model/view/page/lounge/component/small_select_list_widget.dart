@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
+import 'package:music_minorleague/model/view/page/upload/component/upload_result_Dialog.dart';
 import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
@@ -23,6 +24,7 @@ class SmallSelectListWidget extends StatefulWidget {
 }
 
 class _SmallSelectListWidgetState extends State<SmallSelectListWidget> {
+  List<MusicInfoData> selectedMusicList = new List<MusicInfoData>();
   @override
   void initState() {
     super.initState();
@@ -51,9 +53,14 @@ class _SmallSelectListWidgetState extends State<SmallSelectListWidget> {
                 children: [
                   Column(
                     children: [
-                      IconButton(icon: Icon(Icons.add), onPressed: null),
+                      IconButton(
+                          icon: Icon(Icons.add),
+                          onPressed: () {
+                            getSelectedMusicList();
+                            // updateMyMusicList();
+                          }),
                       Text(
-                        '재생 목록 추가',
+                        '내 재생 목록 추가',
                         style: MTextStyles.bold12PinkishGrey,
                       ),
                     ],
@@ -66,7 +73,9 @@ class _SmallSelectListWidgetState extends State<SmallSelectListWidget> {
                   Column(
                     children: [
                       IconButton(
-                          icon: Icon(FontAwesomeIcons.play), onPressed: null),
+                          iconSize: 14,
+                          icon: Icon(FontAwesomeIcons.play),
+                          onPressed: null),
                       Text(
                         '선택 항목 재생',
                         style: MTextStyles.bold12PinkishGrey,
@@ -97,4 +106,61 @@ class _SmallSelectListWidgetState extends State<SmallSelectListWidget> {
       ),
     );
   }
+
+  void getSelectedMusicList() {
+    selectedMusicList.clear();
+    for (int i = 0; i < widget._selectedList.length; i++) {
+      if (widget._selectedList[i] == true) {
+        selectedMusicList.add(widget._musicList[i]);
+      }
+    }
+  }
+
+  // updateMyMusicList() {
+  //   if (selectedMusicList != null)
+  //   {
+  //     if(selectedMusicList.length > 0){
+
+  //     // var data = {
+  //     //   "title": _titleController.text,
+  //     //   "artist": _artist,
+  //     //   "musicType": EnumToString.convertToString(_typeOfMusic),
+  //     //   "musicPath": musicFileUrl,
+  //     //   "imagePath": imageFileUrl,
+  //     //   "dateTime": DateTime.now().toIso8601String(),
+  //     //   "favorite": 0,
+  //     // };
+
+  //     FirebaseFirestore.instance
+  //         .collection('allMusic')
+  //         .doc(DateTime.now().toIso8601String())
+  //         .set(data)
+  //         .whenComplete(
+  //           () =>
+  //               UploadResultDialog.showUploadResultDialog(context, '파일 업로드 성공')
+  //                   .then((value) {
+  //             setState(() {
+  //               if (value == true) Navigator.pop(context);
+  //             });
+  //           }),
+  //           // showDialog(
+  //           //   context: context,
+  //           //   builder: (context) =>
+  //           //       _onTapButton(context, "Files Uploaded Successfully :)"),
+  //           // ),
+  //         );
+  //   } else {
+  //     UploadResultDialog.showUploadResultDialog(context, '파일 업로드 실패')
+  //         .then((value) {
+  //       setState(() {
+  //         if (value == true) Navigator.pop(context);
+  //       });
+  //     });
+  //     // showDialog(
+  //     //   context: context,
+  //     //   builder: (context) =>
+  //     //       _onTapButton(context, "Please Enter All Details :("),
+  //     // );
+
+  // }
 }

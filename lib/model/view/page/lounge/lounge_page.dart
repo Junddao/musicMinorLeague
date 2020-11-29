@@ -101,8 +101,16 @@ class _LoungePageState extends State<LoungePage>
     }));
   }
 
-  List<MusicInfoData> _getBestTwentyMusicDatabase(QuerySnapshot qs) {
-    List<MusicInfoData> topTwentyMusicList = new List<MusicInfoData>();
+  void _clearSubscriptions() {
+    for (var s in _subscriptions) {
+      s?.cancel();
+      s = null;
+    }
+    _subscriptions.clear();
+  }
+
+  List<MusicInfoData> _getMusicDatabase(QuerySnapshot qs) {
+    List<MusicInfoData> musicList = new List<MusicInfoData>();
     for (int idx = 0; idx < qs.docs.length; idx++) {
       MusicInfoData musicInfoData = new MusicInfoData();
 
@@ -115,13 +123,14 @@ class _LoungePageState extends State<LoungePage>
       musicInfoData.musicTypeEnum = EnumToString.fromString(
           MusicTypeEnum.values, qs.docs[idx].data()['musicType']);
       musicInfoData.title = qs.docs[idx].data()['title'];
-      topTwentyMusicList.add(musicInfoData);
+      musicList.add(musicInfoData);
 
       int favoriteNum = qs.docs[idx].data()['favorite'];
+
       print(favoriteNum);
     }
 
-    return topTwentyMusicList;
+    return musicList;
   }
 
   @override
@@ -164,8 +173,12 @@ class _LoungePageState extends State<LoungePage>
                   child: CircularProgressIndicator(),
                 );
               } else {
-                return TopTwentyMusicWidget(
-                    _getBestTwentyMusicDatabase(snapshot.data));
+                musicList = _getMusicDatabase(snapshot.data);
+                List<MusicInfoData> _twentyList = new List<MusicInfoData>();
+                musicList.length > 20
+                    ? _twentyList = musicList.sublist(0, 20)
+                    : _twentyList = musicList;
+                return TopTwentyMusicWidget(_twentyList);
               }
             },
           ),
@@ -366,6 +379,7 @@ class _LoungePageState extends State<LoungePage>
 
                                                 // _clearSubscriptions();
                                                 PlayMusic.makeNewPlayer();
+
                                                 _initSubscription();
 
                                                 PlayMusic.playUrlFunc(Provider
@@ -425,25 +439,17 @@ class _LoungePageState extends State<LoungePage>
     );
   }
 
-  _buildBestTwenty() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10, right: 10),
-      child: Column(
-        children: [
-          SelectButtonsWidget(selectAllMusicFunc: selectAllMusicFunc),
-          playListOfThisWeek(),
-        ],
-      ),
-    );
-  }
-
-  void _clearSubscriptions() {
-    for (var s in _subscriptions) {
-      s?.cancel();
-      s = null;
-    }
-    _subscriptions.clear();
-  }
+  // _buildBestTwenty() {
+  //   return Padding(
+  //     padding: const EdgeInsets.only(left: 10, right: 10),
+  //     child: Column(
+  //       children: [
+  //         SelectButtonsWidget(selectAllMusicFunc: selectAllMusicFunc),
+  //         playListOfThisWeek(),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   void selectAllMusicFunc() {
     setState(() {
@@ -458,6 +464,9 @@ class _LoungePageState extends State<LoungePage>
           selectedList[i] = true;
         }
       }
+      selectedList.contains(true)
+          ? bottomWidget = BottomWidgets.miniSelectList
+          : bottomWidget = BottomWidgets.none;
     });
   }
 }
