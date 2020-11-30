@@ -33,9 +33,11 @@ class LoungePage extends StatefulWidget {
 
 class _LoungePageState extends State<LoungePage>
     with SingleTickerProviderStateMixin {
+  final _scaffoldKey = new GlobalKey<ScaffoldState>();
   TabController tabController;
 
-  BottomWidgets bottomWidget = BottomWidgets.none;
+  BottomWidgets bottomSeletListWidget = BottomWidgets.none;
+  BottomWidgets bottomPlayListWidget = BottomWidgets.none;
   bool isTabThisWeekMusicListItem;
 
   List<MusicInfoData> musicList;
@@ -116,11 +118,11 @@ class _LoungePageState extends State<LoungePage>
 
       musicInfoData.artist = qs.docs[idx].data()['artist'];
       musicInfoData.dateTime = qs.docs[idx].data()['dateTime'];
-      musicInfoData.favoriteCnt = qs.docs[idx].data()['favorite'];
+      musicInfoData.favorite = qs.docs[idx].data()['favorite'];
       musicInfoData.imagePath = qs.docs[idx].data()['imagePath'];
       musicInfoData.musicPath = qs.docs[idx].data()['musicPath'];
 
-      musicInfoData.musicTypeEnum = EnumToString.fromString(
+      musicInfoData.musicType = EnumToString.fromString(
           MusicTypeEnum.values, qs.docs[idx].data()['musicType']);
       musicInfoData.title = qs.docs[idx].data()['title'];
       musicList.add(musicInfoData);
@@ -147,6 +149,7 @@ class _LoungePageState extends State<LoungePage>
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text(
@@ -239,9 +242,10 @@ class _LoungePageState extends State<LoungePage>
                                       selectedList[index] =
                                           !selectedList[index];
                                       selectedList.contains(true)
-                                          ? bottomWidget =
+                                          ? bottomSeletListWidget =
                                               BottomWidgets.miniSelectList
-                                          : bottomWidget = BottomWidgets.none;
+                                          : bottomSeletListWidget =
+                                              BottomWidgets.none;
                                     });
                                   },
                                   leading: CircleAvatar(
@@ -289,6 +293,8 @@ class _LoungePageState extends State<LoungePage>
                                           onPressed: () {
                                             MusicInfoData musicInfoData =
                                                 new MusicInfoData(
+                                              id: snapshot.data.docs[index]
+                                                  ['id'],
                                               title: snapshot.data.docs[index]
                                                   ['title'],
                                               artist: snapshot.data.docs[index]
@@ -299,9 +305,9 @@ class _LoungePageState extends State<LoungePage>
                                                   .docs[index]['imagePath'],
                                               dateTime: snapshot
                                                   .data.docs[index]['dateTime'],
-                                              favoriteCnt: snapshot
+                                              favorite: snapshot
                                                   .data.docs[index]['favorite'],
-                                              musicTypeEnum:
+                                              musicType:
                                                   EnumToString.fromString(
                                                       MusicTypeEnum.values,
                                                       snapshot.data.docs[index]
@@ -312,12 +318,6 @@ class _LoungePageState extends State<LoungePage>
                                                     listen: false)
                                                 .musicInfoData = musicInfoData;
 
-                                            // play 선택한 항목이 이전 선택한 항목이 아니면 oldmusicindex 에 복사 후 재생/정지 변경
-                                            int oldIndex = Provider.of<
-                                                        NowPlayMusicProvider>(
-                                                    context,
-                                                    listen: false)
-                                                .oldMusicIndex;
                                             int nowIndex = Provider.of<
                                                         NowPlayMusicProvider>(
                                                     context,
@@ -344,7 +344,6 @@ class _LoungePageState extends State<LoungePage>
                                             // different song selected
                                             else if (nowIndex >= 0 &&
                                                 nowIndex != index) {
-                                              oldIndex = nowIndex;
                                               nowIndex = index;
                                               selectedValue = 2;
                                             }
@@ -352,11 +351,6 @@ class _LoungePageState extends State<LoungePage>
                                                     context,
                                                     listen: false)
                                                 .nowMusicIndex = nowIndex;
-
-                                            Provider.of<NowPlayMusicProvider>(
-                                                    context,
-                                                    listen: false)
-                                                .oldMusicIndex = oldIndex;
 
                                             setState(() {
                                               if (selectedValue == 0) {
@@ -366,14 +360,6 @@ class _LoungePageState extends State<LoungePage>
                                                             listen: false)
                                                     .musicInfoData
                                                     .musicPath);
-                                                Provider.of<NowPlayMusicProvider>(
-                                                        context,
-                                                        listen: false)
-                                                    .oldMusicIndex = Provider
-                                                        .of<NowPlayMusicProvider>(
-                                                            context,
-                                                            listen: false)
-                                                    .nowMusicIndex;
                                               } else if (selectedValue == 2) {
                                                 PlayMusic.stopFunc();
 
@@ -388,18 +374,10 @@ class _LoungePageState extends State<LoungePage>
                                                             listen: false)
                                                     .musicInfoData
                                                     .musicPath);
-                                                Provider.of<NowPlayMusicProvider>(
-                                                        context,
-                                                        listen: false)
-                                                    .oldMusicIndex = Provider
-                                                        .of<NowPlayMusicProvider>(
-                                                            context,
-                                                            listen: false)
-                                                    .nowMusicIndex;
                                               } else if (selectedValue == 1) {
                                                 PlayMusic.playOrPauseFunc();
                                               }
-                                              bottomWidget =
+                                              bottomPlayListWidget =
                                                   BottomWidgets.miniPlayer;
                                             });
                                           }),
@@ -420,16 +398,21 @@ class _LoungePageState extends State<LoungePage>
                 },
               ),
               Visibility(
-                visible:
-                    bottomWidget == BottomWidgets.miniSelectList ? true : false,
-                child: SmallSelectListWidget(
-                    musicList: musicList, selectedList: selectedList),
-              ),
-              Visibility(
-                visible:
-                    bottomWidget == BottomWidgets.miniPlayer ? true : false,
+                visible: bottomPlayListWidget == BottomWidgets.miniPlayer
+                    ? true
+                    : false,
                 child: SmallPlayListWidget(
                   musicList: musicList,
+                ),
+              ),
+              Visibility(
+                visible: bottomSeletListWidget == BottomWidgets.miniSelectList
+                    ? true
+                    : false,
+                child: SmallSelectListWidget(
+                  musicList: musicList,
+                  selectedList: selectedList,
+                  snackBarFunc: showAndHideSnackBar,
                 ),
               ),
             ],
@@ -465,8 +448,23 @@ class _LoungePageState extends State<LoungePage>
         }
       }
       selectedList.contains(true)
-          ? bottomWidget = BottomWidgets.miniSelectList
-          : bottomWidget = BottomWidgets.none;
+          ? bottomSeletListWidget = BottomWidgets.miniSelectList
+          : bottomSeletListWidget = BottomWidgets.none;
+    });
+  }
+
+  void showAndHideSnackBar(String content) {
+    _scaffoldKey.currentState.showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Text(content),
+          ],
+        ),
+      ),
+    );
+    Future.delayed(Duration(seconds: 2), () {
+      _scaffoldKey.currentState.hideCurrentSnackBar();
     });
   }
 }

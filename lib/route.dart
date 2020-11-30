@@ -23,8 +23,7 @@ class Routers {
       case 'MyMusicPlayerPage':
         return CupertinoPageRoute(builder: (_) => MyMusicPlayerPage());
       case 'MyPlayListPage':
-        return CupertinoPageRoute(
-            builder: (_) => MyPlayListPage(selectedMusicList: arguments));
+        return CupertinoPageRoute(builder: (_) => MyPlayListPage());
 
       // case 'ClassProceedingPage':
       //   return CupertinoPageRoute(

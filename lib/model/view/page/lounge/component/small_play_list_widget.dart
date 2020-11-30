@@ -34,38 +34,6 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
 
   @override
   void initState() {
-    // _assetsAudioPlayer = PlayMusic.assetsAudioPlayer();
-    // // _assetsAudioPlaye
-
-    // _subscriptions.add(_assetsAudioPlayer.playlistFinished.listen((data) {
-    //   print("finished : $data");
-    // }));
-    // _subscriptions.add(_assetsAudioPlayer.playlistAudioFinished.listen((data) {
-    //   print("playlistAudioFinished : $data");
-    // }));
-    // _subscriptions.add(_assetsAudioPlayer.audioSessionId.listen((sessionId) {
-    //   print("audioSessionId : $sessionId");
-    // }));
-    // _subscriptions.add(_assetsAudioPlayer.current.listen((data) {
-    //   print("current : $data");
-    // }));
-    // _subscriptions.add(_assetsAudioPlayer.onReadyToPlay.listen((audio) {
-    //   print("onReadyToPlay : $audio");
-    // }));
-    // _subscriptions.add(_assetsAudioPlayer.isBuffering.listen((isBuffering) {
-    //   print("isBuffering : $isBuffering");
-    // }));
-    // _subscriptions.add(_assetsAudioPlayer.playerState.listen((playerState) {
-    //   print("playerState : $playerState");
-    // }));
-    // _subscriptions.add(_assetsAudioPlayer.isPlaying.listen((isplaying) {
-    //   print("isplaying : $isplaying");
-    // }));
-    // _subscriptions
-    //     .add(AssetsAudioPlayer.addNotificationOpenAction((notification) {
-    //   return false;
-    // }));
-
     super.initState();
   }
 
@@ -80,8 +48,8 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
             borderRadius: BorderRadius.all(
               Radius.circular(16),
             ),
-            border: Border.all(color: Colors.black12, width: 1),
-            color: Colors.white,
+            border: Border.all(color: MColors.black, width: 1),
+            color: MColors.white,
           ),
           child: Column(
             children: [

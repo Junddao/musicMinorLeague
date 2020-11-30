@@ -15,6 +15,7 @@ import 'package:music_minorleague/model/view/style/textstyles.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:music_minorleague/utils/play_func.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 import 'component/cancel_Dialog.dart';
 import 'component/choice_chip_widget.dart';
@@ -520,6 +521,7 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
         musicFileUrl != null &&
         imageFileUrl != null) {
       var data = {
+        "id": Uuid().v4(),
         "title": _titleController.text,
         "artist": _artist,
         "musicType": EnumToString.convertToString(_typeOfMusic),

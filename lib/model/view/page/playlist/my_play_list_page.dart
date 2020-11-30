@@ -12,20 +12,15 @@ import 'package:music_minorleague/utils/play_func.dart';
 import 'package:provider/provider.dart';
 
 class MyPlayListPage extends StatefulWidget {
-  const MyPlayListPage({
-    Key key,
-    List<MusicInfoData> selectedMusicList,
-  })  : _selectedMusicList = selectedMusicList,
-        super(key: key);
   @override
   _MyPlayListPageState createState() => _MyPlayListPageState();
-
-  final List<MusicInfoData> _selectedMusicList;
 }
 
 class _MyPlayListPageState extends State<MyPlayListPage> {
   AssetsAudioPlayer _assetsAudioPlayer;
   final List<StreamSubscription> _subscriptions = [];
+  List<MusicInfoData> _selectedMusicList;
+
   _initSubscription() {
     _clearSubscriptions();
     _assetsAudioPlayer = PlayMusic.assetsAudioPlayer();
@@ -78,6 +73,11 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBar(),
@@ -108,28 +108,28 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
                   stream: PlayMusic.getCurrentStream(),
                   builder: (context, snapshotCurrent) {
                     return ListView.builder(
-                      itemCount: widget._selectedMusicList.length,
+                      itemCount: _selectedMusicList.length,
                       itemBuilder: (context, index) {
                         return Container(
                           height: 72,
                           child: ListTile(
                             leading: CircleAvatar(
                               backgroundImage: NetworkImage(
-                                  widget._selectedMusicList[index].imagePath),
+                                  _selectedMusicList[index].imagePath),
                             ),
                             title: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  widget._selectedMusicList[index].title,
+                                  _selectedMusicList[index].title,
                                   style: MTextStyles.bold14Grey06,
                                 ),
                                 SizedBox(
                                   width: 6,
                                 ),
                                 Text(
-                                  widget._selectedMusicList[index].artist,
+                                  _selectedMusicList[index].artist,
                                   maxLines: 1,
                                   style:
                                       MTextStyles.regular12WarmGrey_underline,
@@ -156,38 +156,30 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
                                     onPressed: () {
                                       MusicInfoData musicInfoData =
                                           new MusicInfoData(
-                                              title: widget
-                                                  ._selectedMusicList[index]
+                                              title: _selectedMusicList[index]
                                                   .title,
-                                              artist: widget
-                                                  ._selectedMusicList[index]
+                                              artist: _selectedMusicList[index]
                                                   .artist,
-                                              musicPath: widget
-                                                  ._selectedMusicList[index]
-                                                  .musicPath,
-                                              imagePath: widget
-                                                  ._selectedMusicList[index]
-                                                  .imagePath,
-                                              dateTime: widget
-                                                  ._selectedMusicList[index]
-                                                  .dateTime,
-                                              favoriteCnt: widget
-                                                  ._selectedMusicList[index]
-                                                  .favoriteCnt,
-                                              musicTypeEnum: widget
-                                                  ._selectedMusicList[index]
-                                                  .musicTypeEnum);
+                                              musicPath:
+                                                  _selectedMusicList[index]
+                                                      .musicPath,
+                                              imagePath:
+                                                  _selectedMusicList[index]
+                                                      .imagePath,
+                                              dateTime:
+                                                  _selectedMusicList[index]
+                                                      .dateTime,
+                                              favorite:
+                                                  _selectedMusicList[index]
+                                                      .favorite,
+                                              musicType:
+                                                  _selectedMusicList[index]
+                                                      .musicType);
 
                                       Provider.of<NowPlayMusicProvider>(context,
                                               listen: false)
                                           .musicInfoData = musicInfoData;
 
-                                      // play 선택한 항목이 이전 선택한 항목이 아니면 oldmusicindex 에 복사 후 재생/정지 변경
-                                      int oldIndex =
-                                          Provider.of<NowPlayMusicProvider>(
-                                                  context,
-                                                  listen: false)
-                                              .oldMusicIndex;
                                       int nowIndex =
                                           Provider.of<NowPlayMusicProvider>(
                                                   context,
@@ -214,17 +206,12 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
                                       // different song selected
                                       else if (nowIndex >= 0 &&
                                           nowIndex != index) {
-                                        oldIndex = nowIndex;
                                         nowIndex = index;
                                         selectedValue = 2;
                                       }
                                       Provider.of<NowPlayMusicProvider>(context,
                                               listen: false)
                                           .nowMusicIndex = nowIndex;
-
-                                      Provider.of<NowPlayMusicProvider>(context,
-                                              listen: false)
-                                          .oldMusicIndex = oldIndex;
 
                                       setState(() {
                                         if (selectedValue == 0) {
@@ -234,14 +221,6 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
                                                       listen: false)
                                                   .musicInfoData
                                                   .musicPath);
-                                          Provider.of<NowPlayMusicProvider>(
-                                                      context,
-                                                      listen: false)
-                                                  .oldMusicIndex =
-                                              Provider.of<NowPlayMusicProvider>(
-                                                      context,
-                                                      listen: false)
-                                                  .nowMusicIndex;
                                         } else if (selectedValue == 2) {
                                           PlayMusic.stopFunc();
 
@@ -254,14 +233,6 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
                                                       listen: false)
                                                   .musicInfoData
                                                   .musicPath);
-                                          Provider.of<NowPlayMusicProvider>(
-                                                      context,
-                                                      listen: false)
-                                                  .oldMusicIndex =
-                                              Provider.of<NowPlayMusicProvider>(
-                                                      context,
-                                                      listen: false)
-                                                  .nowMusicIndex;
                                         } else if (selectedValue == 1) {
                                           PlayMusic.playOrPauseFunc();
                                         }
