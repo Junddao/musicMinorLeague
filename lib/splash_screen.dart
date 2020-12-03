@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import 'model/data/user_profile_data.dart';
 import 'model/provider/user_profile_provider.dart';
+import 'model/view/style/colors.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -58,6 +59,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      decoration: BoxDecoration(color: MColors.white),
       child: Stack(
         alignment: Alignment.center,
         children: [

@@ -18,14 +18,17 @@ class SelectButtonsWidget extends StatelessWidget {
         Column(
           children: [
             IconButton(
-              icon: Icon(Icons.check),
+              icon: Icon(
+                Icons.check,
+                size: 14,
+              ),
               onPressed: () {
                 _selectAllMusicFunc();
               },
             ),
             Text(
               '전체',
-              style: MTextStyles.bold12PinkishGrey,
+              style: MTextStyles.bold10PinkishGrey,
             ),
           ],
         ),

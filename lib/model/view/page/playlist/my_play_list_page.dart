@@ -6,8 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
 import 'package:music_minorleague/model/enum/music_type_enum.dart';
+import 'package:music_minorleague/model/enum/myplaylist_widget_enum.dart';
 import 'package:music_minorleague/model/provider/now_play_music_provider.dart';
+import 'package:music_minorleague/model/view/page/playlist/component/my_playlist_small_select_list_widget.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
+import 'package:music_minorleague/utils/db_helper.dart';
 import 'package:music_minorleague/utils/play_func.dart';
 import 'package:provider/provider.dart';
 
@@ -17,9 +20,15 @@ class MyPlayListPage extends StatefulWidget {
 }
 
 class _MyPlayListPageState extends State<MyPlayListPage> {
+  final _scaffoldKey = new GlobalKey<ScaffoldState>();
+  DBHelper dbHelper = DBHelper();
+
   AssetsAudioPlayer _assetsAudioPlayer;
   final List<StreamSubscription> _subscriptions = [];
-  List<MusicInfoData> _selectedMusicList;
+  List<MusicInfoData> _selectedMusicList = new List<MusicInfoData>();
+  List<bool> _selectedList;
+
+  MyPlaylistWidgetEnum myPlayListWidgetEnum;
 
   _initSubscription() {
     _clearSubscriptions();
@@ -80,15 +89,29 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: _appBar(),
       body: _body(),
     );
   }
 
-  _appBar() {}
+  _appBar() {
+    return AppBar(
+      automaticallyImplyLeading: false,
+      title: Text(
+        '내 재생목록',
+        style: MTextStyles.bold18Black,
+      ),
+      backgroundColor: Colors.transparent,
+      elevation: 0.0,
+    );
+  }
 
   _body() {
-    return playListOfThisWeek();
+    return Padding(
+      padding: const EdgeInsets.only(left: 10, right: 10),
+      child: playListOfThisWeek(),
+    );
   }
 
   Widget playListOfThisWeek() {
@@ -96,165 +119,239 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
       direction: Axis.vertical,
       children: [
         Expanded(
-          child: Stack(
-            children: [
-              // if (isPlayList?.length != snapshot.data.docs.length) {
-              //   isPlayList = null;
-              //   isPlayList = List.generate(
-              //       snapshot.data.docs.length, (index) => false);
-              // }
+          child: FutureBuilder<Object>(
+              future: dbHelper.getListItem(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  _selectedMusicList = snapshot.data;
+                  if (_selectedList?.length != _selectedMusicList.length) {
+                    _selectedList = List.generate(
+                        _selectedMusicList.length, (index) => false);
+                  }
+                }
 
-              StreamBuilder<Object>(
-                  stream: PlayMusic.getCurrentStream(),
-                  builder: (context, snapshotCurrent) {
-                    return ListView.builder(
-                      itemCount: _selectedMusicList.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          height: 72,
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              backgroundImage: NetworkImage(
-                                  _selectedMusicList[index].imagePath),
-                            ),
-                            title: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  _selectedMusicList[index].title,
-                                  style: MTextStyles.bold14Grey06,
-                                ),
-                                SizedBox(
-                                  width: 6,
-                                ),
-                                Text(
-                                  _selectedMusicList[index].artist,
-                                  maxLines: 1,
-                                  style:
-                                      MTextStyles.regular12WarmGrey_underline,
-                                ),
-                              ],
-                            ),
-                            trailing: Wrap(
-                              children: [
-                                IconButton(
-                                    iconSize: 14,
-                                    icon: Icon(
-                                      Provider.of<NowPlayMusicProvider>(context,
-                                                          listen: false)
-                                                      .isPlay ==
-                                                  true &&
-                                              index ==
-                                                  Provider.of<NowPlayMusicProvider>(
-                                                          context,
-                                                          listen: false)
-                                                      .nowMusicIndex
-                                          ? FontAwesomeIcons.pause
-                                          : FontAwesomeIcons.play,
-                                    ),
-                                    onPressed: () {
-                                      MusicInfoData musicInfoData =
-                                          new MusicInfoData(
-                                              title: _selectedMusicList[index]
-                                                  .title,
-                                              artist: _selectedMusicList[index]
-                                                  .artist,
-                                              musicPath:
-                                                  _selectedMusicList[index]
-                                                      .musicPath,
-                                              imagePath:
-                                                  _selectedMusicList[index]
-                                                      .imagePath,
-                                              dateTime:
-                                                  _selectedMusicList[index]
-                                                      .dateTime,
-                                              favorite:
-                                                  _selectedMusicList[index]
-                                                      .favorite,
-                                              musicType:
-                                                  _selectedMusicList[index]
-                                                      .musicType);
+                return Stack(
+                  children: [
+                    StreamBuilder<Object>(
+                        stream: PlayMusic.getCurrentStream(),
+                        builder: (context, snapshotCurrent) {
+                          return ListView.builder(
+                            itemCount: _selectedMusicList.length,
+                            itemBuilder: (context, index) {
+                              return Container(
+                                height: 72,
+                                color: _selectedList[index] == true
+                                    ? Colors.grey[300]
+                                    : Colors.transparent,
+                                child: ListTile(
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedList[index] =
+                                          !_selectedList[index];
+                                      _selectedList.contains(true)
+                                          ? myPlayListWidgetEnum =
+                                              MyPlaylistWidgetEnum
+                                                  .miniSelectWidget
+                                          : myPlayListWidgetEnum =
+                                              MyPlaylistWidgetEnum.none;
+                                    });
+                                  },
+                                  leading: CircleAvatar(
+                                    backgroundImage: NetworkImage(
+                                        _selectedMusicList[index].imagePath),
+                                  ),
+                                  title: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        _selectedMusicList[index].title,
+                                        style: MTextStyles.bold14Grey06,
+                                      ),
+                                      SizedBox(
+                                        width: 6,
+                                      ),
+                                      Text(
+                                        _selectedMusicList[index].artist,
+                                        maxLines: 1,
+                                        style: MTextStyles
+                                            .regular12WarmGrey_underline,
+                                      ),
+                                    ],
+                                  ),
+                                  trailing: Wrap(
+                                    children: [
+                                      IconButton(
+                                          iconSize: 14,
+                                          icon: Icon(
+                                            Provider.of<NowPlayMusicProvider>(
+                                                                context,
+                                                                listen: false)
+                                                            .isPlay ==
+                                                        true &&
+                                                    index ==
+                                                        Provider.of<NowPlayMusicProvider>(
+                                                                context,
+                                                                listen: false)
+                                                            .nowMusicIndex
+                                                ? FontAwesomeIcons.pause
+                                                : FontAwesomeIcons.play,
+                                          ),
+                                          onPressed: () {
+                                            MusicInfoData musicInfoData =
+                                                new MusicInfoData(
+                                                    title:
+                                                        _selectedMusicList[
+                                                                index]
+                                                            .title,
+                                                    artist:
+                                                        _selectedMusicList[
+                                                                index]
+                                                            .artist,
+                                                    musicPath:
+                                                        _selectedMusicList[
+                                                                index]
+                                                            .musicPath,
+                                                    imagePath:
+                                                        _selectedMusicList[
+                                                                index]
+                                                            .imagePath,
+                                                    dateTime:
+                                                        _selectedMusicList[
+                                                                index]
+                                                            .dateTime,
+                                                    favorite:
+                                                        _selectedMusicList[
+                                                                index]
+                                                            .favorite,
+                                                    musicType:
+                                                        _selectedMusicList[
+                                                                index]
+                                                            .musicType);
 
-                                      Provider.of<NowPlayMusicProvider>(context,
-                                              listen: false)
-                                          .musicInfoData = musicInfoData;
+                                            Provider.of<NowPlayMusicProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .musicInfoData = musicInfoData;
 
-                                      int nowIndex =
-                                          Provider.of<NowPlayMusicProvider>(
-                                                  context,
-                                                  listen: false)
-                                              .nowMusicIndex;
+                                            int nowIndex = Provider.of<
+                                                        NowPlayMusicProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .nowMusicIndex;
 
-                                      int selectedValue; // 0 : first Selected , 1: same song selected, 2: different song selected
+                                            int selectedValue; // 0 : first Selected , 1: same song selected, 2: different song selected
 
-                                      // first selected
-                                      if (nowIndex < 0) {
-                                        nowIndex = index;
-                                        selectedValue = 0;
-                                      }
-                                      // same song selected
-                                      else if (nowIndex == index) {
-                                        Provider.of<NowPlayMusicProvider>(
-                                                context,
-                                                listen: false)
-                                            .isPlay = false;
-
-                                        selectedValue = 1;
-                                      }
-
-                                      // different song selected
-                                      else if (nowIndex >= 0 &&
-                                          nowIndex != index) {
-                                        nowIndex = index;
-                                        selectedValue = 2;
-                                      }
-                                      Provider.of<NowPlayMusicProvider>(context,
-                                              listen: false)
-                                          .nowMusicIndex = nowIndex;
-
-                                      setState(() {
-                                        if (selectedValue == 0) {
-                                          PlayMusic.playUrlFunc(
+                                            // first selected
+                                            if (nowIndex < 0) {
+                                              nowIndex = index;
+                                              selectedValue = 0;
+                                            }
+                                            // same song selected
+                                            else if (nowIndex == index) {
                                               Provider.of<NowPlayMusicProvider>(
                                                       context,
                                                       listen: false)
-                                                  .musicInfoData
-                                                  .musicPath);
-                                        } else if (selectedValue == 2) {
-                                          PlayMusic.stopFunc();
+                                                  .isPlay = false;
 
-                                          PlayMusic.makeNewPlayer();
-                                          _initSubscription();
+                                              selectedValue = 1;
+                                            }
 
-                                          PlayMusic.playUrlFunc(
-                                              Provider.of<NowPlayMusicProvider>(
-                                                      context,
-                                                      listen: false)
-                                                  .musicInfoData
-                                                  .musicPath);
-                                        } else if (selectedValue == 1) {
-                                          PlayMusic.playOrPauseFunc();
-                                        }
-                                      });
-                                    }),
-                                IconButton(
-                                    icon: Icon(
-                                      Icons.favorite_border_outlined,
-                                      size: 16,
-                                    ),
-                                    onPressed: null),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  }),
-            ],
-          ),
+                                            // different song selected
+                                            else if (nowIndex >= 0 &&
+                                                nowIndex != index) {
+                                              nowIndex = index;
+                                              selectedValue = 2;
+                                            }
+                                            Provider.of<NowPlayMusicProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .nowMusicIndex = nowIndex;
+
+                                            setState(() {
+                                              if (selectedValue == 0) {
+                                                PlayMusic.playUrlFunc(Provider
+                                                        .of<NowPlayMusicProvider>(
+                                                            context,
+                                                            listen: false)
+                                                    .musicInfoData
+                                                    .musicPath);
+                                              } else if (selectedValue == 2) {
+                                                PlayMusic.stopFunc();
+
+                                                PlayMusic.makeNewPlayer();
+                                                _initSubscription();
+
+                                                PlayMusic.playUrlFunc(Provider
+                                                        .of<NowPlayMusicProvider>(
+                                                            context,
+                                                            listen: false)
+                                                    .musicInfoData
+                                                    .musicPath);
+                                              } else if (selectedValue == 1) {
+                                                PlayMusic.playOrPauseFunc();
+                                              }
+                                            });
+                                          }),
+                                      IconButton(
+                                          icon: Icon(
+                                            Icons.favorite_border_outlined,
+                                            size: 16,
+                                          ),
+                                          onPressed: null),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        }),
+                    Visibility(
+                      visible: myPlayListWidgetEnum ==
+                              MyPlaylistWidgetEnum.miniSelectWidget
+                          ? true
+                          : false,
+                      child: MyPlaylistSmallSelectListWidget(
+                        musicList: _selectedMusicList,
+                        selectedList: _selectedList,
+                        snackBarFunc: showAndHideSnackBar,
+                        refreshSelectedListAndWidgetFunc:
+                            refreshSelectedListAndWidgetFunc,
+                      ),
+                    ),
+                  ],
+                );
+              }),
         ),
       ],
     );
+  }
+
+  refreshSelectedListAndWidgetFunc() {
+    setState(() {
+      _selectedList.forEach((element) {
+        element = false;
+      });
+    });
+  }
+
+  void showAndHideSnackBar(String content) {
+    _scaffoldKey.currentState.showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Text(content),
+          ],
+        ),
+      ),
+    );
+    Future.delayed(Duration(seconds: 2), () {
+      _scaffoldKey.currentState.hideCurrentSnackBar();
+    });
   }
 }

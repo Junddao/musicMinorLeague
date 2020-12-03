@@ -6,6 +6,7 @@ import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
+import 'package:music_minorleague/model/enum/lounge_bottom_widget_enum.dart';
 import 'package:music_minorleague/model/enum/music_type_enum.dart';
 import 'package:music_minorleague/model/provider/now_play_music_provider.dart';
 import 'package:music_minorleague/model/provider/user_profile_provider.dart';
@@ -20,12 +21,6 @@ import 'component/small_play_list_widget.dart';
 import 'component/small_select_list_widget.dart';
 import 'component/top_twenty_music_widget.dart';
 
-enum BottomWidgets {
-  miniSelectList,
-  miniPlayer,
-  none,
-}
-
 class LoungePage extends StatefulWidget {
   @override
   _LoungePageState createState() => _LoungePageState();
@@ -36,8 +31,8 @@ class _LoungePageState extends State<LoungePage>
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
   TabController tabController;
 
-  BottomWidgets bottomSeletListWidget = BottomWidgets.none;
-  BottomWidgets bottomPlayListWidget = BottomWidgets.none;
+  LoungeBottomWidgets bottomSeletListWidget = LoungeBottomWidgets.none;
+  LoungeBottomWidgets bottomPlayListWidget = LoungeBottomWidgets.none;
   bool isTabThisWeekMusicListItem;
 
   List<MusicInfoData> musicList;
@@ -167,6 +162,7 @@ class _LoungePageState extends State<LoungePage>
     return Padding(
       padding: const EdgeInsets.only(left: 10, right: 10),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           StreamBuilder(
             stream: getData(),
@@ -184,6 +180,16 @@ class _LoungePageState extends State<LoungePage>
                 return TopTwentyMusicWidget(_twentyList);
               }
             },
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 20.0, top: 40, bottom: 12.0),
+            child: Text(
+              'All Music',
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: MColors.blackColor),
+            ),
           ),
           SelectButtonsWidget(selectAllMusicFunc: selectAllMusicFunc),
           Expanded(
@@ -243,9 +249,9 @@ class _LoungePageState extends State<LoungePage>
                                           !selectedList[index];
                                       selectedList.contains(true)
                                           ? bottomSeletListWidget =
-                                              BottomWidgets.miniSelectList
+                                              LoungeBottomWidgets.miniSelectList
                                           : bottomSeletListWidget =
-                                              BottomWidgets.none;
+                                              LoungeBottomWidgets.none;
                                     });
                                   },
                                   leading: CircleAvatar(
@@ -378,7 +384,8 @@ class _LoungePageState extends State<LoungePage>
                                                 PlayMusic.playOrPauseFunc();
                                               }
                                               bottomPlayListWidget =
-                                                  BottomWidgets.miniPlayer;
+                                                  LoungeBottomWidgets
+                                                      .miniPlayer;
                                             });
                                           }),
                                       IconButton(
@@ -398,7 +405,7 @@ class _LoungePageState extends State<LoungePage>
                 },
               ),
               Visibility(
-                visible: bottomPlayListWidget == BottomWidgets.miniPlayer
+                visible: bottomPlayListWidget == LoungeBottomWidgets.miniPlayer
                     ? true
                     : false,
                 child: SmallPlayListWidget(
@@ -406,9 +413,10 @@ class _LoungePageState extends State<LoungePage>
                 ),
               ),
               Visibility(
-                visible: bottomSeletListWidget == BottomWidgets.miniSelectList
-                    ? true
-                    : false,
+                visible:
+                    bottomSeletListWidget == LoungeBottomWidgets.miniSelectList
+                        ? true
+                        : false,
                 child: SmallSelectListWidget(
                   musicList: musicList,
                   selectedList: selectedList,
@@ -448,8 +456,8 @@ class _LoungePageState extends State<LoungePage>
         }
       }
       selectedList.contains(true)
-          ? bottomSeletListWidget = BottomWidgets.miniSelectList
-          : bottomSeletListWidget = BottomWidgets.none;
+          ? bottomSeletListWidget = LoungeBottomWidgets.miniSelectList
+          : bottomSeletListWidget = LoungeBottomWidgets.none;
     });
   }
 

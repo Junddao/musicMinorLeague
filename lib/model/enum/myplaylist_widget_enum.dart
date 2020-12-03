@@ -1,0 +1,4 @@
+enum MyPlaylistWidgetEnum {
+  miniSelectWidget,
+  none,
+}
