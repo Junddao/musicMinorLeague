@@ -42,7 +42,7 @@ class DBHelper {
 
   Future<MusicInfoData> save(MusicInfoData listItem) async {
     var dbClient = await db;
-    listItem.sqliteId = await dbClient.insert(TABLE, listItem.toMap());
+    // listItem.sqliteId = await dbClient.insert(TABLE, listItem.toMap());
     return listItem;
   }
 

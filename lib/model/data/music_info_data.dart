@@ -5,7 +5,6 @@ import 'package:enum_to_string/enum_to_string.dart';
 import 'package:music_minorleague/model/enum/music_type_enum.dart';
 
 class MusicInfoData {
-  int sqliteId;
   String id;
   String title;
   String artist;
@@ -15,7 +14,6 @@ class MusicInfoData {
   int favorite;
   MusicTypeEnum musicType;
   MusicInfoData({
-    this.sqliteId,
     this.id,
     this.title,
     this.artist,
@@ -29,7 +27,6 @@ class MusicInfoData {
 
   Map<String, dynamic> toMap() {
     return {
-      'sqliteId': sqliteId,
       'id': id,
       'title': title,
       'artist': artist,
@@ -45,7 +42,6 @@ class MusicInfoData {
     if (map == null) return null;
 
     return MusicInfoData(
-      sqliteId: map['sqliteId'],
       id: map['id'],
       title: map['title'],
       artist: map['artist'],

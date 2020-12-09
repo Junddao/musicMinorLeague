@@ -5,40 +5,32 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
 import 'package:music_minorleague/model/provider/now_play_music_provider.dart';
-import 'package:music_minorleague/model/view/page/lounge/component/position_seek_widget.dart';
+import 'package:music_minorleague/model/view/page/playlist/component/my_position_seek_widget.dart';
 import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 import 'package:music_minorleague/utils/play_func.dart';
 import 'package:provider/provider.dart';
 
-class SmallPlayListWidget extends StatefulWidget {
-  const SmallPlayListWidget({
+class MySmallPlayListWidget extends StatefulWidget {
+  const MySmallPlayListWidget({
     Key key,
     List<MusicInfoData> musicList,
-    Function playNext,
-    Function playPrevious,
   })  : _musicList = musicList,
-        _playNext = playNext,
-        _playPrevious = playPrevious,
         super(key: key);
 
   final List<MusicInfoData> _musicList;
-  final Function _playNext;
-  final Function _playPrevious;
 
   @override
-  _SmallPlayListWidgetState createState() => _SmallPlayListWidgetState();
+  _MySmallPlayListWidgetState createState() => _MySmallPlayListWidgetState();
 }
 
-class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
+class _MySmallPlayListWidgetState extends State<MySmallPlayListWidget> {
   Duration position = new Duration();
   Duration musicLength = new Duration();
   final List<StreamSubscription> _subscriptions = [];
   AssetsAudioPlayer _assetsAudioPlayer;
   bool listenOnlyUserInterraction = false;
-
-  int oldMusicIndex = -1;
 
   @override
   void initState() {
@@ -48,7 +40,7 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      bottom: 10,
+      bottom: 0,
       child: Container(
           height: 130,
           width: SizeConfig.screenWidth - 20,
@@ -110,13 +102,10 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
                   trailing: Wrap(
                     children: [
                       IconButton(
-                        icon: Icon(
-                          Icons.skip_previous,
-                        ),
-                        onPressed: () {
-                          widget._playPrevious();
-                        },
-                      ),
+                          icon: Icon(
+                            Icons.skip_previous,
+                          ),
+                          onPressed: null),
                       IconButton(
                           iconSize: 12,
                           icon: Icon(Provider.of<NowPlayMusicProvider>(context,
@@ -137,13 +126,10 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
                             });
                           }),
                       IconButton(
-                        icon: Icon(
-                          Icons.skip_next,
-                        ),
-                        onPressed: () {
-                          widget._playNext();
-                        },
-                      ),
+                          icon: Icon(
+                            Icons.skip_next,
+                          ),
+                          onPressed: null),
                     ],
                   ),
                 ),
@@ -154,11 +140,11 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
                   padding: const EdgeInsets.only(left: 15, right: 15),
                   child: StreamBuilder<Object>(
                     stream: PlayMusic.getCurrentStream(),
-                    builder: (context, currentSnapshot) {
-                      if (!currentSnapshot.hasData) {
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
                         return SizedBox.shrink();
                       }
-                      final Playing playing = currentSnapshot.data;
+                      final Playing playing = snapshot.data;
 
                       return StreamBuilder(
                           stream: PlayMusic.getSongLengthStream(),
@@ -170,7 +156,7 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
                             final RealtimePlayingInfos infos = snapshot.data;
                             position = infos.currentPosition;
                             musicLength = infos.duration;
-                            return PositionSeekWidget(
+                            return MyPositionSeekWidget(
                                 position: position,
                                 infos: infos,
                                 musicLength: musicLength);
@@ -182,5 +168,18 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
             ],
           )),
     );
+  }
+
+  String durationToString(Duration duration) {
+    String twoDigits(int n) {
+      if (n >= 10) return "$n";
+      return "0$n";
+    }
+
+    String twoDigitMinutes =
+        twoDigits(duration.inMinutes.remainder(Duration.minutesPerHour));
+    String twoDigitSeconds =
+        twoDigits(duration.inSeconds.remainder(Duration.secondsPerMinute));
+    return "$twoDigitMinutes:$twoDigitSeconds";
   }
 }

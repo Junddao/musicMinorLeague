@@ -13,6 +13,7 @@ import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 import 'package:enum_to_string/enum_to_string.dart';
+import 'package:music_minorleague/utils/firebase_db_helper.dart';
 import 'package:music_minorleague/utils/play_func.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -531,24 +532,17 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
         "favorite": 0,
       };
 
-      firestoreinstance
-          .collection('allMusic')
-          .doc(DateTime.now().toIso8601String())
-          .set(data)
-          .whenComplete(
-            () =>
-                UploadResultDialog.showUploadResultDialog(context, '파일 업로드 성공')
-                    .then((value) {
-              setState(() {
-                if (value == true) Navigator.pop(context);
-              });
-            }),
-            // showDialog(
-            //   context: context,
-            //   builder: (context) =>
-            //       _onTapButton(context, "Files Uploaded Successfully :)"),
-            // ),
-          );
+      String collection = 'allMusic';
+      String doc = DateTime.now().toIso8601String();
+
+      FirebaseDBHelper.setData(collection, doc, data).whenComplete(
+        () => UploadResultDialog.showUploadResultDialog(context, '파일 업로드 성공')
+            .then((value) {
+          setState(() {
+            if (value == true) Navigator.pop(context);
+          });
+        }),
+      );
     } else {
       UploadResultDialog.showUploadResultDialog(context, '파일 업로드 실패')
           .then((value) {
@@ -556,17 +550,6 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
           if (value == true) Navigator.pop(context);
         });
       });
-      // showDialog(
-      //   context: context,
-      //   builder: (context) =>
-      //       _onTapButton(context, "Please Enter All Details :("),
-      // );
     }
   }
-
-  // _onTapButton(BuildContext context, data) {
-  //   return AlertDialog(title: Text(data));
-  //   //  Navigator.of(context).pop();  // 여기에 ok 버튼 누러서 pop 추가해야함
-
-  // }
 }

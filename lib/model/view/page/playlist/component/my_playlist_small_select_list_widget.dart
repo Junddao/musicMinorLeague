@@ -3,11 +3,14 @@ import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
+import 'package:music_minorleague/model/provider/user_profile_provider.dart';
 import 'package:music_minorleague/model/view/page/upload/component/upload_result_Dialog.dart';
 import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 import 'package:music_minorleague/utils/db_helper.dart';
+import 'package:music_minorleague/utils/firebase_db_helper.dart';
+import 'package:provider/provider.dart';
 
 class MyPlaylistSmallSelectListWidget extends StatefulWidget {
   const MyPlaylistSmallSelectListWidget({
@@ -136,29 +139,42 @@ class _MyPlaylistSmallSelectListWidget
     }
   }
 
-  Future<void> deleteMyMusicList() async {
-    DBHelper dbHelper = DBHelper();
-    Future<List<MusicInfoData>> listItems;
-    // 우선 저장된 데이터를 가져오고
-
-    try {
-      if (selectedMusicList != null) {
-        if (selectedMusicList.length > 0) {
-          selectedMusicList.forEach(
-            (element) {
-              dbHelper.delete(element.sqliteId);
-
-              // DBHelper.database();
-            },
-          );
-        }
-      }
-      listItems = dbHelper.getListItem();
-      listItems.whenComplete(
-        () => widget._snackBarFunc('삭제 완료'),
-      );
-    } catch (ex) {
-      print(ex.toString());
-    }
+  void deleteMyMusicList() {
+    String mainCollection = FirebaseDBHelper.myMusicCollection;
+    String mainDoc = Provider.of<UserProfileProvider>(context, listen: false)
+        .userProfileData
+        .id;
+    String subCollection = FirebaseDBHelper.mySelectedMusicCollection;
+    selectedMusicList.forEach((element) {
+      String subDoc = element.id;
+      FirebaseDBHelper.deleteSubDoc(
+          mainCollection, mainDoc, subCollection, subDoc);
+    });
   }
+
+  // Future<void> deleteMyMusicList() async {
+  //   DBHelper dbHelper = DBHelper();
+  //   Future<List<MusicInfoData>> listItems;
+  //   // 우선 저장된 데이터를 가져오고
+
+  //   try {
+  //     if (selectedMusicList != null) {
+  //       if (selectedMusicList.length > 0) {
+  //         selectedMusicList.forEach(
+  //           (element) {
+  //             dbHelper.delete(element.sqliteId);
+
+  //             // DBHelper.database();
+  //           },
+  //         );
+  //       }
+  //     }
+  //     listItems = dbHelper.getListItem();
+  //     listItems.whenComplete(
+  //       () => widget._snackBarFunc('삭제 완료'),
+  //     );
+  //   } catch (ex) {
+  //     print(ex.toString());
+  //   }
+  // }
 }

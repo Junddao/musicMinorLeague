@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:music_minorleague/model/provider/now_play_music_provider.dart';
-import 'package:music_minorleague/model/provider/user_profile_provider.dart';
 import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
@@ -14,6 +13,14 @@ class MyMusicPlayerPage extends StatefulWidget {
 
 class _MyMusicPlayerPageState extends State<MyMusicPlayerPage> {
   bool _isPlaying = false;
+
+  @override
+  void initState() {
+    super.initState();
+    //TODO 1. 인터넷 연결 상태를 확인한다.(끊겨있으면 error 페이지 표시)
+    //TODO sqlite 에 저장된 파일과 firebase 에 저장된 파일을 비교하여 파일 존재 여부를 확인하고 없으면 내 DB를 삭제한다.
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

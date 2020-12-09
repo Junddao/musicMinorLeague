@@ -18,6 +18,23 @@ class PlayMusic {
     _assetsAudioPlayer.open(Audio.file(filePath));
   }
 
+  static playListFunc(List<Audio> audios) {
+    _assetsAudioPlayer.open(
+      Playlist(
+        audios: audios,
+      ),
+      loopMode: LoopMode.playlist,
+    );
+  }
+
+  static next() {
+    _assetsAudioPlayer.next();
+  }
+
+  static previous() {
+    _assetsAudioPlayer.previous();
+  }
+
   static playFunc() {
     _assetsAudioPlayer.play();
   }

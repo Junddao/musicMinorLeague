@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class NowPlayMusicProvider with ChangeNotifier {
   MusicInfoData _musicInfoData;
 
-  int _nowMusicIndex = -1;
+  String _nowMusicId;
   bool _isPlay = false;
 
   MusicInfoData get musicInfoData => _musicInfoData;
@@ -13,9 +13,9 @@ class NowPlayMusicProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  int get nowMusicIndex => _nowMusicIndex;
-  set nowMusicIndex(int nowMusicIndex) {
-    _nowMusicIndex = nowMusicIndex;
+  String get nowMusicId => _nowMusicId;
+  set nowMusicId(String nowMusicId) {
+    _nowMusicId = nowMusicId;
     notifyListeners();
   }
 

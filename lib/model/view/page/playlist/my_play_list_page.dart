@@ -1,16 +1,22 @@
 import 'dart:async';
 
 import 'package:assets_audio_player/assets_audio_player.dart';
-import 'package:enum_to_string/enum_to_string.dart';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
-import 'package:music_minorleague/model/enum/music_type_enum.dart';
 import 'package:music_minorleague/model/enum/myplaylist_widget_enum.dart';
 import 'package:music_minorleague/model/provider/now_play_music_provider.dart';
+import 'package:music_minorleague/model/provider/user_profile_provider.dart';
+
 import 'package:music_minorleague/model/view/page/playlist/component/my_playlist_small_select_list_widget.dart';
+import 'package:music_minorleague/model/view/page/playlist/component/my_select_buttons_widget.dart';
+import 'package:music_minorleague/model/view/page/playlist/component/my_small_play_list_widget.dart';
+import 'package:music_minorleague/model/view/style/colors.dart';
+import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 import 'package:music_minorleague/utils/db_helper.dart';
+import 'package:music_minorleague/utils/firebase_db_helper.dart';
 import 'package:music_minorleague/utils/play_func.dart';
 import 'package:provider/provider.dart';
 
@@ -25,10 +31,11 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
 
   AssetsAudioPlayer _assetsAudioPlayer;
   final List<StreamSubscription> _subscriptions = [];
-  List<MusicInfoData> _selectedMusicList = new List<MusicInfoData>();
+  List<MusicInfoData> _myMusicList = new List<MusicInfoData>();
   List<bool> _selectedList;
 
   MyPlaylistWidgetEnum myPlayListWidgetEnum;
+  MyPlaylistWidgetEnum myMiniPlayer;
 
   _initSubscription() {
     _clearSubscriptions();
@@ -84,6 +91,7 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
   @override
   void initState() {
     super.initState();
+    _initSubscription();
   }
 
   @override
@@ -110,27 +118,78 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
   _body() {
     return Padding(
       padding: const EdgeInsets.only(left: 10, right: 10),
-      child: playListOfThisWeek(),
+      child: Stack(
+        children: [
+          SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: SizeConfig.screenHeight),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  MySelectButtonsWidget(selectAllMusicFunc: selectAllMusicFunc),
+                  Expanded(
+                    child: Stack(
+                      children: [
+                        mySelectedMusicListWidget(),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Visibility(
+            visible: myMiniPlayer == MyPlaylistWidgetEnum.miniPlayerWidget
+                ? true
+                : false,
+            child: MySmallPlayListWidget(
+              musicList: _myMusicList,
+            ),
+          ),
+          Visibility(
+            visible:
+                myPlayListWidgetEnum == MyPlaylistWidgetEnum.miniSelectWidget
+                    ? true
+                    : false,
+            child: MyPlaylistSmallSelectListWidget(
+              musicList: _myMusicList,
+              selectedList: _selectedList,
+              snackBarFunc: showAndHideSnackBar,
+              refreshSelectedListAndWidgetFunc:
+                  refreshSelectedListAndWidgetFunc,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget playListOfThisWeek() {
+  Widget mySelectedMusicListWidget() {
+    String mainCollection = FirebaseDBHelper.myMusicCollection;
+    String mainDoc = Provider.of<UserProfileProvider>(context, listen: false)
+        .userProfileData
+        .id;
+    String subCollection = FirebaseDBHelper.mySelectedMusicCollection;
+    List<String> dataList = new List<String>();
     return Flex(
       direction: Axis.vertical,
       children: [
         Expanded(
-          child: FutureBuilder<Object>(
-              future: dbHelper.getListItem(),
+          child: StreamBuilder<Object>(
+              stream: FirebaseDBHelper.getSubDataStream(
+                  mainCollection, mainDoc, subCollection),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
                     child: CircularProgressIndicator(),
                   );
                 } else {
-                  _selectedMusicList = snapshot.data;
-                  if (_selectedList?.length != _selectedMusicList.length) {
-                    _selectedList = List.generate(
-                        _selectedMusicList.length, (index) => false);
+                  _myMusicList =
+                      FirebaseDBHelper.getMusicDatabase(snapshot.data);
+
+                  if (_selectedList?.length != _myMusicList.length) {
+                    _selectedList =
+                        List.generate(_myMusicList.length, (index) => false);
                   }
                 }
 
@@ -140,7 +199,8 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
                         stream: PlayMusic.getCurrentStream(),
                         builder: (context, snapshotCurrent) {
                           return ListView.builder(
-                            itemCount: _selectedMusicList.length,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: _myMusicList.length,
                             itemBuilder: (context, index) {
                               return Container(
                                 height: 72,
@@ -162,7 +222,7 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
                                   },
                                   leading: CircleAvatar(
                                     backgroundImage: NetworkImage(
-                                        _selectedMusicList[index].imagePath),
+                                        _myMusicList[index]?.imagePath),
                                   ),
                                   title: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -170,14 +230,14 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        _selectedMusicList[index].title,
+                                        _myMusicList[index].title,
                                         style: MTextStyles.bold14Grey06,
                                       ),
                                       SizedBox(
                                         width: 6,
                                       ),
                                       Text(
-                                        _selectedMusicList[index].artist,
+                                        _myMusicList[index].artist,
                                         maxLines: 1,
                                         style: MTextStyles
                                             .regular12WarmGrey_underline,
@@ -194,44 +254,50 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
                                                                 listen: false)
                                                             .isPlay ==
                                                         true &&
-                                                    index ==
+                                                    _myMusicList[index].id ==
                                                         Provider.of<NowPlayMusicProvider>(
                                                                 context,
                                                                 listen: false)
-                                                            .nowMusicIndex
+                                                            .nowMusicId
                                                 ? FontAwesomeIcons.pause
                                                 : FontAwesomeIcons.play,
                                           ),
+                                          color: Provider.of<NowPlayMusicProvider>(
+                                                              context,
+                                                              listen: false)
+                                                          .isPlay ==
+                                                      true &&
+                                                  _myMusicList[index].id ==
+                                                      Provider.of<NowPlayMusicProvider>(
+                                                              context,
+                                                              listen: false)
+                                                          .nowMusicId
+                                              ? MColors.black
+                                              : MColors.warm_grey,
                                           onPressed: () {
                                             MusicInfoData musicInfoData =
                                                 new MusicInfoData(
-                                                    title:
-                                                        _selectedMusicList[
-                                                                index]
-                                                            .title,
-                                                    artist:
-                                                        _selectedMusicList[
-                                                                index]
-                                                            .artist,
+                                                    id: _myMusicList[index].id,
+                                                    title: _myMusicList[index]
+                                                        .title,
+                                                    artist: _myMusicList[index]
+                                                        .artist,
                                                     musicPath:
-                                                        _selectedMusicList[
+                                                        _myMusicList[
                                                                 index]
                                                             .musicPath,
                                                     imagePath:
-                                                        _selectedMusicList[
+                                                        _myMusicList[
                                                                 index]
                                                             .imagePath,
                                                     dateTime:
-                                                        _selectedMusicList[
-                                                                index]
+                                                        _myMusicList[index]
                                                             .dateTime,
                                                     favorite:
-                                                        _selectedMusicList[
-                                                                index]
+                                                        _myMusicList[index]
                                                             .favorite,
                                                     musicType:
-                                                        _selectedMusicList[
-                                                                index]
+                                                        _myMusicList[index]
                                                             .musicType);
 
                                             Provider.of<NowPlayMusicProvider>(
@@ -239,21 +305,22 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
                                                     listen: false)
                                                 .musicInfoData = musicInfoData;
 
-                                            int nowIndex = Provider.of<
+                                            String nowId = Provider.of<
                                                         NowPlayMusicProvider>(
                                                     context,
                                                     listen: false)
-                                                .nowMusicIndex;
+                                                .nowMusicId;
 
                                             int selectedValue; // 0 : first Selected , 1: same song selected, 2: different song selected
 
                                             // first selected
-                                            if (nowIndex < 0) {
-                                              nowIndex = index;
+                                            if (nowId == null) {
+                                              nowId = _myMusicList[index].id;
                                               selectedValue = 0;
                                             }
                                             // same song selected
-                                            else if (nowIndex == index) {
+                                            else if (nowId ==
+                                                _myMusicList[index].id) {
                                               Provider.of<NowPlayMusicProvider>(
                                                       context,
                                                       listen: false)
@@ -263,15 +330,16 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
                                             }
 
                                             // different song selected
-                                            else if (nowIndex >= 0 &&
-                                                nowIndex != index) {
-                                              nowIndex = index;
+                                            else if (nowId != null &&
+                                                nowId !=
+                                                    _myMusicList[index].id) {
+                                              nowId = _myMusicList[index].id;
                                               selectedValue = 2;
                                             }
                                             Provider.of<NowPlayMusicProvider>(
                                                     context,
                                                     listen: false)
-                                                .nowMusicIndex = nowIndex;
+                                                .nowMusicId = nowId;
 
                                             setState(() {
                                               if (selectedValue == 0) {
@@ -296,6 +364,9 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
                                               } else if (selectedValue == 1) {
                                                 PlayMusic.playOrPauseFunc();
                                               }
+                                              myMiniPlayer =
+                                                  MyPlaylistWidgetEnum
+                                                      .miniPlayerWidget;
                                             });
                                           }),
                                       IconButton(
@@ -311,19 +382,6 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
                             },
                           );
                         }),
-                    Visibility(
-                      visible: myPlayListWidgetEnum ==
-                              MyPlaylistWidgetEnum.miniSelectWidget
-                          ? true
-                          : false,
-                      child: MyPlaylistSmallSelectListWidget(
-                        musicList: _selectedMusicList,
-                        selectedList: _selectedList,
-                        snackBarFunc: showAndHideSnackBar,
-                        refreshSelectedListAndWidgetFunc:
-                            refreshSelectedListAndWidgetFunc,
-                      ),
-                    ),
                   ],
                 );
               }),
@@ -334,6 +392,7 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
 
   refreshSelectedListAndWidgetFunc() {
     setState(() {
+      myPlayListWidgetEnum = MyPlaylistWidgetEnum.none;
       _selectedList.forEach((element) {
         element = false;
       });
@@ -352,6 +411,25 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
     );
     Future.delayed(Duration(seconds: 2), () {
       _scaffoldKey.currentState.hideCurrentSnackBar();
+    });
+  }
+
+  void selectAllMusicFunc() {
+    setState(() {
+      if (_selectedList.every((element) {
+        return element;
+      })) {
+        for (int i = 0; i < _selectedList.length; i++) {
+          _selectedList[i] = false;
+        }
+      } else {
+        for (int i = 0; i < _selectedList.length; i++) {
+          _selectedList[i] = true;
+        }
+      }
+      _selectedList.contains(true)
+          ? myPlayListWidgetEnum = MyPlaylistWidgetEnum.miniSelectWidget
+          : myPlayListWidgetEnum = MyPlaylistWidgetEnum.none;
     });
   }
 }
