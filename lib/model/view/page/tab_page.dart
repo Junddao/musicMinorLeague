@@ -1,5 +1,6 @@
 import 'package:flutter_svg/svg.dart';
 import 'package:music_minorleague/model/view/page/lounge/lounge_page.dart';
+import 'package:music_minorleague/model/view/page/music_player/my_music_player_page.dart';
 import 'package:music_minorleague/model/view/page/playlist/my_play_list_page.dart';
 import 'package:music_minorleague/model/view/page/user_profile_page.dart';
 import 'package:music_minorleague/model/view/style/colors.dart';
@@ -18,6 +19,7 @@ class _TabPageState extends State<TabPage> {
   final List<Widget> _tabs = [
     LoungePage(),
     MyPlayListPage(),
+    SizedBox.shrink(), // empty widget
     SizedBox.shrink(), // empty widget
     UserProfilePage(),
   ];
@@ -59,19 +61,39 @@ class _TabPageState extends State<TabPage> {
                       //     icon: Icon(Icons.mic),
                       //     title: Text('녹음')), // 뭘 보여줘야 할까...
                       BottomNavigationBarItem(
-                        icon: Icon(Icons.home),
+                        icon: Icon(
+                          Icons.home,
+                          size: 20,
+                        ),
                         label: '라운지',
                       ), //
                       BottomNavigationBarItem(
-                        icon: Icon(Icons.queue_music_outlined),
+                        icon: Icon(
+                          Icons.queue_music_outlined,
+                          size: 20,
+                        ),
                         label: '내 재생목록',
                       ),
                       BottomNavigationBarItem(
-                        icon: Icon(Icons.add_circle_outline_outlined),
+                        icon: Icon(
+                          Icons.add_circle_outline_outlined,
+                          size: 30,
+                        ),
                         label: '등록하기',
                       ),
+
                       BottomNavigationBarItem(
-                        icon: Icon(Icons.person),
+                        icon: Icon(
+                          Icons.music_note_rounded,
+                          size: 20,
+                        ),
+                        label: '플레이어',
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(
+                          Icons.person,
+                          size: 20,
+                        ),
                         label: '프로필',
                       ),
                     ]))));
@@ -80,6 +102,8 @@ class _TabPageState extends State<TabPage> {
   void _onItemTapped(int index) {
     if (index == 2) {
       _settingModalBottomSheet(context, index);
+    } else if (index == 3) {
+      _noneNaviBarPage('MyMusicPlayerPage');
     } else {
       Provider.of<TabStates>(context, listen: false).selectedIndex = index;
     }
@@ -135,11 +159,14 @@ class _TabPageState extends State<TabPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SvgPicture.asset('assets/icons/cloud_download.svg'),
+                      SvgPicture.asset(
+                        'assets/icons/error_outline-24px.svg',
+                        color: MColors.tomato,
+                      ),
                       SizedBox(height: 10),
                       Text(
-                        '다운로드',
-                        style: MTextStyles.medium14Grey06,
+                        '준비중',
+                        style: MTextStyles.medium14Tomato,
                       )
                     ],
                   ),

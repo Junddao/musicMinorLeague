@@ -4,6 +4,7 @@ import 'package:music_minorleague/model/provider/now_play_music_provider.dart';
 import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
+import 'package:music_minorleague/utils/play_func.dart';
 import 'package:provider/provider.dart';
 
 class MyMusicPlayerPage extends StatefulWidget {
@@ -48,6 +49,14 @@ class _MyMusicPlayerPageState extends State<MyMusicPlayerPage> {
   }
 
   _body() {
+    // if (Provider.of<NowPlayMusicProvider>(context, listen: false)
+    //         .musicInfoData ==
+    //     null) {
+    //   return Center(
+    //       child: Container(
+    //     child: Text('empty!'),
+    //   ));
+    // } else {
     return Container(
       width: SizeConfig.screenWidth,
       child: SingleChildScrollView(
@@ -91,17 +100,11 @@ class _MyMusicPlayerPageState extends State<MyMusicPlayerPage> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: Image(
-                  image:
-                      Provider.of<NowPlayMusicProvider>(context, listen: false)
-                                  .musicInfoData
-                                  .imagePath ==
-                              null
-                          ? Image.asset('assets/images/default_image.jpg')
-                          : NetworkImage(Provider.of<NowPlayMusicProvider>(
-                                  context,
-                                  listen: false)
-                              .musicInfoData
-                              .imagePath),
+                  image: NetworkImage(Provider.of<NowPlayMusicProvider>(context,
+                              listen: false)
+                          .musicInfoData
+                          ?.imagePath ??
+                      'https://cdn.pixabay.com/photo/2018/03/04/09/51/space-3197611_1280.jpg'),
                   width: MediaQuery.of(context).size.width * 0.7,
                   height: MediaQuery.of(context).size.width * 0.7,
                   fit: BoxFit.cover,
@@ -110,13 +113,15 @@ class _MyMusicPlayerPageState extends State<MyMusicPlayerPage> {
             ),
             Text(
               Provider.of<NowPlayMusicProvider>(context, listen: false)
-                  .musicInfoData
-                  .title,
+                      .musicInfoData
+                      ?.title ??
+                  'noTitle',
               style: MTextStyles.bold20Black36,
             ),
             Text(Provider.of<NowPlayMusicProvider>(context, listen: false)
-                .musicInfoData
-                .artist),
+                    .musicInfoData
+                    ?.artist ??
+                'none'),
             SizedBox(
               height: 20,
             ),
@@ -145,14 +150,17 @@ class _MyMusicPlayerPageState extends State<MyMusicPlayerPage> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
                 IconButton(
-                  onPressed: () {},
-                  icon: Icon(FontAwesomeIcons.backward),
+                  onPressed: () {
+                    PlayMusic.previous();
+                  },
+                  icon: Icon(Icons.skip_previous),
                 ),
                 IconButton(
                   iconSize: 50,
                   onPressed: () {
                     setState(() {
                       _isPlaying = !_isPlaying;
+                      PlayMusic.playOrPauseFunc();
                     });
                   },
                   icon: Icon(
@@ -161,8 +169,12 @@ class _MyMusicPlayerPageState extends State<MyMusicPlayerPage> {
                   ),
                 ),
                 IconButton(
-                  onPressed: () {},
-                  icon: Icon(FontAwesomeIcons.forward),
+                  onPressed: () {
+                    setState(() {
+                      PlayMusic.next();
+                    });
+                  },
+                  icon: Icon(Icons.skip_next),
                 ),
               ],
             ),
@@ -170,5 +182,6 @@ class _MyMusicPlayerPageState extends State<MyMusicPlayerPage> {
         ),
       ),
     );
+    // }
   }
 }
