@@ -50,7 +50,7 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
     return Positioned(
       bottom: 10,
       child: Container(
-          height: 130,
+          height: 100,
           width: SizeConfig.screenWidth - 20,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.all(
@@ -68,7 +68,7 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
           child: Column(
             children: [
               Container(
-                height: 80,
+                height: 50,
                 child: ListTile(
                   leading: CircleAvatar(
                       backgroundImage: NetworkImage(
@@ -90,7 +90,7 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
                                   .musicInfoData
                                   ?.title ??
                               '',
-                          style: MTextStyles.bold14Grey06,
+                          style: MTextStyles.bold12Grey06,
                         ),
                         SizedBox(
                           width: 6,
@@ -102,7 +102,7 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
                                   ?.artist ??
                               '',
                           maxLines: 1,
-                          style: MTextStyles.regular12WarmGrey,
+                          style: MTextStyles.regular10WarmGrey,
                         ),
                       ],
                     ),
@@ -113,12 +113,13 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
                         icon: Icon(
                           Icons.skip_previous,
                         ),
+                        iconSize: 20,
                         onPressed: () {
                           widget._playPrevious();
                         },
                       ),
                       IconButton(
-                          iconSize: 12,
+                          iconSize: 10,
                           icon: Icon(Provider.of<NowPlayMusicProvider>(context,
                                           listen: false)
                                       .isPlay ==
@@ -140,6 +141,7 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
                         icon: Icon(
                           Icons.skip_next,
                         ),
+                        iconSize: 20,
                         onPressed: () {
                           widget._playNext();
                         },

@@ -13,17 +13,24 @@ class FirebaseDBHelper {
 
   static Future<void> setData(
       String collection, String doc, Map<String, Object> data) async {
-    return await firestoreinstance.collection(collection).doc(doc).set(data);
+    await firestoreinstance.collection(collection).doc(doc).set(data);
   }
 
   static Future<void> setSubCollection(String mainCollection, String mainDoc,
       String subCollection, String subDoc, Map<String, Object> data) async {
-    return await firestoreinstance
+    await firestoreinstance
         .collection(mainCollection)
         .doc(mainDoc)
         .collection(subCollection)
         .doc(subDoc)
         .set(data);
+  }
+
+  static Future<void> updateFavoriteData(
+      String collection, String doc, int data) async {
+    await firestoreinstance.collection(collection).doc(doc).update({
+      'favorite': data,
+    });
   }
 
   static Future<void> deleteDoc(String collection, String doc) async {
@@ -45,7 +52,10 @@ class FirebaseDBHelper {
   }
 
   static Stream<QuerySnapshot> getDataStream(String collection) {
-    return firestoreinstance.collection(collection).snapshots();
+    return firestoreinstance
+        .collection(collection)
+        .orderBy('favorite', descending: true)
+        .snapshots();
   }
 
   static Stream<QuerySnapshot> getSubDataStream(

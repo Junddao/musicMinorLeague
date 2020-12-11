@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:music_minorleague/model/provider/now_play_music_provider.dart';
 import 'package:music_minorleague/route.dart';
 import 'package:music_minorleague/splash_screen.dart';
@@ -8,6 +9,7 @@ import 'package:provider/provider.dart';
 
 import 'model/provider/user_profile_provider.dart';
 import 'model/view/style/colors.dart';
+import 'model/view/style/custom_animation.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,6 +17,24 @@ void main() async {
   runApp(
     new MyApp(),
   );
+  configLoading();
+}
+
+void configLoading() {
+  EasyLoading.instance
+    ..displayDuration = const Duration(milliseconds: 2000)
+    ..indicatorType = EasyLoadingIndicatorType.fadingCircle
+    ..loadingStyle = EasyLoadingStyle.dark
+    ..indicatorSize = 45.0
+    ..radius = 10.0
+    ..progressColor = Colors.yellow
+    ..backgroundColor = Colors.green
+    ..indicatorColor = Colors.yellow
+    ..textColor = Colors.yellow
+    ..maskColor = Colors.blue.withOpacity(0.5)
+    ..userInteractions = true
+    ..dismissOnTap = false
+    ..customAnimation = CustomAnimation();
 }
 
 class MyApp extends StatelessWidget {
@@ -43,6 +63,7 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         onGenerateRoute: Routers.generateRoute,
         home: SplashScreen(),
+        builder: EasyLoading.init(),
       ),
     );
   }

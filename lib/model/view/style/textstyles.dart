@@ -458,7 +458,12 @@ class MTextStyles {
       fontFamily: "NotoSansKR",
       fontStyle: FontStyle.normal,
       fontSize: 12.0);
-
+  static const regular8Grey06 = const TextStyle(
+      color: MColors.grey_06,
+      fontWeight: FontWeight.w400,
+      fontFamily: "NotoSansKR",
+      fontStyle: FontStyle.normal,
+      fontSize: 8.0);
   static const regular10Grey06 = const TextStyle(
       color: MColors.grey_06,
       fontWeight: FontWeight.w400,

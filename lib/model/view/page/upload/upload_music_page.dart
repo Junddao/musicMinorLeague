@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:music_minorleague/model/enum/music_type_enum.dart';
@@ -45,6 +47,7 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
   List<Asset> _coverImageList;
 
   bool isPlay = false;
+  Timer _timer;
 
   final firestoreinstance = FirebaseFirestore.instance;
 
@@ -469,6 +472,11 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
   }
 
   Future<void> upload() async {
+    await EasyLoading.show(
+      status: 'uploading...',
+      maskType: EasyLoadingMaskType.black,
+    );
+
     await uploadImageFile(_coverImage);
     await uploadMusicFile(_musicFile);
   }
@@ -533,15 +541,18 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
       };
 
       String collection = 'allMusic';
-      String doc = DateTime.now().toIso8601String();
+      String doc = data['id'];
 
       FirebaseDBHelper.setData(collection, doc, data).whenComplete(
-        () => UploadResultDialog.showUploadResultDialog(context, '파일 업로드 성공')
-            .then((value) {
-          setState(() {
-            if (value == true) Navigator.pop(context);
+        () {
+          EasyLoading.dismiss();
+          return UploadResultDialog.showUploadResultDialog(context, '파일 업로드 성공')
+              .then((value) {
+            setState(() {
+              if (value == true) Navigator.pop(context);
+            });
           });
-        }),
+        },
       );
     } else {
       UploadResultDialog.showUploadResultDialog(context, '파일 업로드 실패')

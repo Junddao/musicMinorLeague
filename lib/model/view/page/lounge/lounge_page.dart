@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
@@ -41,7 +42,10 @@ class _LoungePageState extends State<LoungePage>
   List<MusicInfoData> selectedMusicList;
 
   List<bool> selectedList;
+  AnimationController _animationController;
   // List<bool> isPlayList;
+
+  int selectedThumbIndex = 0;
 
   final List<StreamSubscription> _subscriptions = [];
   AssetsAudioPlayer _assetsAudioPlayer;
@@ -49,6 +53,8 @@ class _LoungePageState extends State<LoungePage>
   @override
   void initState() {
     super.initState();
+    _animationController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     // tabController = TabController(vsync: this, length: 2);
 
     isTabThisWeekMusicListItem = false;
@@ -295,6 +301,8 @@ class _LoungePageState extends State<LoungePage>
                                     ],
                                   ),
                                   trailing: Wrap(
+                                    crossAxisAlignment:
+                                        WrapCrossAlignment.center,
                                     children: [
                                       IconButton(
                                           iconSize: 14,
@@ -349,12 +357,44 @@ class _LoungePageState extends State<LoungePage>
                                             );
                                             playOrpauseMusic(musicInfoData);
                                           }),
-                                      IconButton(
-                                          icon: Icon(
-                                            Icons.favorite_border_outlined,
-                                            size: 16,
+                                      GestureDetector(
+                                        onTap: () {
+                                          _handleOnPressThumb(index);
+                                        },
+                                        child: Container(
+                                          height: 28,
+                                          width: 28,
+                                          child: FlareActor(
+                                            'assets/icons/thumb.flr',
+                                            alignment: Alignment.center,
+                                            fit: BoxFit.cover,
+                                            animation:
+                                                selectedThumbIndex == index
+                                                    ? "click"
+                                                    : "idle",
                                           ),
-                                          onPressed: null),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 20,
+                                        child: Text(
+                                          musicList[index].favorite > 10000
+                                              ? '10000++'
+                                              : musicList[index]
+                                                  .favorite
+                                                  .toString(),
+                                          style: MTextStyles.regular8Grey06,
+                                        ),
+                                      ),
+
+                                      // IconButton(
+                                      //     icon: Icon(
+                                      //       Icons.thumb_up_alt_outlined,
+                                      //       size: 14,
+                                      //     ),
+                                      //     onPressed: () {
+                                      //       _handleOnPressThumb(index);
+                                      //     }),
                                     ],
                                   ),
                                 ),
@@ -414,7 +454,17 @@ class _LoungePageState extends State<LoungePage>
   }
 
   void playOrPauseMusicForSelectedList(int index) {
-    setMusicInfoProvider(index);
+    MusicInfoData musicInfoData = new MusicInfoData(
+      id: selectedMusicList[index].id,
+      title: selectedMusicList[index].title,
+      artist: selectedMusicList[index].artist,
+      musicPath: selectedMusicList[index].musicPath,
+      imagePath: selectedMusicList[index].imagePath,
+      dateTime: selectedMusicList[index].dateTime,
+      favorite: selectedMusicList[index].favorite,
+      musicType: selectedMusicList[index].musicType,
+    );
+    setNowPlayMusicInfo(musicInfoData);
 
     PlayMusic.makeNewPlayer();
     _initSubscription();
@@ -424,24 +474,13 @@ class _LoungePageState extends State<LoungePage>
     PlayMusic.playListFunc(audios);
   }
 
-  void setMusicInfoProvider(int index) {
+  void setNowPlayMusicInfo(MusicInfoData musicInfoData) {
     setState(() {
-      MusicInfoData musicInfoData = new MusicInfoData(
-        id: musicList[index].id,
-        title: musicList[index].title,
-        artist: musicList[index].artist,
-        musicPath: musicList[index].musicPath,
-        imagePath: musicList[index].imagePath,
-        dateTime: musicList[index].dateTime,
-        favorite: musicList[index].favorite,
-        musicType: musicList[index].musicType,
-      );
-
       Provider.of<NowPlayMusicProvider>(context, listen: false).musicInfoData =
           musicInfoData;
       Provider.of<NowPlayMusicProvider>(context, listen: false).isPlay = true;
       Provider.of<NowPlayMusicProvider>(context, listen: false).nowMusicId =
-          musicList[index].id;
+          musicInfoData.id;
     });
   }
 
@@ -506,13 +545,24 @@ class _LoungePageState extends State<LoungePage>
         selectedMusicList.add(musicList[i]);
       }
     }
+    Provider.of<NowPlayMusicProvider>(context, listen: false)
+        .selectedMusicList = selectedMusicList;
   }
 
   void playPrevious() {
     int index = PlayMusic.assetsAudioPlayer().current.value.index;
     if (index > 0) index = index - 1;
-
-    setMusicInfoProvider(index);
+    MusicInfoData musicInfoData = new MusicInfoData(
+      id: selectedMusicList[index].id,
+      title: selectedMusicList[index].title,
+      artist: selectedMusicList[index].artist,
+      musicPath: selectedMusicList[index].musicPath,
+      imagePath: selectedMusicList[index].imagePath,
+      dateTime: selectedMusicList[index].dateTime,
+      favorite: selectedMusicList[index].favorite,
+      musicType: selectedMusicList[index].musicType,
+    );
+    setNowPlayMusicInfo(musicInfoData);
     setState(() {
       PlayMusic.previous();
     });
@@ -521,8 +571,30 @@ class _LoungePageState extends State<LoungePage>
   void playNext() {
     int index = PlayMusic.assetsAudioPlayer().current.value.index;
     if (index < selectedMusicList.length) index = index + 1;
+    MusicInfoData musicInfoData = new MusicInfoData(
+      id: selectedMusicList[index].id,
+      title: selectedMusicList[index].title,
+      artist: selectedMusicList[index].artist,
+      musicPath: selectedMusicList[index].musicPath,
+      imagePath: selectedMusicList[index].imagePath,
+      dateTime: selectedMusicList[index].dateTime,
+      favorite: selectedMusicList[index].favorite,
+      musicType: selectedMusicList[index].musicType,
+    );
+    setNowPlayMusicInfo(musicInfoData);
     setState(() {
       PlayMusic.next();
+    });
+  }
+
+  void _handleOnPressThumb(int index) {
+    String collection = FirebaseDBHelper.allMusicCollection;
+    String doc = musicList[index].id;
+    int data = musicList[index].favorite;
+
+    FirebaseDBHelper.updateFavoriteData(collection, doc, data + 1);
+    setState(() {
+      selectedThumbIndex = index;
     });
   }
 }

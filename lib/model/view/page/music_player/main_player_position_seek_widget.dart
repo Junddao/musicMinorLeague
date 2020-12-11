@@ -4,8 +4,8 @@ import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 import 'package:music_minorleague/utils/play_func.dart';
 
-class PositionSeekWidget extends StatefulWidget {
-  const PositionSeekWidget({
+class MainPlayerPositionSeekWidget extends StatefulWidget {
+  const MainPlayerPositionSeekWidget({
     Key key,
     @required this.position,
     @required this.infos,
@@ -17,10 +17,12 @@ class PositionSeekWidget extends StatefulWidget {
   final Duration musicLength;
 
   @override
-  _PositionSeekWidgetState createState() => _PositionSeekWidgetState();
+  _MainPlayerPositionSeekWidgetState createState() =>
+      _MainPlayerPositionSeekWidgetState();
 }
 
-class _PositionSeekWidgetState extends State<PositionSeekWidget> {
+class _MainPlayerPositionSeekWidgetState
+    extends State<MainPlayerPositionSeekWidget> {
   bool listenOnlyUserInterraction = false;
   Duration _visibleValue;
   @override
@@ -30,7 +32,7 @@ class _PositionSeekWidgetState extends State<PositionSeekWidget> {
   }
 
   @override
-  void didUpdateWidget(covariant PositionSeekWidget oldWidget) {
+  void didUpdateWidget(covariant MainPlayerPositionSeekWidget oldWidget) {
     if (!listenOnlyUserInterraction) {
       _visibleValue <= widget.musicLength
           ? _visibleValue = widget.position
@@ -56,11 +58,11 @@ class _PositionSeekWidgetState extends State<PositionSeekWidget> {
                     text: TextSpan(
                       children: [
                         TextSpan(
-                          style: MTextStyles.bold10Black,
+                          style: MTextStyles.bold12Black,
                           text: durationToString(_visibleValue),
                         ),
                         TextSpan(
-                            style: MTextStyles.regular10Grey06, text: ' / '),
+                            style: MTextStyles.regular12Grey06, text: ' / '),
                         TextSpan(
                           style: MTextStyles.regular10WarmGrey,
                           text: durationToString(widget.infos.duration),

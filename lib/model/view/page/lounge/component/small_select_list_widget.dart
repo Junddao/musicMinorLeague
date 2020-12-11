@@ -54,7 +54,7 @@ class _SmallSelectListWidgetState extends State<SmallSelectListWidget> {
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child: Container(
-              height: 130,
+              height: 100,
               width: SizeConfig.screenWidth - 20,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(
