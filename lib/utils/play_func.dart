@@ -1,4 +1,6 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:music_minorleague/model/data/music_info_data.dart';
+import 'package:music_minorleague/model/provider/now_play_music_provider.dart';
 
 class PlayMusic {
   static AssetsAudioPlayer _assetsAudioPlayer = new AssetsAudioPlayer();
@@ -10,20 +12,44 @@ class PlayMusic {
     _assetsAudioPlayer.stop();
   }
 
-  static playUrlFunc(String filePath) {
-    _assetsAudioPlayer.open(Audio.network(filePath));
+  static playUrlFunc(MusicInfoData nowMusicData) {
+    final audio = Audio.network(nowMusicData.musicPath,
+        metas: Metas(
+          title: nowMusicData.title,
+          artist: nowMusicData.artist,
+          image: MetasImage.network(nowMusicData.imagePath),
+        ));
+    _assetsAudioPlayer.open(audio, showNotification: true);
   }
 
   static playFileFunc(String filePath) {
     _assetsAudioPlayer.open(Audio.file(filePath));
   }
 
-  static playListFunc(List<Audio> audios) {
+// static playListFunc(List<Audio> audios) {
+//     _assetsAudioPlayer.open(
+//       Playlist(
+//         audios: audios,
+//       ),
+//       loopMode: LoopMode.playlist,
+//     );
+//   }
+
+  static playListFunc(List<MusicInfoData> selectedMusicList) {
+    List<Audio> audios = List.generate(
+        selectedMusicList.length,
+        (index) => new Audio.network(selectedMusicList[index].musicPath,
+            metas: Metas(
+              title: selectedMusicList[index].title,
+              artist: selectedMusicList[index].artist,
+              image: MetasImage.network(selectedMusicList[index].imagePath),
+            )));
     _assetsAudioPlayer.open(
       Playlist(
         audios: audios,
       ),
       loopMode: LoopMode.playlist,
+      showNotification: true,
     );
   }
 

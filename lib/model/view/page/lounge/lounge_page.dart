@@ -3,18 +3,21 @@ import 'dart:async';
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
 import 'package:music_minorleague/model/enum/lounge_bottom_widget_enum.dart';
 import 'package:music_minorleague/model/enum/music_type_enum.dart';
+import 'package:music_minorleague/model/provider/mini_widget_status_provider.dart';
 import 'package:music_minorleague/model/provider/now_play_music_provider.dart';
-import 'package:music_minorleague/model/provider/user_profile_provider.dart';
+
 import 'package:music_minorleague/model/view/page/lounge/component/select_buttons_widget.dart';
 import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
+
 import 'package:music_minorleague/utils/firebase_db_helper.dart';
 import 'package:music_minorleague/utils/play_func.dart';
 import 'package:provider/provider.dart';
@@ -33,8 +36,6 @@ class _LoungePageState extends State<LoungePage>
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
   TabController tabController;
 
-  LoungeBottomWidgets bottomSeletListWidget = LoungeBottomWidgets.none;
-  LoungeBottomWidgets bottomPlayListWidget = LoungeBottomWidgets.none;
   bool isTabThisWeekMusicListItem;
 
   List<MusicInfoData> musicList;
@@ -45,7 +46,7 @@ class _LoungePageState extends State<LoungePage>
   AnimationController _animationController;
   // List<bool> isPlayList;
 
-  int selectedThumbIndex = 0;
+  int selectedThumbIndex = -1;
 
   final List<StreamSubscription> _subscriptions = [];
   AssetsAudioPlayer _assetsAudioPlayer;
@@ -168,7 +169,7 @@ class _LoungePageState extends State<LoungePage>
                             ? _twentyList = musicList.sublist(0, 20)
                             : _twentyList = musicList;
                         return TopTwentyMusicWidget(
-                            _twentyList, playOrpauseMusic, visibleMiniPlayer);
+                            _twentyList, playOrpauseMusic);
                       }
                     },
                   ),
@@ -196,7 +197,9 @@ class _LoungePageState extends State<LoungePage>
             ),
           ),
           Visibility(
-            visible: bottomPlayListWidget == LoungeBottomWidgets.miniPlayer
+            visible: Provider.of<MiniWidgetStatusProvider>(context)
+                        .bottomPlayListWidget ==
+                    LoungeBottomWidgets.miniPlayer
                 ? true
                 : false,
             child: SmallPlayListWidget(
@@ -206,7 +209,9 @@ class _LoungePageState extends State<LoungePage>
             ),
           ),
           Visibility(
-            visible: bottomSeletListWidget == LoungeBottomWidgets.miniSelectList
+            visible: Provider.of<MiniWidgetStatusProvider>(context)
+                        .bottomSeletListWidget ==
+                    LoungeBottomWidgets.miniSelectList
                 ? true
                 : false,
             child: SmallSelectListWidget(
@@ -255,149 +260,196 @@ class _LoungePageState extends State<LoungePage>
                         stream: _assetsAudioPlayer.current,
                         builder: (context, snapshotCurrent) {
                           return ListView.builder(
+                            addAutomaticKeepAlives: true,
                             physics: NeverScrollableScrollPhysics(),
                             itemCount: snapshot.data.docs.length,
                             itemBuilder: (context, index) {
-                              return Container(
-                                height: 72,
-                                color: selectedList[index] == true
-                                    ? Colors.grey[300]
-                                    : Colors.transparent,
-                                child: ListTile(
-                                  onTap: () {
-                                    setState(() {
-                                      selectedList[index] =
-                                          !selectedList[index];
-                                      getSelectedMusicList();
-                                      selectedList.contains(true)
-                                          ? bottomSeletListWidget =
-                                              LoungeBottomWidgets.miniSelectList
-                                          : bottomSeletListWidget =
-                                              LoungeBottomWidgets.none;
-                                    });
-                                  },
-                                  leading: CircleAvatar(
-                                    backgroundImage: NetworkImage(
-                                        snapshot.data.docs[index]['imagePath']),
-                                  ),
-                                  title: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        snapshot.data.docs[index]['title'],
-                                        style: MTextStyles.bold14Grey06,
-                                      ),
-                                      SizedBox(
-                                        width: 6,
-                                      ),
-                                      Text(
-                                        snapshot.data.docs[index]['artist'],
-                                        maxLines: 1,
-                                        style: MTextStyles
-                                            .regular12WarmGrey_underline,
-                                      ),
-                                    ],
-                                  ),
-                                  trailing: Wrap(
-                                    crossAxisAlignment:
-                                        WrapCrossAlignment.center,
-                                    children: [
-                                      IconButton(
-                                          iconSize: 14,
-                                          icon: Icon(
-                                            Provider.of<NowPlayMusicProvider>(
-                                                                context,
-                                                                listen: false)
-                                                            .isPlay ==
-                                                        true &&
-                                                    musicList[index].id ==
-                                                        Provider.of<NowPlayMusicProvider>(
-                                                                context,
-                                                                listen: false)
-                                                            .nowMusicId
-                                                ? FontAwesomeIcons.pause
-                                                : FontAwesomeIcons.play,
-                                          ),
-                                          color: Provider.of<NowPlayMusicProvider>(
-                                                              context,
-                                                              listen: false)
-                                                          .isPlay ==
-                                                      true &&
-                                                  musicList[index].id ==
-                                                      Provider.of<NowPlayMusicProvider>(
-                                                              context,
-                                                              listen: false)
-                                                          .nowMusicId
-                                              ? MColors.black
-                                              : MColors.warm_grey,
-                                          onPressed: () {
-                                            MusicInfoData musicInfoData =
-                                                new MusicInfoData(
-                                              id: snapshot.data.docs[index]
-                                                  ['id'],
-                                              title: snapshot.data.docs[index]
-                                                  ['title'],
-                                              artist: snapshot.data.docs[index]
-                                                  ['artist'],
-                                              musicPath: snapshot.data
-                                                  .docs[index]['musicPath'],
-                                              imagePath: snapshot.data
-                                                  .docs[index]['imagePath'],
-                                              dateTime: snapshot
-                                                  .data.docs[index]['dateTime'],
-                                              favorite: snapshot
-                                                  .data.docs[index]['favorite'],
-                                              musicType:
-                                                  EnumToString.fromString(
-                                                      MusicTypeEnum.values,
-                                                      snapshot.data.docs[index]
-                                                          ['musicType']),
-                                            );
-                                            playOrpauseMusic(musicInfoData);
-                                          }),
-                                      GestureDetector(
+                              return Column(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    child: Container(
+                                      height: 72,
+                                      color: selectedList[index] == true
+                                          ? Colors.blueGrey[100]
+                                          : Colors.transparent,
+                                      child: ListTile(
                                         onTap: () {
-                                          _handleOnPressThumb(index);
+                                          selectedList[index] =
+                                              !selectedList[index];
+                                          getSelectedMusicList();
+                                          selectedList.contains(true)
+                                              ? Provider.of<MiniWidgetStatusProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .bottomSeletListWidget =
+                                                  LoungeBottomWidgets
+                                                      .miniSelectList
+                                              : Provider.of<MiniWidgetStatusProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .bottomSeletListWidget =
+                                                  LoungeBottomWidgets.none;
                                         },
-                                        child: Container(
-                                          height: 28,
-                                          width: 28,
-                                          child: FlareActor(
-                                            'assets/icons/thumb.flr',
-                                            alignment: Alignment.center,
+                                        leading: ClipOval(
+                                          // borderRadius:
+                                          //     BorderRadius.circular(4.0),
+                                          child: ExtendedImage.network(
+                                            snapshot.data.docs[index]
+                                                ['imagePath'],
+                                            cache: true,
+                                            width: 50,
+                                            height: 50,
                                             fit: BoxFit.cover,
-                                            animation:
-                                                selectedThumbIndex == index
-                                                    ? "click"
-                                                    : "idle",
+                                            clearMemoryCacheWhenDispose: false,
+
+                                            // loadStateChanged:
+                                            //     (ExtendedImageState state) {
+                                            //   switch (state
+                                            //       .extendedImageLoadState) {
+                                            //     case LoadState.loading:
+                                            //       break;
+                                            //     case LoadState.completed:
+                                            //       break;
+                                            //     case LoadState.failed:
+                                            //   }
+                                            // },
                                           ),
                                         ),
-                                      ),
-                                      SizedBox(
-                                        width: 20,
-                                        child: Text(
-                                          musicList[index].favorite > 10000
-                                              ? '10000++'
-                                              : musicList[index]
-                                                  .favorite
-                                                  .toString(),
-                                          style: MTextStyles.regular8Grey06,
+                                        title: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              snapshot.data.docs[index]
+                                                  ['title'],
+                                              style: MTextStyles.bold16Grey06,
+                                            ),
+                                            SizedBox(
+                                              width: 6,
+                                            ),
+                                            Text(
+                                              snapshot.data.docs[index]
+                                                  ['artist'],
+                                              maxLines: 1,
+                                              style: MTextStyles
+                                                  .regular12WarmGrey_underline,
+                                            ),
+                                          ],
+                                        ),
+                                        trailing: Wrap(
+                                          crossAxisAlignment:
+                                              WrapCrossAlignment.center,
+                                          children: [
+                                            IconButton(
+                                                iconSize: 14,
+                                                icon: Icon(
+                                                  Provider.of<NowPlayMusicProvider>(
+                                                                      context,
+                                                                      listen:
+                                                                          false)
+                                                                  .isPlay ==
+                                                              true &&
+                                                          musicList[index].id ==
+                                                              Provider.of<NowPlayMusicProvider>(
+                                                                      context,
+                                                                      listen:
+                                                                          false)
+                                                                  .nowMusicId
+                                                      ? FontAwesomeIcons.pause
+                                                      : FontAwesomeIcons.play,
+                                                ),
+                                                color: Provider.of<NowPlayMusicProvider>(
+                                                                    context,
+                                                                    listen:
+                                                                        false)
+                                                                .isPlay ==
+                                                            true &&
+                                                        musicList[index].id ==
+                                                            Provider.of<NowPlayMusicProvider>(
+                                                                    context,
+                                                                    listen:
+                                                                        false)
+                                                                .nowMusicId
+                                                    ? MColors.black
+                                                    : MColors.warm_grey,
+                                                onPressed: () {
+                                                  MusicInfoData musicInfoData =
+                                                      new MusicInfoData(
+                                                    id: snapshot
+                                                        .data.docs[index]['id'],
+                                                    title: snapshot.data
+                                                        .docs[index]['title'],
+                                                    artist: snapshot.data
+                                                        .docs[index]['artist'],
+                                                    musicPath: snapshot
+                                                            .data.docs[index]
+                                                        ['musicPath'],
+                                                    imagePath: snapshot
+                                                            .data.docs[index]
+                                                        ['imagePath'],
+                                                    dateTime: snapshot
+                                                            .data.docs[index]
+                                                        ['dateTime'],
+                                                    favorite: snapshot
+                                                            .data.docs[index]
+                                                        ['favorite'],
+                                                    musicType:
+                                                        EnumToString.fromString(
+                                                            MusicTypeEnum
+                                                                .values,
+                                                            snapshot.data
+                                                                    .docs[index]
+                                                                ['musicType']),
+                                                  );
+                                                  playOrpauseMusic(
+                                                      musicInfoData);
+                                                }),
+                                            GestureDetector(
+                                              onTap: () {
+                                                _handleOnPressThumb(index);
+                                              },
+                                              child: Container(
+                                                height: 28,
+                                                width: 28,
+                                                child: FlareActor(
+                                                  'assets/icons/thumb.flr',
+                                                  alignment: Alignment.center,
+                                                  fit: BoxFit.cover,
+                                                  animation:
+                                                      selectedThumbIndex ==
+                                                              index
+                                                          ? "click"
+                                                          : "idle",
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 20,
+                                              child: Text(
+                                                musicList[index].favorite >
+                                                        10000
+                                                    ? '10000++'
+                                                    : musicList[index]
+                                                        .favorite
+                                                        .toString(),
+                                                style:
+                                                    MTextStyles.regular8Grey06,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-
-                                      // IconButton(
-                                      //     icon: Icon(
-                                      //       Icons.thumb_up_alt_outlined,
-                                      //       size: 14,
-                                      //     ),
-                                      //     onPressed: () {
-                                      //       _handleOnPressThumb(index);
-                                      //     }),
-                                    ],
+                                    ),
                                   ),
-                                ),
+                                  Divider(
+                                    height: 1,
+                                    indent: 10,
+                                    endIndent: 10,
+                                  ),
+                                ],
                               );
                             },
                           );
@@ -425,17 +477,26 @@ class _LoungePageState extends State<LoungePage>
           selectedList[i] = true;
         }
       }
+      for (int i = 0; i < selectedList.length; i++) {
+        if (selectedList[i] == true) {
+          selectedMusicList.add(musicList[i]);
+        }
+      }
       selectedList.contains(true)
-          ? bottomSeletListWidget = LoungeBottomWidgets.miniSelectList
-          : bottomSeletListWidget = LoungeBottomWidgets.none;
+          ? Provider.of<MiniWidgetStatusProvider>(context, listen: false)
+              .bottomSeletListWidget = LoungeBottomWidgets.miniSelectList
+          : Provider.of<MiniWidgetStatusProvider>(context, listen: false)
+              .bottomSeletListWidget = LoungeBottomWidgets.none;
     });
   }
 
   void visibleMiniPlayer() {
-    setState(() {
-      bottomPlayListWidget = LoungeBottomWidgets.miniPlayer;
-      bottomSeletListWidget = LoungeBottomWidgets.none;
-    });
+    // setState(() {
+    Provider.of<MiniWidgetStatusProvider>(context, listen: false)
+        .bottomPlayListWidget = LoungeBottomWidgets.miniPlayer;
+    Provider.of<MiniWidgetStatusProvider>(context, listen: false)
+        .bottomSeletListWidget = LoungeBottomWidgets.none;
+    // });
   }
 
   void showAndHideSnackBar(String content) {
@@ -468,10 +529,11 @@ class _LoungePageState extends State<LoungePage>
 
     PlayMusic.makeNewPlayer();
     _initSubscription();
-    int length = selectedList.where((element) => element == true).length;
-    List<Audio> audios = List.generate(length,
-        (index) => new Audio.network(selectedMusicList[index].musicPath));
-    PlayMusic.playListFunc(audios);
+    // int length = selectedList.where((element) => element == true).length;
+    // List<Audio> audios = List.generate(length,
+    //     (index) => new Audio.network(selectedMusicList[index].musicPath));
+    // PlayMusic.playListFunc(audios);
+    PlayMusic.playListFunc(selectedMusicList);
   }
 
   void setNowPlayMusicInfo(MusicInfoData musicInfoData) {
@@ -516,9 +578,9 @@ class _LoungePageState extends State<LoungePage>
     setState(() {
       if (selectedValue == 0) {
         PlayMusic.playUrlFunc(
-            Provider.of<NowPlayMusicProvider>(context, listen: false)
-                .musicInfoData
-                .musicPath);
+          Provider.of<NowPlayMusicProvider>(context, listen: false)
+              .musicInfoData,
+        );
       } else if (selectedValue == 2) {
         PlayMusic.stopFunc();
 
@@ -529,12 +591,12 @@ class _LoungePageState extends State<LoungePage>
 
         PlayMusic.playUrlFunc(
             Provider.of<NowPlayMusicProvider>(context, listen: false)
-                .musicInfoData
-                .musicPath);
+                .musicInfoData);
       } else if (selectedValue == 1) {
         PlayMusic.playOrPauseFunc();
       }
-      bottomPlayListWidget = LoungeBottomWidgets.miniPlayer;
+      Provider.of<MiniWidgetStatusProvider>(context, listen: false)
+          .bottomPlayListWidget = LoungeBottomWidgets.miniPlayer;
     });
   }
 

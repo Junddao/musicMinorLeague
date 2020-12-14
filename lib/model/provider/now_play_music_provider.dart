@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 
 class NowPlayMusicProvider with ChangeNotifier {
   MusicInfoData _musicInfoData;
+  List<MusicInfoData> _musicList;
   List<MusicInfoData> _selectedMusicList;
+  List<bool> _selectList;
   String _nowMusicId;
   bool _isPlay = false;
 
@@ -11,6 +13,20 @@ class NowPlayMusicProvider with ChangeNotifier {
   set selectedMusicList(List<MusicInfoData> selectedMusicList) {
     // _selectedMusicList
     _selectedMusicList = List.from(selectedMusicList);
+    notifyListeners();
+  }
+
+  List<MusicInfoData> get musicList => _musicList;
+  set musicList(List<MusicInfoData> musicList) {
+    // _selectedMusicList
+    _musicList = List.from(musicList);
+    notifyListeners();
+  }
+
+  List<bool> get selectList => _selectList;
+  set selectList(List<bool> selectList) {
+    // _selectedMusicList
+    _selectList = List.from(selectList);
     notifyListeners();
   }
 

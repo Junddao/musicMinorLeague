@@ -1,3 +1,4 @@
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
@@ -10,9 +11,8 @@ import 'package:provider/provider.dart';
 class TopTwentyMusicWidget extends StatefulWidget {
   final List<MusicInfoData> _topTwentyMusicList;
   final Function playOrpauseMusic;
-  final Function visibleMiniPlayer;
-  TopTwentyMusicWidget(
-      this._topTwentyMusicList, this.playOrpauseMusic, this.visibleMiniPlayer);
+
+  TopTwentyMusicWidget(this._topTwentyMusicList, this.playOrpauseMusic);
 
   @override
   _TopTwentyMusicWidgetState createState() => _TopTwentyMusicWidgetState();
@@ -64,9 +64,11 @@ class _TopTwentyMusicWidgetState extends State<TopTwentyMusicWidget> {
                               Positioned.fill(
                                   child: item.imagePath == null
                                       ? Container()
-                                      : Image.network(
+                                      : ExtendedImage.network(
                                           item.imagePath,
                                           fit: BoxFit.cover,
+                                          cache: true,
+                                          clearMemoryCacheWhenDispose: true,
                                         )),
                               Container(
                                 color: const Color(0x66000000),
@@ -163,59 +165,4 @@ class _TopTwentyMusicWidgetState extends State<TopTwentyMusicWidget> {
             ),
     ]);
   }
-
-  // void playOrPauseMusic(int index) {
-  //   Provider.of<NowPlayMusicProvider>(context, listen: false).musicInfoData =
-  //       widget._topTwentyMusicList[index];
-
-  //   String nowId =
-  //       Provider.of<NowPlayMusicProvider>(context, listen: false).nowMusicId;
-
-  //   int selectedValue; // 0 : first Selected , 1: same song selected, 2: different song selected
-
-  //   // first selected
-  //   if (nowId == null) {
-  //     nowId = widget._topTwentyMusicList[index].id;
-  //     selectedValue = 0;
-  //   }
-  //   // same song selected
-  //   else if (nowId == widget._topTwentyMusicList[index].id) {
-  //     Provider.of<NowPlayMusicProvider>(context, listen: false).isPlay = false;
-
-  //     selectedValue = 1;
-  //   }
-
-  //   // different song selected
-  //   else if (nowId != null && nowId != widget._topTwentyMusicList[index].id) {
-  //     nowId = widget._topTwentyMusicList[index].id;
-  //     selectedValue = 2;
-  //   }
-  //   Provider.of<NowPlayMusicProvider>(context, listen: false).nowMusicId =
-  //       nowId;
-
-  //   setState(() {
-  //     if (selectedValue == 0) {
-  //       PlayMusic.playUrlFunc(
-  //           Provider.of<NowPlayMusicProvider>(context, listen: false)
-  //               .musicInfoData
-  //               .musicPath);
-  //     } else if (selectedValue == 2) {
-  //       PlayMusic.stopFunc();
-
-  //       widget._initSubscription();
-
-  //       // _clearSubscriptions();
-  //       PlayMusic.makeNewPlayer();
-
-  //       PlayMusic.playUrlFunc(
-  //           Provider.of<NowPlayMusicProvider>(context, listen: false)
-  //               .musicInfoData
-  //               .musicPath);
-  //     } else if (selectedValue == 1) {
-  //       PlayMusic.playOrPauseFunc();
-  //     }
-
-  //     widget.visibleMiniPlayer();
-  //   });
-  // }
 }

@@ -29,6 +29,7 @@ dependencies:
   cupertino_icons: ^1.0.0
   dio: ^3.0.10
   enum_to_string: ^1.0.13
+  extended_image: ^1.4.0
   file_picker: ^2.0.13
   firebase_auth: ^0.18.3
   firebase_core: ^0.5.2

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
@@ -70,12 +71,20 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
               Container(
                 height: 50,
                 child: ListTile(
-                  leading: CircleAvatar(
-                      backgroundImage: NetworkImage(
-                          Provider.of<NowPlayMusicProvider>(context,
-                                  listen: false)
-                              .musicInfoData
-                              .imagePath)),
+                  leading: ClipOval(
+                    // borderRadius:
+                    //     BorderRadius.circular(4.0),
+                    child: ExtendedImage.network(
+                      Provider.of<NowPlayMusicProvider>(context, listen: false)
+                          .musicInfoData
+                          .imagePath,
+                      cache: true,
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                      clearMemoryCacheWhenDispose: true,
+                    ),
+                  ),
                   title: InkWell(
                     onTap: () {
                       Navigator.of(context).pushNamed('MyMusicPlayerPage');

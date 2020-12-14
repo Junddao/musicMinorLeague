@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:music_minorleague/model/provider/mini_widget_status_provider.dart';
 import 'package:music_minorleague/model/provider/now_play_music_provider.dart';
 import 'package:music_minorleague/route.dart';
 import 'package:music_minorleague/splash_screen.dart';
@@ -51,6 +52,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<NowPlayMusicProvider>(
           create: (_) => NowPlayMusicProvider(),
         ),
+        ChangeNotifierProvider<MiniWidgetStatusProvider>(
+          create: (_) => MiniWidgetStatusProvider(),
+        ),
       ],
       child: MaterialApp(
         title: 'MusicMinorLeague',
@@ -60,7 +64,7 @@ class MyApp extends StatelessWidget {
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         debugShowCheckedModeBanner: false,
-        initialRoute: '/',
+        // initialRoute: '/',
         onGenerateRoute: Routers.generateRoute,
         home: SplashScreen(),
         builder: EasyLoading.init(),

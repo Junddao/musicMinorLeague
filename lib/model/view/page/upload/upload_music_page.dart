@@ -49,11 +49,14 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
   bool isPlay = false;
   Timer _timer;
 
+  String uniqueId;
+
   final firestoreinstance = FirebaseFirestore.instance;
 
   @override
   void initState() {
     _coverImageList = List<Asset>();
+    uniqueId = Uuid().v4();
     super.initState();
   }
 
@@ -483,14 +486,10 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
 
   Future<String> uploadImageFile(File imageFile) async {
     var now = DateTime.now();
-    String filename = _titleController.text + '_image';
+    String filename = _titleController.text + uniqueId + '_image';
     String date =
         now.year.toString() + now.month.toString() + now.day.toString();
-    ref = FirebaseStorage.instance
-        .ref()
-        .child(date)
-        .child(_artist)
-        .child(filename);
+    ref = FirebaseStorage.instance.ref().child(_artist).child(filename);
 
     UploadTask uploadTask = ref.putFile(imageFile);
 
@@ -506,14 +505,10 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
 
   Future<void> uploadMusicFile(File _musicFile) async {
     var now = DateTime.now();
-    String filename = _titleController.text + '_music';
+    String filename = _titleController.text + uniqueId + '_music';
     String date =
         now.year.toString() + now.month.toString() + now.day.toString();
-    ref = FirebaseStorage.instance
-        .ref()
-        .child(date)
-        .child(_artist)
-        .child(filename);
+    ref = FirebaseStorage.instance.ref().child(_artist).child(filename);
 
     UploadTask uploadTask = ref.putFile(_musicFile);
 
@@ -530,7 +525,7 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
         musicFileUrl != null &&
         imageFileUrl != null) {
       var data = {
-        "id": Uuid().v4(),
+        "id": uniqueId,
         "title": _titleController.text,
         "artist": _artist,
         "musicType": EnumToString.convertToString(_typeOfMusic),

@@ -1,4 +1,5 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
@@ -59,32 +60,11 @@ class _MyMusicPlayerPageState extends State<MyMusicPlayerPage> {
   }
 
   _body() {
-    // if (Provider.of<NowPlayMusicProvider>(context, listen: false)
-    //         .musicInfoData ==
-    //     null) {
-    //   return Center(
-    //       child: Container(
-    //     child: Text('empty!'),
-    //   ));
-    // } else {
     return Container(
       width: SizeConfig.screenWidth,
       child: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            // SizedBox(
-            //   height: 50,
-            // ),
-            // Container(
-            //   alignment: Alignment.topLeft,
-            //   margin: EdgeInsets.only(
-            //     left: 10,
-            //   ),
-            //   child: IconButton(
-            //     onPressed: () {},
-            //     icon: Icon(FontAwesomeIcons.chevronDown),
-            //   ),
-            // ),
             SizedBox(
               height: 20,
             ),
@@ -110,11 +90,13 @@ class _MyMusicPlayerPageState extends State<MyMusicPlayerPage> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: Image(
-                  image: NetworkImage(Provider.of<NowPlayMusicProvider>(context,
-                              listen: false)
-                          .musicInfoData
-                          ?.imagePath ??
-                      'https://cdn.pixabay.com/photo/2018/03/04/09/51/space-3197611_1280.jpg'),
+                  image: ExtendedNetworkImageProvider(
+                    Provider.of<NowPlayMusicProvider>(context, listen: false)
+                            .musicInfoData
+                            ?.imagePath ??
+                        'https://cdn.pixabay.com/photo/2018/03/04/09/51/space-3197611_1280.jpg',
+                    cache: true,
+                  ),
                   width: MediaQuery.of(context).size.width * 0.7,
                   height: MediaQuery.of(context).size.width * 0.7,
                   fit: BoxFit.cover,
@@ -165,7 +147,6 @@ class _MyMusicPlayerPageState extends State<MyMusicPlayerPage> {
                 ),
               ),
             ),
-
             SizedBox(
               height: 40,
             ),
