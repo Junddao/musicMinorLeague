@@ -10,7 +10,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:music_minorleague/model/enum/music_type_enum.dart';
 import 'package:music_minorleague/model/provider/user_profile_provider.dart';
-import 'package:music_minorleague/model/view/page/upload/component/upload_result_Dialog.dart';
+import 'package:music_minorleague/model/view/page/upload/component/upload_result_dialog.dart';
+
 import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';

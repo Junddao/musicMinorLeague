@@ -48,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
 
     updateDatabase(userProfileData);
 
-    Navigator.of(context).pushNamed('TabPage');
+    Navigator.of(context).pushNamed('RootPage');
   }
 
   @override

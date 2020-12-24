@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 class NowPlayMusicProvider with ChangeNotifier {
   MusicInfoData _musicInfoData;
   List<MusicInfoData> _musicList;
+
   List<MusicInfoData> _selectedMusicList;
   List<bool> _selectList;
   String _nowMusicId;

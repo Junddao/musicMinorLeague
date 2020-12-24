@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 import 'package:flutter/material.dart';
+import 'package:music_minorleague/utils/firebase_db_helper.dart';
 import 'package:provider/provider.dart';
 
 import 'model/data/user_profile_data.dart';
@@ -50,7 +51,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Provider.of<UserProfileProvider>(context, listen: false).userProfileData =
         UserProfileData.fromMap(userProfileData);
 
-    Navigator.of(context).pushNamed('TabPage');
+    Navigator.of(context).pushNamed('RootPage');
   }
 
   void _navigatorToLogin() {
