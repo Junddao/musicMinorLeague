@@ -96,4 +96,8 @@ class PlayMusic {
   static AssetsAudioPlayer assetsAudioPlayer() {
     return _assetsAudioPlayer;
   }
+
+  static Stream<bool> isPlayingFunc() {
+    return _assetsAudioPlayer.isPlaying;
+  }
 }
