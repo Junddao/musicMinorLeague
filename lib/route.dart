@@ -3,6 +3,7 @@ import 'package:music_minorleague/model/view/page/music_player/my_music_player_p
 import 'package:music_minorleague/model/view/page/playlist/my_play_list_page.dart';
 import 'package:music_minorleague/model/view/page/tab_page.dart';
 import 'package:music_minorleague/model/view/page/upload/upload_music_page.dart';
+import 'package:music_minorleague/model/view/page/user_profile/my_profile_modify_page.dart';
 import 'package:music_minorleague/rootpage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,8 @@ class Routers {
         return CupertinoPageRoute(builder: (_) => MyMusicPlayerPage());
       case 'MyPlayListPage':
         return CupertinoPageRoute(builder: (_) => MyPlayListPage());
+      case 'MyProfileModifyPage':
+        return CupertinoPageRoute(builder: (_) => MyProfileModifyPage());
 
       // case 'ClassProceedingPage':
       //   return CupertinoPageRoute(

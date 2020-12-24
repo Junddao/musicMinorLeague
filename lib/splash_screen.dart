@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 import 'package:flutter/material.dart';
+import 'package:music_minorleague/utils/firebase_db_helper.dart';
 import 'package:provider/provider.dart';
 
 import 'model/data/user_profile_data.dart';
@@ -38,18 +39,24 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _navigatorToHome() {
-    UserProfileData userProfileData = new UserProfileData(
-      _user.displayName,
-      _user.photoURL,
-      _user.email,
-      _user.email.substring(0, _user.email.indexOf('@')), // id
-      '',
-    );
+    // UserProfileData userProfileData = new UserProfileData(
+    //   _user.displayName,
+    //   _user.photoURL,
+    //   _user.email,
+    //   _user.email.substring(0, _user.email.indexOf('@')), // id
+    //   '',
+    //   '',
+    // );
 
-    Provider.of<UserProfileProvider>(context, listen: false).userProfileData =
-        userProfileData;
+    String collection = FirebaseDBHelper.userCollection;
+    String doc = _user.email.substring(0, _user.email.indexOf('@'));
 
-    Navigator.of(context).pushNamed('TabPage');
+    FirebaseDBHelper.getData(collection, doc).then((value) {
+      Provider.of<UserProfileProvider>(context, listen: false).userProfileData =
+          UserProfileData.fromMap(value.data());
+    });
+
+    Navigator.of(context).pushNamed('RootPage');
   }
 
   void _navigatorToLogin() {

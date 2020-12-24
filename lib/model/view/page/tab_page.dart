@@ -1,14 +1,20 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:music_minorleague/model/enum/lounge_bottom_widget_enum.dart';
+import 'package:music_minorleague/model/provider/mini_widget_status_provider.dart';
+import 'package:music_minorleague/model/provider/now_play_music_provider.dart';
 import 'package:music_minorleague/model/view/page/lounge/lounge_page.dart';
 import 'package:music_minorleague/model/view/page/music_player/my_music_player_page.dart';
 import 'package:music_minorleague/model/view/page/playlist/my_play_list_page.dart';
 import 'package:music_minorleague/model/view/page/user_profile/my_profile_page.dart';
+import 'package:music_minorleague/model/view/page/widget/small_play_list_widget.dart';
 
 import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 import 'package:music_minorleague/tabstates.dart';
 import 'package:flutter/material.dart';
+import 'package:music_minorleague/utils/firebase_db_helper.dart';
 import 'package:provider/provider.dart';
 
 class TabPage extends StatefulWidget {
@@ -39,72 +45,79 @@ class _TabPageState extends State<TabPage> {
         });
         return Future(() => false);
       },
-      child: Consumer<TabStates>(
-          builder: (context, value, child) => Scaffold(
-              // appBar: AppBar(
-              //   automaticallyImplyLeading: false,
-              //   leading: IconButton(
-              //     icon: Icon(Icons.menu_outlined),
-              //   ),
-              //   title: getTitleText(),
-              //   backgroundColor: Colors.transparent,
-              //   elevation: 0.0,
-              // ),
+      child: Stack(
+        children: [
+          Consumer<TabStates>(
+            builder: (context, value, child) => Scaffold(
               body: _tabs[Provider.of<TabStates>(context).selectedIndex],
               bottomNavigationBar: new Theme(
-                  data: Theme.of(context).copyWith(
-                      canvasColor: Colors.white,
-                      primaryColor: Colors.red,
-                      textTheme: Theme.of(context).textTheme.copyWith(
-                          caption: new TextStyle(
-                              color: Colors
-                                  .grey))), // sets the inactive color of the `BottomNavigationBar`
+                data: Theme.of(context).copyWith(
+                    canvasColor: Colors.white,
+                    primaryColor: Colors.red,
+                    textTheme: Theme.of(context).textTheme.copyWith(
+                        caption: new TextStyle(
+                            color: Colors
+                                .grey))), // sets the inactive color of the `BottomNavigationBar`
 
-                  child: new BottomNavigationBar(
-                      onTap: _onItemTapped,
-                      type: BottomNavigationBarType.fixed,
-                      currentIndex: value.selectedIndex,
-                      items: <BottomNavigationBarItem>[
-                        // BottomNavigationBarItem(
-                        //     icon: Icon(Icons.mic),
-                        //     title: Text('녹음')), // 뭘 보여줘야 할까...
-                        BottomNavigationBarItem(
-                          icon: Icon(
-                            Icons.home,
-                            size: 20,
-                          ),
-                          label: '라운지',
-                        ), //
-                        BottomNavigationBarItem(
-                          icon: Icon(
-                            Icons.queue_music_outlined,
-                            size: 20,
-                          ),
-                          label: '내 재생목록',
-                        ),
-                        BottomNavigationBarItem(
-                          icon: Icon(
-                            Icons.add_circle_outline_outlined,
-                            size: 30,
-                          ),
-                          label: '등록하기',
-                        ),
+                child: new BottomNavigationBar(
+                  onTap: _onItemTapped,
+                  type: BottomNavigationBarType.fixed,
+                  currentIndex: value.selectedIndex,
+                  items: <BottomNavigationBarItem>[
+                    // BottomNavigationBarItem(
+                    //     icon: Icon(Icons.mic),
+                    //     title: Text('녹음')), // 뭘 보여줘야 할까...
+                    BottomNavigationBarItem(
+                      icon: Icon(
+                        Icons.home,
+                        size: 20,
+                      ),
+                      label: '라운지',
+                    ), //
+                    BottomNavigationBarItem(
+                      icon: Icon(
+                        Icons.queue_music_outlined,
+                        size: 20,
+                      ),
+                      label: '내 재생목록',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(
+                        Icons.add_circle_outline_outlined,
+                        size: 30,
+                      ),
+                      label: '등록하기',
+                    ),
 
-                        BottomNavigationBarItem(
-                          icon: Icon(
-                            Icons.music_note_rounded,
-                            size: 20,
-                          ),
-                          label: '플레이어',
-                        ),
-                        BottomNavigationBarItem(
-                          icon: Icon(
-                            Icons.person,
-                            size: 20,
-                          ),
-                          label: '프로필',
-                        ),
-                      ])))),
+                    BottomNavigationBarItem(
+                      icon: Icon(
+                        Icons.music_note_rounded,
+                        size: 20,
+                      ),
+                      label: '플레이어',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(
+                        Icons.person,
+                        size: 20,
+                      ),
+                      label: '프로필',
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Visibility(
+            visible: Provider.of<MiniWidgetStatusProvider>(context)
+                        .bottomPlayListWidget ==
+                    LoungeBottomWidgets.miniPlayer
+                ? true
+                : false,
+            child: SmallPlayListWidget(),
+          ),
+        ],
+      ),
     );
   }
 

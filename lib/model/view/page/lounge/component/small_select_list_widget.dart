@@ -1,10 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
+import 'package:music_minorleague/model/provider/now_play_music_provider.dart';
 import 'package:music_minorleague/model/provider/user_profile_provider.dart';
-import 'package:music_minorleague/model/view/page/upload/component/upload_result_Dialog.dart';
+
 import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
@@ -146,14 +146,17 @@ class _SmallSelectListWidgetState extends State<SmallSelectListWidget> {
     selectedMusicList.clear();
     for (int i = 0; i < widget._selectedList.length; i++) {
       if (widget._selectedList[i] == true) {
-        selectedMusicList.add(widget._musicList[i]);
+        // selectedMusicList.add(widget._musicList[i]);
+        selectedMusicList.add(
+            Provider.of<NowPlayMusicProvider>(context, listen: false)
+                .musicList[i]);
       }
     }
   }
 
   playSelectMusic() {
     widget._visibleMiniPlayerFunc();
-    widget._playOrPauseMusicForSelectedListFunc(0);
+    widget._playOrPauseMusicForSelectedListFunc();
   }
 
   Future<void> updateMyMusicListInFirebase() async {

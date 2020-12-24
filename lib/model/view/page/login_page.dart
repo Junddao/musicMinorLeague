@@ -40,6 +40,7 @@ class _LoginPageState extends State<LoginPage> {
       user.email,
       user.email.substring(0, user.email.indexOf('@')), // id
       '',
+      '',
     );
 
     Provider.of<UserProfileProvider>(context, listen: false).userProfileData =
@@ -47,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
 
     updateDatabase(userProfileData);
 
-    Navigator.of(context).pushNamed('TabPage');
+    Navigator.of(context).pushNamed('RootPage');
   }
 
   @override
@@ -117,6 +118,7 @@ class _LoginPageState extends State<LoginPage> {
       "id": _id, // id
       'JoinDate': DateTime.now().toIso8601String(),
       "youtubeUrl": '',
+      "introduce": '',
     };
     String doc = _id;
     FirebaseDBHelper.setData(FirebaseDBHelper.userCollection, doc, data);

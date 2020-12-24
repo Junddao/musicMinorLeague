@@ -1,23 +1,28 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
-import 'package:music_minorleague/model/provider/now_play_music_provider.dart';
 
 class PlayMusic {
   static AssetsAudioPlayer _assetsAudioPlayer = new AssetsAudioPlayer();
+
+  static disposeAudioPlayer() {
+    _assetsAudioPlayer.dispose();
+  }
+
   static makeNewPlayer() {
     _assetsAudioPlayer = AssetsAudioPlayer.newPlayer();
   }
 
-  static stopFunc() {
-    _assetsAudioPlayer.stop();
+  static Future<void> stopFunc() async {
+    await _assetsAudioPlayer.stop();
   }
 
-  static playUrlFunc(MusicInfoData nowMusicData) {
-    final audio = Audio.network(nowMusicData.musicPath,
+  static playUrlFunc(MusicInfoData currentMusicData) {
+    final audio = Audio.network(currentMusicData.musicPath,
         metas: Metas(
-          title: nowMusicData.title,
-          artist: nowMusicData.artist,
-          image: MetasImage.network(nowMusicData.imagePath),
+          id: currentMusicData.id,
+          title: currentMusicData.title,
+          artist: currentMusicData.artist,
+          image: MetasImage.network(currentMusicData.imagePath),
         ));
     _assetsAudioPlayer.open(audio, showNotification: true);
   }
@@ -26,26 +31,19 @@ class PlayMusic {
     _assetsAudioPlayer.open(Audio.file(filePath));
   }
 
-// static playListFunc(List<Audio> audios) {
-//     _assetsAudioPlayer.open(
-//       Playlist(
-//         audios: audios,
-//       ),
-//       loopMode: LoopMode.playlist,
-//     );
-//   }
-
   static playListFunc(List<MusicInfoData> selectedMusicList) {
     List<Audio> audios = List.generate(
         selectedMusicList.length,
         (index) => new Audio.network(selectedMusicList[index].musicPath,
             metas: Metas(
+              id: selectedMusicList[index].id,
               title: selectedMusicList[index].title,
               artist: selectedMusicList[index].artist,
               image: MetasImage.network(selectedMusicList[index].imagePath),
             )));
     _assetsAudioPlayer.open(
       Playlist(
+        startIndex: 0,
         audios: audios,
       ),
       loopMode: LoopMode.playlist,
@@ -95,5 +93,9 @@ class PlayMusic {
 
   static AssetsAudioPlayer assetsAudioPlayer() {
     return _assetsAudioPlayer;
+  }
+
+  static Stream<bool> isPlayingFunc() {
+    return _assetsAudioPlayer.isPlaying;
   }
 }
