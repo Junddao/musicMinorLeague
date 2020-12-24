@@ -1,6 +1,5 @@
 import 'package:flutter_svg/svg.dart';
 import 'package:music_minorleague/model/view/page/lounge/lounge_page.dart';
-import 'package:music_minorleague/model/view/page/music_player/my_music_player_page.dart';
 import 'package:music_minorleague/model/view/page/playlist/my_play_list_page.dart';
 import 'package:music_minorleague/model/view/page/user_profile/my_profile_page.dart';
 

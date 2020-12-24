@@ -38,16 +38,17 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _navigatorToHome() {
-    UserProfileData userProfileData = new UserProfileData(
-      _user.displayName,
-      _user.photoURL,
-      _user.email,
-      _user.email.substring(0, _user.email.indexOf('@')), // id
-      '',
-    );
+    var userProfileData = {
+      'userName': _user.displayName,
+      'photoUrl': _user.photoURL,
+      'userEmail': _user.email,
+      'id': _user.email.substring(0, _user.email.indexOf('@')), // id
+      'youtubeUrl': '',
+      'introduce': '',
+    };
 
     Provider.of<UserProfileProvider>(context, listen: false).userProfileData =
-        userProfileData;
+        UserProfileData.fromMap(userProfileData);
 
     Navigator.of(context).pushNamed('TabPage');
   }

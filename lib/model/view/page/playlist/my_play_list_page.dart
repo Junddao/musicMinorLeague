@@ -180,7 +180,11 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
               stream: FirebaseDBHelper.getSubDataStream(
                   mainCollection, mainDoc, subCollection),
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text('error'),
+                  );
+                } else if (snapshot.hasData == false) {
                   return Center(
                     child: CircularProgressIndicator(),
                   );

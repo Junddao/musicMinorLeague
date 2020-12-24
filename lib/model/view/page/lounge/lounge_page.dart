@@ -34,7 +34,6 @@ class LoungePage extends StatefulWidget {
 class _LoungePageState extends State<LoungePage>
     with SingleTickerProviderStateMixin {
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
-  TabController tabController;
 
   bool isTabThisWeekMusicListItem;
 
@@ -43,7 +42,7 @@ class _LoungePageState extends State<LoungePage>
   List<MusicInfoData> selectedMusicList;
 
   List<bool> selectedList;
-  AnimationController _animationController;
+
   // List<bool> isPlayList;
 
   int selectedThumbIndex = -1;
@@ -54,15 +53,14 @@ class _LoungePageState extends State<LoungePage>
   @override
   void initState() {
     super.initState();
-    _animationController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+
     // tabController = TabController(vsync: this, length: 2);
 
     isTabThisWeekMusicListItem = false;
     musicList = new List<MusicInfoData>();
     topTwentyMusicList = new List<MusicInfoData>();
     selectedMusicList = new List<MusicInfoData>();
-
+    selectedList = new List<bool>();
     _initSubscription();
   }
 
@@ -120,7 +118,6 @@ class _LoungePageState extends State<LoungePage>
   @override
   void dispose() {
     super.dispose();
-    tabController.dispose();
   }
 
   @override
@@ -156,7 +153,11 @@ class _LoungePageState extends State<LoungePage>
                     stream: FirebaseDBHelper.getDataStream(
                         FirebaseDBHelper.allMusicCollection),
                     builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
+                      if (snapshot.hasError) {
+                        return Center(
+                          child: Text('error'),
+                        );
+                      } else if (snapshot.hasData == false) {
                         return Center(
                           child: CircularProgressIndicator(),
                         );
@@ -165,6 +166,11 @@ class _LoungePageState extends State<LoungePage>
                             FirebaseDBHelper.getMusicDatabase(snapshot.data);
                         List<MusicInfoData> _twentyList =
                             new List<MusicInfoData>();
+                        if (selectedList?.length != snapshot.data.docs.length) {
+                          selectedList = null;
+                          selectedList = List.generate(
+                              snapshot.data.docs.length, (index) => false);
+                        }
                         musicList.length > 20
                             ? _twentyList = musicList.sublist(0, 20)
                             : _twentyList = musicList;
@@ -239,17 +245,15 @@ class _LoungePageState extends State<LoungePage>
                 stream: FirebaseDBHelper.getDataStream(
                     FirebaseDBHelper.allMusicCollection),
                 builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text('error'),
+                    );
+                  } else if (snapshot.hasData == false) {
                     return Center(
                       child: CircularProgressIndicator(),
                     );
                   } else {
-                    if (selectedList?.length != snapshot.data.docs.length) {
-                      selectedList = null;
-                      selectedList = List.generate(
-                          snapshot.data.docs.length, (index) => false);
-                    }
-
                     // if (isPlayList?.length != snapshot.data.docs.length) {
                     //   isPlayList = null;
                     //   isPlayList = List.generate(
@@ -302,18 +306,6 @@ class _LoungePageState extends State<LoungePage>
                                             height: 50,
                                             fit: BoxFit.cover,
                                             clearMemoryCacheWhenDispose: false,
-
-                                            // loadStateChanged:
-                                            //     (ExtendedImageState state) {
-                                            //   switch (state
-                                            //       .extendedImageLoadState) {
-                                            //     case LoadState.loading:
-                                            //       break;
-                                            //     case LoadState.completed:
-                                            //       break;
-                                            //     case LoadState.failed:
-                                            //   }
-                                            // },
                                           ),
                                         ),
                                         title: Column(

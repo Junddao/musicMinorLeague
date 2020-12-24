@@ -34,16 +34,17 @@ class _LoginPageState extends State<LoginPage> {
 
     final User user = (await _auth.signInWithCredential(credential)).user;
 
-    UserProfileData userProfileData = new UserProfileData(
-      user.displayName,
-      user.photoURL,
-      user.email,
-      user.email.substring(0, user.email.indexOf('@')), // id
-      '',
-    );
+    Map<String, dynamic> userProfileData = {
+      'userName': user.displayName,
+      'photoUrl': user.photoURL,
+      'userEmail': user.email,
+      'id': user.email.substring(0, user.email.indexOf('@')), // id
+      'youtubeUrl': '',
+      'introduce': '',
+    };
 
     Provider.of<UserProfileProvider>(context, listen: false).userProfileData =
-        userProfileData;
+        UserProfileData.fromMap(userProfileData);
 
     updateDatabase(userProfileData);
 
@@ -107,19 +108,11 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  updateDatabase(UserProfileData userProfileData) {
-    String _id = userProfileData.userEmail
-        .substring(0, userProfileData.userEmail.indexOf('@'));
-    var data = {
-      "userName": userProfileData.userName,
-      "photoUrl": userProfileData.photoUrl,
-      "userEmail": userProfileData.userEmail,
-      "id": _id, // id
-      'JoinDate': DateTime.now().toIso8601String(),
-      "youtubeUrl": '',
-    };
-    String doc = _id;
-    FirebaseDBHelper.setData(FirebaseDBHelper.userCollection, doc, data);
+  updateDatabase(Map<String, dynamic> userProfileData) {
+    String doc = userProfileData['userEmail']
+        .substring(0, userProfileData['userEmail'].indexOf('@'));
+    FirebaseDBHelper.setData(
+        FirebaseDBHelper.userCollection, doc, userProfileData);
     // firestoreinstance.collection('User').doc(_id).set(data);
   }
 }

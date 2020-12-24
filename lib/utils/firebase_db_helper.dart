@@ -33,6 +33,16 @@ class FirebaseDBHelper {
     });
   }
 
+  static Future<void> updateData(
+      String collection, String doc, Map<String, dynamic> data) async {
+    await firestoreinstance.collection(collection).doc(doc).update({
+      'userName': data['userName'],
+      'photoUrl': data['photoUrl'],
+      'youtubeUrl': data['youtubeUrl'],
+      'introduce': data['introduce'],
+    });
+  }
+
   static Future<void> deleteDoc(String collection, String doc) async {
     return await firestoreinstance.collection(collection).doc(doc).delete();
   }
@@ -47,7 +57,7 @@ class FirebaseDBHelper {
         .delete();
   }
 
-  static Future<void> getData(String collection, String doc) async {
+  static Future<DocumentSnapshot> getData(String collection, String doc) async {
     return await firestoreinstance.collection(collection).doc(doc).get();
   }
 

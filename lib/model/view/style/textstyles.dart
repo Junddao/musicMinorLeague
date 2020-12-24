@@ -410,6 +410,13 @@ class MTextStyles {
       fontStyle: FontStyle.normal,
       fontSize: 12.0);
 
+  static const bold12White = const TextStyle(
+      color: MColors.white,
+      fontWeight: FontWeight.w700,
+      fontFamily: "NotoSansKR",
+      fontStyle: FontStyle.normal,
+      fontSize: 12.0);
+
   static const medium12PinkishGrey = const TextStyle(
       color: MColors.pinkish_grey,
       fontWeight: FontWeight.w500,

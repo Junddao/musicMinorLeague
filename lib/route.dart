@@ -7,6 +7,8 @@ import 'package:music_minorleague/rootpage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'model/view/page/user_profile/my_profile_modify_page.dart';
+
 class Routers {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     var arguments = settings.arguments;
@@ -24,7 +26,8 @@ class Routers {
         return CupertinoPageRoute(builder: (_) => MyMusicPlayerPage());
       case 'MyPlayListPage':
         return CupertinoPageRoute(builder: (_) => MyPlayListPage());
-
+      case 'MyProfileModifyPage':
+        return CupertinoPageRoute(builder: (_) => MyProfileModifyPage());
       // case 'ClassProceedingPage':
       //   return CupertinoPageRoute(
       //       builder: (_) => ClassProceedingPage(id: arguments));
