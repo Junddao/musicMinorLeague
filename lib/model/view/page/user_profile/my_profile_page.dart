@@ -6,6 +6,7 @@ import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MyProfilePage extends StatefulWidget {
   @override
@@ -34,6 +35,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
   }
 
   _body() {
+    String url =
+        Provider.of<UserProfileProvider>(context).userProfileData.youtubeUrl;
     SizeConfig().init(context);
     return SingleChildScrollView(
       child: Stack(
@@ -83,7 +86,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
                             SizedBox(
                               width: SizeConfig.screenWidth - 60,
                               child: Text(
-                                // 'aaaadsfjdajfksdjfklajdfjadslkfjasdkfjaklsdjflksfj',
                                 Provider.of<UserProfileProvider>(context,
                                         listen: false)
                                     .userProfileData
@@ -98,17 +100,22 @@ class _MyProfilePageState extends State<MyProfilePage> {
                       Positioned(
                         top: 120,
                         right: 0,
-                        child: Container(
-                          height: 30,
-                          width: 30,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100),
-                              border: Border.all(
-                                  width: 1, color: MColors.warm_grey)),
-                          child: Icon(
-                            FontAwesomeIcons.youtube,
-                            size: 15,
-                            color: MColors.warm_grey,
+                        child: InkWell(
+                          onTap: () {
+                            _launchURL(url);
+                          },
+                          child: Container(
+                            height: 30,
+                            width: 30,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100),
+                                border: Border.all(
+                                    width: 1, color: MColors.tomato)),
+                            child: Icon(
+                              FontAwesomeIcons.youtube,
+                              size: 15,
+                              color: MColors.tomato,
+                            ),
                           ),
                         ),
                       ),
@@ -231,5 +238,13 @@ class _MyProfilePageState extends State<MyProfilePage> {
         ],
       ),
     );
+  }
+
+  _launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }

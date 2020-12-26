@@ -1,5 +1,6 @@
-enum LoungeBottomWidgets {
+enum BottomWidgets {
   miniSelectList,
   miniPlayer,
+  myMiniSelctList,
   none,
 }

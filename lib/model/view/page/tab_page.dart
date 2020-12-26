@@ -1,19 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:music_minorleague/model/enum/lounge_bottom_widget_enum.dart';
-import 'package:music_minorleague/model/provider/mini_widget_status_provider.dart';
-import 'package:music_minorleague/model/provider/now_play_music_provider.dart';
+
 import 'package:music_minorleague/model/view/page/lounge/lounge_page.dart';
 import 'package:music_minorleague/model/view/page/playlist/my_play_list_page.dart';
 import 'package:music_minorleague/model/view/page/user_profile/my_profile_page.dart';
-import 'package:music_minorleague/model/view/page/lounge/component/small_play_list_widget.dart';
-
 import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 import 'package:music_minorleague/tabstates.dart';
 import 'package:flutter/material.dart';
-import 'package:music_minorleague/utils/firebase_db_helper.dart';
+
 import 'package:provider/provider.dart';
 
 class TabPage extends StatefulWidget {
@@ -25,7 +20,6 @@ class _TabPageState extends State<TabPage> {
   final List<Widget> _tabs = [
     LoungePage(),
     MyPlayListPage(),
-
     SizedBox.shrink(), // empty widget
     SizedBox.shrink(), // empty widget
     MyProfilePage(),
@@ -77,7 +71,7 @@ class _TabPageState extends State<TabPage> {
                     Icons.queue_music_outlined,
                     size: 20,
                   ),
-                  label: '내 재생목록',
+                  label: '내가 찜한 노래',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(

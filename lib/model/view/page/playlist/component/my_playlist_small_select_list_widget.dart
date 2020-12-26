@@ -3,6 +3,8 @@ import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
+import 'package:music_minorleague/model/enum/lounge_bottom_widget_enum.dart';
+import 'package:music_minorleague/model/provider/mini_widget_status_provider.dart';
 import 'package:music_minorleague/model/provider/user_profile_provider.dart';
 import 'package:music_minorleague/model/view/page/upload/component/upload_result_Dialog.dart';
 import 'package:music_minorleague/model/view/style/colors.dart';
@@ -10,6 +12,7 @@ import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 import 'package:music_minorleague/utils/db_helper.dart';
 import 'package:music_minorleague/utils/firebase_db_helper.dart';
+import 'package:music_minorleague/utils/play_func.dart';
 import 'package:provider/provider.dart';
 
 class MyPlaylistSmallSelectListWidget extends StatefulWidget {
@@ -46,20 +49,27 @@ class _MyPlaylistSmallSelectListWidget
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      bottom: 0,
+      bottom: 10,
       child: Stack(
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child: Container(
-              height: 130,
+              height: 100,
               width: SizeConfig.screenWidth - 20,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(
                   Radius.circular(16),
                 ),
-                border: Border.all(color: MColors.black, width: 1),
+                border: Border.all(color: MColors.black, width: 0.2),
                 color: MColors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey,
+                    offset: Offset(0.0, 1.0),
+                    blurRadius: 3.0,
+                  ),
+                ],
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -70,7 +80,10 @@ class _MyPlaylistSmallSelectListWidget
                       IconButton(
                           iconSize: 14,
                           icon: Icon(FontAwesomeIcons.play),
-                          onPressed: null),
+                          onPressed: () {
+                            getSelectedMusicList();
+                            playSelectMusic();
+                          }),
                       Text(
                         '선택 항목 재생',
                         style: MTextStyles.regular12Black,
@@ -139,6 +152,19 @@ class _MyPlaylistSmallSelectListWidget
     }
   }
 
+  playSelectMusic() {
+    Provider.of<MiniWidgetStatusProvider>(context, listen: false)
+        .bottomPlayListWidget = BottomWidgets.miniPlayer;
+    playOrPauseMusicForSelectedList();
+  }
+
+  void playOrPauseMusicForSelectedList() {
+    PlayMusic.stopFunc().whenComplete(() {
+      PlayMusic.makeNewPlayer();
+      PlayMusic.playListFunc(selectedMusicList);
+    });
+  }
+
   void deleteMyMusicList() {
     String mainCollection = FirebaseDBHelper.myMusicCollection;
     String mainDoc = Provider.of<UserProfileProvider>(context, listen: false)
@@ -151,30 +177,4 @@ class _MyPlaylistSmallSelectListWidget
           mainCollection, mainDoc, subCollection, subDoc);
     });
   }
-
-  // Future<void> deleteMyMusicList() async {
-  //   DBHelper dbHelper = DBHelper();
-  //   Future<List<MusicInfoData>> listItems;
-  //   // 우선 저장된 데이터를 가져오고
-
-  //   try {
-  //     if (selectedMusicList != null) {
-  //       if (selectedMusicList.length > 0) {
-  //         selectedMusicList.forEach(
-  //           (element) {
-  //             dbHelper.delete(element.sqliteId);
-
-  //             // DBHelper.database();
-  //           },
-  //         );
-  //       }
-  //     }
-  //     listItems = dbHelper.getListItem();
-  //     listItems.whenComplete(
-  //       () => widget._snackBarFunc('삭제 완료'),
-  //     );
-  //   } catch (ex) {
-  //     print(ex.toString());
-  //   }
-  // }
 }

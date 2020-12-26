@@ -39,17 +39,22 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _navigatorToHome() {
-    var userProfileData = {
-      'userName': _user.displayName,
-      'photoUrl': _user.photoURL,
-      'userEmail': _user.email,
-      'id': _user.email.substring(0, _user.email.indexOf('@')), // id
-      'youtubeUrl': '',
-      'introduce': '',
-    };
+    // UserProfileData userProfileData = new UserProfileData(
+    //   _user.displayName,
+    //   _user.photoURL,
+    //   _user.email,
+    //   _user.email.substring(0, _user.email.indexOf('@')), // id
+    //   '',
+    //   '',
+    // );
 
-    Provider.of<UserProfileProvider>(context, listen: false).userProfileData =
-        UserProfileData.fromMap(userProfileData);
+    String collection = FirebaseDBHelper.userCollection;
+    String doc = _user.email.substring(0, _user.email.indexOf('@'));
+
+    FirebaseDBHelper.getData(collection, doc).then((value) {
+      Provider.of<UserProfileProvider>(context, listen: false).userProfileData =
+          UserProfileData.fromMap(value.data());
+    });
 
     Navigator.of(context).pushNamed('TabPage');
   }

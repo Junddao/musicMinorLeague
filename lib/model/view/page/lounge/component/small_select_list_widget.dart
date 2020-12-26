@@ -92,7 +92,7 @@ class _SmallSelectListWidgetState extends State<SmallSelectListWidget> {
                                 );
                           }),
                       Text(
-                        '내 재생 목록 추가',
+                        '찜 목록에 추가',
                         style: MTextStyles.regular12Black,
                       ),
                     ],
@@ -153,7 +153,7 @@ class _SmallSelectListWidgetState extends State<SmallSelectListWidget> {
 
   playSelectMusic() {
     widget._visibleMiniPlayerFunc();
-    widget._playOrPauseMusicForSelectedListFunc(0);
+    widget._playOrPauseMusicForSelectedListFunc();
   }
 
   Future<void> updateMyMusicListInFirebase() async {
