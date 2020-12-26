@@ -16,17 +16,7 @@ import 'package:provider/provider.dart';
 class SmallPlayListWidget extends StatefulWidget {
   const SmallPlayListWidget({
     Key key,
-    List<MusicInfoData> musicList,
-    Function playNext,
-    Function playPrevious,
-  })  : _musicList = musicList,
-        _playNext = playNext,
-        _playPrevious = playPrevious,
-        super(key: key);
-
-  final List<MusicInfoData> _musicList;
-  final Function _playNext;
-  final Function _playPrevious;
+  }) : super(key: key);
 
   @override
   _SmallPlayListWidgetState createState() => _SmallPlayListWidgetState();
@@ -124,7 +114,7 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
                         ),
                         iconSize: 20,
                         onPressed: () {
-                          widget._playPrevious();
+                          PlayMusic.previous();
                         },
                       ),
                       IconButton(
@@ -152,7 +142,7 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
                         ),
                         iconSize: 20,
                         onPressed: () {
-                          widget._playNext();
+                          PlayMusic.next();
                         },
                       ),
                     ],

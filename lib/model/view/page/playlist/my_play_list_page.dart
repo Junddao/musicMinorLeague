@@ -143,9 +143,7 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
             visible: myMiniPlayer == MyPlaylistWidgetEnum.miniPlayerWidget
                 ? true
                 : false,
-            child: MySmallPlayListWidget(
-              musicList: _myMusicList,
-            ),
+            child: MySmallPlayListWidget(),
           ),
           Visibility(
             visible:
@@ -200,237 +198,265 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
 
                 return Stack(
                   children: [
-                    StreamBuilder<Object>(
-                        stream: PlayMusic.getCurrentStream(),
-                        builder: (context, snapshotCurrent) {
-                          return ListView.builder(
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: _myMusicList.length,
-                            itemBuilder: (context, index) {
-                              return Column(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    child: Container(
-                                      height: 72,
-                                      color: _selectedList[index] == true
-                                          ? Colors.blueGrey[100]
-                                          : Colors.transparent,
-                                      child: ListTile(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        onTap: () {
-                                          setState(() {
-                                            _selectedList[index] =
-                                                !_selectedList[index];
-                                            _selectedList.contains(true)
-                                                ? myPlayListWidgetEnum =
-                                                    MyPlaylistWidgetEnum
-                                                        .miniSelectWidget
-                                                : myPlayListWidgetEnum =
-                                                    MyPlaylistWidgetEnum.none;
+                    ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: _myMusicList.length,
+                      itemBuilder: (context, index) {
+                        return Column(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10.0),
+                              child: Container(
+                                height: 72,
+                                color: _selectedList[index] == true
+                                    ? Colors.blueGrey[100]
+                                    : Colors.transparent,
+                                child: StreamBuilder(
+                                    stream: PlayMusic.getCurrentStream(),
+                                    builder: (context, currentSnapshot) {
+                                      final Playing playing =
+                                          currentSnapshot.data;
+
+                                      final String currentMusicId =
+                                          playing?.audio?.audio?.metas?.id;
+                                      return StreamBuilder(
+                                          stream: PlayMusic.isPlayingFunc(),
+                                          builder: (context, playingSnapshot) {
+                                            final isPlaying =
+                                                playingSnapshot.data;
+                                            return ListTile(
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              onTap: () {
+                                                setState(() {
+                                                  _selectedList[index] =
+                                                      !_selectedList[index];
+                                                  _selectedList.contains(true)
+                                                      ? myPlayListWidgetEnum =
+                                                          MyPlaylistWidgetEnum
+                                                              .miniSelectWidget
+                                                      : myPlayListWidgetEnum =
+                                                          MyPlaylistWidgetEnum
+                                                              .none;
+                                                });
+                                              },
+                                              leading: ClipOval(
+                                                // borderRadius:
+                                                //     BorderRadius.circular(4.0),
+                                                child: ExtendedImage.network(
+                                                  _myMusicList[index]
+                                                      ?.imagePath,
+                                                  cache: true,
+                                                  width: 50,
+                                                  height: 50,
+                                                  fit: BoxFit.cover,
+                                                  clearMemoryCacheWhenDispose:
+                                                      true,
+                                                ),
+                                              ),
+                                              title: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    _myMusicList[index].title,
+                                                    style: MTextStyles
+                                                        .bold14Grey06,
+                                                  ),
+                                                  SizedBox(
+                                                    width: 6,
+                                                  ),
+                                                  Text(
+                                                    _myMusicList[index].artist,
+                                                    maxLines: 1,
+                                                    style: MTextStyles
+                                                        .regular12WarmGrey_underline,
+                                                  ),
+                                                ],
+                                              ),
+                                              trailing: Wrap(
+                                                children: [
+                                                  IconButton(
+                                                      iconSize: 14,
+                                                      icon: Icon(
+                                                        Provider.of<NowPlayMusicProvider>(
+                                                                            context,
+                                                                            listen:
+                                                                                false)
+                                                                        .isPlay ==
+                                                                    true &&
+                                                                _myMusicList[
+                                                                            index]
+                                                                        .id ==
+                                                                    Provider.of<NowPlayMusicProvider>(
+                                                                            context,
+                                                                            listen:
+                                                                                false)
+                                                                        .nowMusicId
+                                                            ? FontAwesomeIcons
+                                                                .pause
+                                                            : FontAwesomeIcons
+                                                                .play,
+                                                      ),
+                                                      color: Provider.of<NowPlayMusicProvider>(
+                                                                          context,
+                                                                          listen:
+                                                                              false)
+                                                                      .isPlay ==
+                                                                  true &&
+                                                              _myMusicList[
+                                                                          index]
+                                                                      .id ==
+                                                                  Provider.of<NowPlayMusicProvider>(
+                                                                          context,
+                                                                          listen:
+                                                                              false)
+                                                                      .nowMusicId
+                                                          ? MColors.black
+                                                          : MColors.warm_grey,
+                                                      onPressed: () {
+                                                        MusicInfoData musicInfoData = new MusicInfoData(
+                                                            id: _myMusicList[index]
+                                                                .id,
+                                                            title: _myMusicList[
+                                                                    index]
+                                                                .title,
+                                                            artist:
+                                                                _myMusicList[index]
+                                                                    .artist,
+                                                            musicPath:
+                                                                _myMusicList[
+                                                                        index]
+                                                                    .musicPath,
+                                                            imagePath:
+                                                                _myMusicList[
+                                                                        index]
+                                                                    .imagePath,
+                                                            dateTime:
+                                                                _myMusicList[
+                                                                        index]
+                                                                    .dateTime,
+                                                            favorite:
+                                                                _myMusicList[
+                                                                        index]
+                                                                    .favorite,
+                                                            musicType:
+                                                                _myMusicList[
+                                                                        index]
+                                                                    .musicType);
+
+                                                        Provider.of<NowPlayMusicProvider>(
+                                                                    context,
+                                                                    listen: false)
+                                                                .musicInfoData =
+                                                            musicInfoData;
+
+                                                        String nowId = Provider
+                                                                .of<NowPlayMusicProvider>(
+                                                                    context,
+                                                                    listen:
+                                                                        false)
+                                                            .nowMusicId;
+
+                                                        int selectedValue; // 0 : first Selected , 1: same song selected, 2: different song selected
+
+                                                        // first selected
+                                                        if (nowId == null) {
+                                                          nowId = _myMusicList[
+                                                                  index]
+                                                              .id;
+                                                          selectedValue = 0;
+                                                        }
+                                                        // same song selected
+                                                        else if (nowId ==
+                                                            _myMusicList[index]
+                                                                .id) {
+                                                          Provider.of<NowPlayMusicProvider>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .isPlay = false;
+
+                                                          selectedValue = 1;
+                                                        }
+
+                                                        // different song selected
+                                                        else if (nowId !=
+                                                                null &&
+                                                            nowId !=
+                                                                _myMusicList[
+                                                                        index]
+                                                                    .id) {
+                                                          nowId = _myMusicList[
+                                                                  index]
+                                                              .id;
+                                                          selectedValue = 2;
+                                                        }
+                                                        Provider.of<NowPlayMusicProvider>(
+                                                                context,
+                                                                listen: false)
+                                                            .nowMusicId = nowId;
+
+                                                        setState(() {
+                                                          if (selectedValue ==
+                                                              0) {
+                                                            PlayMusic.playUrlFunc(
+                                                                Provider.of<NowPlayMusicProvider>(
+                                                                        context,
+                                                                        listen:
+                                                                            false)
+                                                                    .musicInfoData);
+                                                          } else if (selectedValue ==
+                                                              2) {
+                                                            PlayMusic
+                                                                .stopFunc();
+
+                                                            PlayMusic
+                                                                .makeNewPlayer();
+                                                            _initSubscription();
+
+                                                            PlayMusic.playUrlFunc(
+                                                                Provider.of<NowPlayMusicProvider>(
+                                                                        context,
+                                                                        listen:
+                                                                            false)
+                                                                    .musicInfoData);
+                                                          } else if (selectedValue ==
+                                                              1) {
+                                                            PlayMusic
+                                                                .playOrPauseFunc();
+                                                          }
+                                                          myMiniPlayer =
+                                                              MyPlaylistWidgetEnum
+                                                                  .miniPlayerWidget;
+                                                        });
+                                                      }),
+                                                  IconButton(
+                                                      icon: Icon(
+                                                        Icons
+                                                            .favorite_border_outlined,
+                                                        size: 16,
+                                                      ),
+                                                      onPressed: null),
+                                                ],
+                                              ),
+                                            );
                                           });
-                                        },
-                                        leading: ClipOval(
-                                          // borderRadius:
-                                          //     BorderRadius.circular(4.0),
-                                          child: ExtendedImage.network(
-                                            _myMusicList[index]?.imagePath,
-                                            cache: true,
-                                            width: 50,
-                                            height: 50,
-                                            fit: BoxFit.cover,
-                                            clearMemoryCacheWhenDispose: true,
-                                          ),
-                                        ),
-                                        title: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              _myMusicList[index].title,
-                                              style: MTextStyles.bold14Grey06,
-                                            ),
-                                            SizedBox(
-                                              width: 6,
-                                            ),
-                                            Text(
-                                              _myMusicList[index].artist,
-                                              maxLines: 1,
-                                              style: MTextStyles
-                                                  .regular12WarmGrey_underline,
-                                            ),
-                                          ],
-                                        ),
-                                        trailing: Wrap(
-                                          children: [
-                                            IconButton(
-                                                iconSize: 14,
-                                                icon: Icon(
-                                                  Provider.of<NowPlayMusicProvider>(
-                                                                      context,
-                                                                      listen:
-                                                                          false)
-                                                                  .isPlay ==
-                                                              true &&
-                                                          _myMusicList[index]
-                                                                  .id ==
-                                                              Provider.of<NowPlayMusicProvider>(
-                                                                      context,
-                                                                      listen:
-                                                                          false)
-                                                                  .nowMusicId
-                                                      ? FontAwesomeIcons.pause
-                                                      : FontAwesomeIcons.play,
-                                                ),
-                                                color: Provider.of<NowPlayMusicProvider>(
-                                                                    context,
-                                                                    listen:
-                                                                        false)
-                                                                .isPlay ==
-                                                            true &&
-                                                        _myMusicList[index]
-                                                                .id ==
-                                                            Provider.of<NowPlayMusicProvider>(
-                                                                    context,
-                                                                    listen:
-                                                                        false)
-                                                                .nowMusicId
-                                                    ? MColors.black
-                                                    : MColors.warm_grey,
-                                                onPressed: () {
-                                                  MusicInfoData musicInfoData =
-                                                      new MusicInfoData(
-                                                          id: _myMusicList[
-                                                                  index]
-                                                              .id,
-                                                          title: _myMusicList[
-                                                                  index]
-                                                              .title,
-                                                          artist:
-                                                              _myMusicList[
-                                                                      index]
-                                                                  .artist,
-                                                          musicPath:
-                                                              _myMusicList[
-                                                                      index]
-                                                                  .musicPath,
-                                                          imagePath: _myMusicList[
-                                                                  index]
-                                                              .imagePath,
-                                                          dateTime:
-                                                              _myMusicList[
-                                                                      index]
-                                                                  .dateTime,
-                                                          favorite:
-                                                              _myMusicList[
-                                                                      index]
-                                                                  .favorite,
-                                                          musicType:
-                                                              _myMusicList[
-                                                                      index]
-                                                                  .musicType);
-
-                                                  Provider.of<NowPlayMusicProvider>(
-                                                              context,
-                                                              listen: false)
-                                                          .musicInfoData =
-                                                      musicInfoData;
-
-                                                  String nowId = Provider.of<
-                                                              NowPlayMusicProvider>(
-                                                          context,
-                                                          listen: false)
-                                                      .nowMusicId;
-
-                                                  int selectedValue; // 0 : first Selected , 1: same song selected, 2: different song selected
-
-                                                  // first selected
-                                                  if (nowId == null) {
-                                                    nowId =
-                                                        _myMusicList[index].id;
-                                                    selectedValue = 0;
-                                                  }
-                                                  // same song selected
-                                                  else if (nowId ==
-                                                      _myMusicList[index].id) {
-                                                    Provider.of<NowPlayMusicProvider>(
-                                                            context,
-                                                            listen: false)
-                                                        .isPlay = false;
-
-                                                    selectedValue = 1;
-                                                  }
-
-                                                  // different song selected
-                                                  else if (nowId != null &&
-                                                      nowId !=
-                                                          _myMusicList[index]
-                                                              .id) {
-                                                    nowId =
-                                                        _myMusicList[index].id;
-                                                    selectedValue = 2;
-                                                  }
-                                                  Provider.of<NowPlayMusicProvider>(
-                                                          context,
-                                                          listen: false)
-                                                      .nowMusicId = nowId;
-
-                                                  setState(() {
-                                                    if (selectedValue == 0) {
-                                                      PlayMusic.playUrlFunc(
-                                                          Provider.of<NowPlayMusicProvider>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .musicInfoData);
-                                                    } else if (selectedValue ==
-                                                        2) {
-                                                      PlayMusic.stopFunc();
-
-                                                      PlayMusic.makeNewPlayer();
-                                                      _initSubscription();
-
-                                                      PlayMusic.playUrlFunc(
-                                                          Provider.of<NowPlayMusicProvider>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .musicInfoData);
-                                                    } else if (selectedValue ==
-                                                        1) {
-                                                      PlayMusic
-                                                          .playOrPauseFunc();
-                                                    }
-                                                    myMiniPlayer =
-                                                        MyPlaylistWidgetEnum
-                                                            .miniPlayerWidget;
-                                                  });
-                                                }),
-                                            IconButton(
-                                                icon: Icon(
-                                                  Icons
-                                                      .favorite_border_outlined,
-                                                  size: 16,
-                                                ),
-                                                onPressed: null),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Divider(
-                                    height: 1,
-                                    indent: 10,
-                                    endIndent: 10,
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        }),
+                                    }),
+                              ),
+                            ),
+                            Divider(
+                              height: 1,
+                              indent: 10,
+                              endIndent: 10,
+                            ),
+                          ],
+                        );
+                      },
+                    ),
                   ],
                 );
               }),

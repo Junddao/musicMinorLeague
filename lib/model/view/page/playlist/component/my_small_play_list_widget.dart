@@ -16,11 +16,7 @@ import 'package:provider/provider.dart';
 class MySmallPlayListWidget extends StatefulWidget {
   const MySmallPlayListWidget({
     Key key,
-    List<MusicInfoData> musicList,
-  })  : _musicList = musicList,
-        super(key: key);
-
-  final List<MusicInfoData> _musicList;
+  }) : super(key: key);
 
   @override
   _MySmallPlayListWidgetState createState() => _MySmallPlayListWidgetState();
@@ -29,8 +25,7 @@ class MySmallPlayListWidget extends StatefulWidget {
 class _MySmallPlayListWidgetState extends State<MySmallPlayListWidget> {
   Duration position = new Duration();
   Duration musicLength = new Duration();
-  final List<StreamSubscription> _subscriptions = [];
-  AssetsAudioPlayer _assetsAudioPlayer;
+
   bool listenOnlyUserInterraction = false;
 
   @override

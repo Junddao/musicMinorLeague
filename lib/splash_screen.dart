@@ -51,7 +51,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Provider.of<UserProfileProvider>(context, listen: false).userProfileData =
         UserProfileData.fromMap(userProfileData);
 
-    Navigator.of(context).pushNamed('RootPage');
+    Navigator.of(context).pushNamed('TabPage');
   }
 
   void _navigatorToLogin() {

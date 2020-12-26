@@ -25,6 +25,7 @@ class _TabPageState extends State<TabPage> {
   final List<Widget> _tabs = [
     LoungePage(),
     MyPlayListPage(),
+
     SizedBox.shrink(), // empty widget
     SizedBox.shrink(), // empty widget
     MyProfilePage(),

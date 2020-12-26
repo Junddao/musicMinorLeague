@@ -144,62 +144,54 @@ class _LoungePageState extends State<LoungePage>
       child: Stack(
         children: [
           SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: SizeConfig.screenHeight),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  StreamBuilder(
-                    stream: FirebaseDBHelper.getDataStream(
-                        FirebaseDBHelper.allMusicCollection),
-                    builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (snapshot.hasError) {
-                        return Center(
-                          child: Text('error'),
-                        );
-                      } else if (snapshot.hasData == false) {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      } else {
-                        musicList =
-                            FirebaseDBHelper.getMusicDatabase(snapshot.data);
-                        List<MusicInfoData> _twentyList =
-                            new List<MusicInfoData>();
-                        if (selectedList?.length != snapshot.data.docs.length) {
-                          selectedList = null;
-                          selectedList = List.generate(
-                              snapshot.data.docs.length, (index) => false);
-                        }
-                        musicList.length > 20
-                            ? _twentyList = musicList.sublist(0, 20)
-                            : _twentyList = musicList;
-                        return TopTwentyMusicWidget(
-                            _twentyList, playOrpauseMusic);
+            physics: ScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                StreamBuilder(
+                  stream: FirebaseDBHelper.getDataStream(
+                      FirebaseDBHelper.allMusicCollection),
+                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (snapshot.hasError) {
+                      return Center(
+                        child: Text('error'),
+                      );
+                    } else if (snapshot.hasData == false) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else {
+                      musicList =
+                          FirebaseDBHelper.getMusicDatabase(snapshot.data);
+                      List<MusicInfoData> _twentyList =
+                          new List<MusicInfoData>();
+                      if (selectedList?.length != snapshot.data.docs.length) {
+                        selectedList = null;
+                        selectedList = List.generate(
+                            snapshot.data.docs.length, (index) => false);
                       }
-                    },
+                      musicList.length > 20
+                          ? _twentyList = musicList.sublist(0, 20)
+                          : _twentyList = musicList;
+                      return TopTwentyMusicWidget(
+                          _twentyList, playOrpauseMusic);
+                    }
+                  },
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.only(left: 20.0, top: 40, bottom: 12.0),
+                  child: Text(
+                    'All Music',
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: MColors.blackColor),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        left: 20.0, top: 40, bottom: 12.0),
-                    child: Text(
-                      'All Music',
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: MColors.blackColor),
-                    ),
-                  ),
-                  SelectButtonsWidget(selectAllMusicFunc: selectAllMusicFunc),
-                  Expanded(
-                    child: Stack(
-                      children: [
-                        playListOfThisWeek(),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                ),
+                SelectButtonsWidget(selectAllMusicFunc: selectAllMusicFunc),
+                playListOfThisWeek(),
+              ],
             ),
           ),
           Visibility(
@@ -208,11 +200,7 @@ class _LoungePageState extends State<LoungePage>
                     LoungeBottomWidgets.miniPlayer
                 ? true
                 : false,
-            child: SmallPlayListWidget(
-              musicList: musicList,
-              playNext: playNext,
-              playPrevious: playPrevious,
-            ),
+            child: SmallPlayListWidget(),
           ),
           Visibility(
             visible: Provider.of<MiniWidgetStatusProvider>(context)
@@ -235,49 +223,48 @@ class _LoungePageState extends State<LoungePage>
   }
 
   Widget playListOfThisWeek() {
-    return Flex(
-      direction: Axis.vertical,
+    return Stack(
       children: [
-        Expanded(
-          child: Stack(
-            children: [
-              StreamBuilder(
-                stream: FirebaseDBHelper.getDataStream(
-                    FirebaseDBHelper.allMusicCollection),
-                builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text('error'),
-                    );
-                  } else if (snapshot.hasData == false) {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  } else {
-                    // if (isPlayList?.length != snapshot.data.docs.length) {
-                    //   isPlayList = null;
-                    //   isPlayList = List.generate(
-                    //       snapshot.data.docs.length, (index) => false);
-                    // }
+        StreamBuilder(
+          stream: FirebaseDBHelper.getDataStream(
+              FirebaseDBHelper.allMusicCollection),
+          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) {
+              return Center(
+                child: Text('error'),
+              );
+            } else if (snapshot.hasData == false) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else {
+              return ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: snapshot.data.docs.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: Container(
+                          height: 72,
+                          color: selectedList[index] == true
+                              ? Colors.blueGrey[100]
+                              : Colors.transparent,
+                          child: StreamBuilder(
+                              stream: PlayMusic.getCurrentStream(),
+                              builder: (context, currentSnapshot) {
+                                final Playing playing = currentSnapshot.data;
 
-                    return StreamBuilder<Object>(
-                        stream: _assetsAudioPlayer.current,
-                        builder: (context, snapshotCurrent) {
-                          return ListView.builder(
-                            addAutomaticKeepAlives: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: snapshot.data.docs.length,
-                            itemBuilder: (context, index) {
-                              return Column(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    child: Container(
-                                      height: 72,
-                                      color: selectedList[index] == true
-                                          ? Colors.blueGrey[100]
-                                          : Colors.transparent,
-                                      child: ListTile(
+                                final String currentMusicId =
+                                    playing?.audio?.audio?.metas?.id;
+                                return StreamBuilder(
+                                    stream: PlayMusic.isPlayingFunc(),
+                                    builder: (context, playingSnapshot) {
+                                      final isPlaying = playingSnapshot.data;
+
+                                      return ListTile(
                                         onTap: () {
                                           selectedList[index] =
                                               !selectedList[index];
@@ -338,33 +325,39 @@ class _LoungePageState extends State<LoungePage>
                                             IconButton(
                                                 iconSize: 14,
                                                 icon: Icon(
-                                                  Provider.of<NowPlayMusicProvider>(
-                                                                      context,
-                                                                      listen:
-                                                                          false)
-                                                                  .isPlay ==
-                                                              true &&
+                                                  isPlaying == true &&
                                                           musicList[index].id ==
-                                                              Provider.of<NowPlayMusicProvider>(
-                                                                      context,
-                                                                      listen:
-                                                                          false)
-                                                                  .nowMusicId
+                                                              currentMusicId
+                                                      // Provider.of<NowPlayMusicProvider>(
+                                                      //                     context,
+                                                      //                     listen:
+                                                      //                         false)
+                                                      //                 .isPlay ==
+                                                      //             true &&
+                                                      //         musicList[index].id ==
+                                                      //             Provider.of<NowPlayMusicProvider>(
+                                                      //                     context,
+                                                      //                     listen:
+                                                      //                         false)
+                                                      //                 .nowMusicId
                                                       ? FontAwesomeIcons.pause
                                                       : FontAwesomeIcons.play,
                                                 ),
-                                                color: Provider.of<NowPlayMusicProvider>(
-                                                                    context,
-                                                                    listen:
-                                                                        false)
-                                                                .isPlay ==
-                                                            true &&
+                                                color: isPlaying == true &&
                                                         musicList[index].id ==
-                                                            Provider.of<NowPlayMusicProvider>(
-                                                                    context,
-                                                                    listen:
-                                                                        false)
-                                                                .nowMusicId
+                                                            currentMusicId
+                                                    // Provider.of<NowPlayMusicProvider>(
+                                                    //                     context,
+                                                    //                     listen:
+                                                    //                         false)
+                                                    //                 .isPlay ==
+                                                    //             true &&
+                                                    //         musicList[index].id ==
+                                                    //             Provider.of<NowPlayMusicProvider>(
+                                                    //                     context,
+                                                    //                     listen:
+                                                    //                         false)
+                                                    //                 .nowMusicId
                                                     ? MColors.black
                                                     : MColors.warm_grey,
                                                 onPressed: () {
@@ -433,24 +426,22 @@ class _LoungePageState extends State<LoungePage>
                                             ),
                                           ],
                                         ),
-                                      ),
-                                    ),
-                                  ),
-                                  Divider(
-                                    height: 1,
-                                    indent: 10,
-                                    endIndent: 10,
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        });
-                  }
+                                      );
+                                    });
+                              }),
+                        ),
+                      ),
+                      Divider(
+                        height: 1,
+                        indent: 10,
+                        endIndent: 10,
+                      ),
+                    ],
+                  );
                 },
-              ),
-            ],
-          ),
+              );
+            }
+          },
         ),
       ],
     );
