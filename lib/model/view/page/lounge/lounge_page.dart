@@ -334,33 +334,38 @@ class _LoungePageState extends State<LoungePage>
                                                     : MColors.warm_grey,
                                                 onPressed: () {
                                                   MusicInfoData musicInfoData =
-                                                      new MusicInfoData(
-                                                    id: snapshot
-                                                        .data.docs[index]['id'],
-                                                    title: snapshot.data
-                                                        .docs[index]['title'],
-                                                    artist: snapshot.data
-                                                        .docs[index]['artist'],
-                                                    musicPath: snapshot
-                                                            .data.docs[index]
-                                                        ['musicPath'],
-                                                    imagePath: snapshot
-                                                            .data.docs[index]
-                                                        ['imagePath'],
-                                                    dateTime: snapshot
-                                                            .data.docs[index]
-                                                        ['dateTime'],
-                                                    favorite: snapshot
-                                                            .data.docs[index]
-                                                        ['favorite'],
-                                                    musicType:
-                                                        EnumToString.fromString(
-                                                            MusicTypeEnum
-                                                                .values,
-                                                            snapshot.data
-                                                                    .docs[index]
-                                                                ['musicType']),
-                                                  );
+                                                      MusicInfoData.fromMap(
+                                                          snapshot
+                                                              .data.docs[index]
+                                                              .data());
+                                                  // MusicInfoData musicInfoData =
+                                                  //     new MusicInfoData(
+                                                  //   id: snapshot
+                                                  //       .data.docs[index]['id'],
+                                                  //   title: snapshot.data
+                                                  //       .docs[index]['title'],
+                                                  //   artist: snapshot.data
+                                                  //       .docs[index]['artist'],
+                                                  //   musicPath: snapshot
+                                                  //           .data.docs[index]
+                                                  //       ['musicPath'],
+                                                  //   imagePath: snapshot
+                                                  //           .data.docs[index]
+                                                  //       ['imagePath'],
+                                                  //   dateTime: snapshot
+                                                  //           .data.docs[index]
+                                                  //       ['dateTime'],
+                                                  //   favorite: snapshot
+                                                  //           .data.docs[index]
+                                                  //       ['favorite'],
+                                                  //   musicType:
+                                                  //       EnumToString.fromString(
+                                                  //           MusicTypeEnum
+                                                  //               .values,
+                                                  //           snapshot.data
+                                                  //                   .docs[index]
+                                                  //               ['musicType']),
+                                                  // );
                                                   playOrpauseMusic(
                                                       musicInfoData,
                                                       currentMusicId);

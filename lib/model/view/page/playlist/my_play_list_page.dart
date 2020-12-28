@@ -287,38 +287,35 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
                                                       ? MColors.black
                                                       : MColors.warm_grey,
                                                   onPressed: () {
-                                                    MusicInfoData musicInfoData =
-                                                        new MusicInfoData(
-                                                            id: _myMusicList[
-                                                                    index]
-                                                                .id,
-                                                            title: _myMusicList[
-                                                                    index]
-                                                                .title,
-                                                            artist:
-                                                                _myMusicList[
-                                                                        index]
-                                                                    .artist,
-                                                            musicPath:
-                                                                _myMusicList[
-                                                                        index]
-                                                                    .musicPath,
-                                                            imagePath:
-                                                                _myMusicList[
-                                                                        index]
-                                                                    .imagePath,
-                                                            dateTime:
-                                                                _myMusicList[
-                                                                        index]
-                                                                    .dateTime,
-                                                            favorite:
-                                                                _myMusicList[
-                                                                        index]
-                                                                    .favorite,
-                                                            musicType:
-                                                                _myMusicList[
-                                                                        index]
-                                                                    .musicType);
+                                                    MusicInfoData
+                                                        musicInfoData =
+                                                        MusicInfoData.fromMap(
+                                                            _myMusicList[index]
+                                                                .toMap());
+                                                    // new MusicInfoData(
+                                                    //     id: _myMusicList[index]
+                                                    //         .id,
+                                                    //     title: _myMusicList[
+                                                    //             index]
+                                                    //         .title,
+                                                    //     artist: _myMusicList[
+                                                    //             index]
+                                                    //         .artist,
+                                                    //     musicPath: _myMusicList[
+                                                    //             index]
+                                                    //         .musicPath,
+                                                    //     imagePath:
+                                                    //         _myMusicList[index]
+                                                    //             .imagePath,
+                                                    //     dateTime:
+                                                    //         _myMusicList[index]
+                                                    //             .dateTime,
+                                                    //     favorite:
+                                                    //         _myMusicList[index]
+                                                    //             .favorite,
+                                                    //     musicType:
+                                                    //         _myMusicList[index]
+                                                    //             .musicType);
                                                     playOrpauseMusic(
                                                         musicInfoData,
                                                         currentMusicId);
