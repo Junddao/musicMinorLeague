@@ -27,12 +27,35 @@ class _TopTwentyMusicWidgetState extends State<TopTwentyMusicWidget> {
         Widget>[
       Padding(
         padding: const EdgeInsets.only(left: 20.0, top: 40, bottom: 12.0),
-        child: Text(
-          'Top 20 ',
-          style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: MColors.blackColor),
+        child: Row(
+          children: [
+            Text(
+              '베스트 20',
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: MColors.blackColor),
+            ),
+            SizedBox(width: 10),
+            InkWell(
+              onTap: () {},
+              child: Container(
+                height: 20,
+                // width: 80,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(width: 1, color: MColors.tomato)),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8, right: 8),
+                  child: Center(
+                      child: Text(
+                    '모두재생',
+                    style: MTextStyles.bold10Tomato,
+                  )),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
       widget._topTwentyMusicList == null ||

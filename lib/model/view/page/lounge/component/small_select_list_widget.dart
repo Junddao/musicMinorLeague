@@ -77,20 +77,20 @@ class _SmallSelectListWidgetState extends State<SmallSelectListWidget> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       IconButton(
-                          iconSize: 16,
-                          icon: Icon(FontAwesomeIcons.plus),
-                          onPressed: () {
-                            // TODO: 업데이트 하도록 구현해야함
-                            // updateMyMusicList();
-                            getSelectedMusicList();
-                            updateMyMusicListInFirebase()
-                                .whenComplete(
-                                  () => widget._snackBarFunc('내 재생목록에 등록 완료'),
-                                )
-                                .catchError(
-                                  () => widget._snackBarFunc('등록 실패'),
-                                );
-                          }),
+                        iconSize: 16,
+                        icon: Icon(FontAwesomeIcons.plus),
+                        onPressed: () {
+                          // TODO: 업데이트 하도록 구현해야함
+                          // updateMyMusicList();
+                          getSelectedMusicList();
+                          updateMyMusicListInFirebase().whenComplete(
+                            () => widget._snackBarFunc('내 재생목록에 등록 완료'),
+                          );
+                          // .catchError(
+                          //   () => widget._snackBarFunc('등록 실패'),
+                          // );
+                        },
+                      ),
                       Text(
                         '찜 목록에 추가',
                         style: MTextStyles.regular12Black,

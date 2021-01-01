@@ -519,6 +519,14 @@ class MTextStyles {
       fontFamily: "NotoSansKR",
       fontStyle: FontStyle.normal,
       fontSize: 10.0);
+
+  static const bold10Tomato = const TextStyle(
+      color: MColors.tomato,
+      fontWeight: FontWeight.w700,
+      fontFamily: "NotoSansKR",
+      fontStyle: FontStyle.normal,
+      fontSize: 10.0);
+
   static const regular10WarmGrey = const TextStyle(
       color: MColors.warm_grey,
       fontWeight: FontWeight.w400,

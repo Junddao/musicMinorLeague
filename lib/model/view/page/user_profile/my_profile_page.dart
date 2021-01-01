@@ -218,7 +218,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
                   height: 10,
                 ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).pushNamed('MyMusicModifyPage');
+                  },
                   child: Container(
                       alignment: Alignment.center,
                       height: 40,

@@ -59,6 +59,10 @@ class PlayMusic {
     _assetsAudioPlayer.previous();
   }
 
+  static playlistPlayAtIndex(int index) {
+    _assetsAudioPlayer.playlistPlayAtIndex(index);
+  }
+
   static playFunc() {
     _assetsAudioPlayer.play();
   }

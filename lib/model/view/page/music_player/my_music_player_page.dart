@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
 import 'package:music_minorleague/model/view/page/music_player/main_player_position_seek_widget.dart';
+import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 import 'package:music_minorleague/utils/play_func.dart';
@@ -26,6 +27,7 @@ class _MyMusicPlayerPageState extends State<MyMusicPlayerPage> {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     return Scaffold(
       appBar: _appBar(),
       body: _body(),
@@ -46,132 +48,213 @@ class _MyMusicPlayerPageState extends State<MyMusicPlayerPage> {
         ),
         onPressed: () => Navigator.of(context).pop(),
       ),
+      backgroundColor: Colors.transparent,
       elevation: 0.0,
     );
   }
 
   _body() {
-    return Container(
-      width: SizeConfig.screenWidth,
-      child: StreamBuilder<Object>(
-          stream: PlayMusic.getCurrentStream(),
-          builder: (context, currentSnapshot) {
-            final Playing playing = currentSnapshot.data;
-            final Metas metas = playing?.audio?.audio?.metas;
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: SizeConfig.screenHeight,
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: SizeConfig.screenWidth,
+            child: StreamBuilder<Object>(
+                stream: PlayMusic.getCurrentStream(),
+                builder: (context, currentSnapshot) {
+                  final Playing playing = currentSnapshot.data;
+                  final Metas metas = playing?.audio?.audio?.metas;
 
-            return StreamBuilder(
-                stream: PlayMusic.isPlayingFunc(),
-                builder: (context, playingSnapshot) {
-                  final isPlaying = playingSnapshot.data;
-                  return Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Container(
-                        margin:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 50),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0x46000000),
-                              offset: Offset(0, 20),
-                              spreadRadius: 0,
-                              blurRadius: 30,
+                  return StreamBuilder(
+                      stream: PlayMusic.isPlayingFunc(),
+                      builder: (context, playingSnapshot) {
+                        final isPlaying = playingSnapshot.data;
+                        return Column(
+                          children: <Widget>[
+                            // SizedBox(
+                            //   height: 20,
+                            // ),
+                            Container(
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 20),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color(0x46000000),
+                                    offset: Offset(0, 10),
+                                    spreadRadius: 0,
+                                    blurRadius: 30,
+                                  ),
+                                  BoxShadow(
+                                    color: Color(0x11000000),
+                                    offset: Offset(0, 10),
+                                    spreadRadius: 0,
+                                    blurRadius: 30,
+                                  ),
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: Image(
+                                  image: ExtendedNetworkImageProvider(
+                                    metas?.image?.path ??
+                                        'https://cdn.pixabay.com/photo/2018/03/04/09/51/space-3197611_1280.jpg',
+                                    cache: true,
+                                  ),
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.6,
+                                  height:
+                                      MediaQuery.of(context).size.width * 0.6,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                             ),
-                            BoxShadow(
-                              color: Color(0x11000000),
-                              offset: Offset(0, 10),
-                              spreadRadius: 0,
-                              blurRadius: 30,
+                            Text(
+                              metas?.title ?? '',
+                              style: MTextStyles.bold16Black,
+                            ),
+                            Text(metas?.artist ?? '',
+                                style: MTextStyles.regular12WarmGrey),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            SizedBox(
+                              height: 40,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 15, right: 15),
+                                child: StreamBuilder(
+                                    stream: PlayMusic.getSongLengthStream(),
+                                    builder: (context, snapshot) {
+                                      if (!snapshot.hasData) {
+                                        return SizedBox.shrink();
+                                      }
+
+                                      final RealtimePlayingInfos infos =
+                                          snapshot.data;
+                                      position = infos.currentPosition;
+                                      musicLength = infos.duration;
+                                      return MainPlayerPositionSeekWidget(
+                                          position: position,
+                                          infos: infos,
+                                          musicLength: musicLength);
+                                    }),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: <Widget>[
+                                IconButton(
+                                  onPressed: () {
+                                    PlayMusic.previous();
+                                  },
+                                  icon: Icon(Icons.skip_previous),
+                                ),
+                                IconButton(
+                                  iconSize: 40,
+                                  onPressed: () {
+                                    setState(() {
+                                      PlayMusic.playOrPauseFunc();
+                                    });
+                                  },
+                                  icon: Icon(
+                                    isPlaying == true
+                                        ? FontAwesomeIcons.pause
+                                        : FontAwesomeIcons.play,
+                                    // color: MColors.tomato,
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    PlayMusic.next();
+                                  },
+                                  icon: Icon(Icons.skip_next),
+                                ),
+                              ],
                             ),
                           ],
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: Image(
-                            image: ExtendedNetworkImageProvider(
-                              metas?.image?.path ??
-                                  'https://cdn.pixabay.com/photo/2018/03/04/09/51/space-3197611_1280.jpg',
-                              cache: true,
+                        );
+                      });
+                }),
+          ),
+          Divider(
+            height: 20,
+            // thickness: 2,
+            indent: 20,
+            endIndent: 20,
+          ),
+          Expanded(
+            child: StreamBuilder(
+                stream: PlayMusic.getCurrentStream(),
+                builder: (context, currentSnapshot) {
+                  if (currentSnapshot.hasData == null) {
+                    return Container(
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  } else {
+                    final Playing playing = currentSnapshot.data;
+                    return ListView.builder(
+                      itemCount: playing.playlist.audios.length,
+                      itemBuilder: (context, index) {
+                        final item = playing.playlist.audios[index].metas;
+                        return ListTile(
+                          tileColor: index == playing.index
+                              ? MColors.kakao_yellow
+                              : MColors.grey_06,
+                          onTap: () {
+                            PlayMusic.playlistPlayAtIndex(index);
+                          },
+                          leading: ClipOval(
+                            // borderRadius:
+                            //     BorderRadius.circular(4.0),
+                            child: Image(
+                              image: ExtendedNetworkImageProvider(
+                                item?.image?.path ??
+                                    'https://cdn.pixabay.com/photo/2018/03/04/09/51/space-3197611_1280.jpg',
+                                cache: true,
+                              ),
+                              width: 40,
+                              height: 40,
+                              fit: BoxFit.cover,
                             ),
-                            width: MediaQuery.of(context).size.width * 0.7,
-                            height: MediaQuery.of(context).size.width * 0.7,
-                            fit: BoxFit.cover,
                           ),
-                        ),
-                      ),
-                      Text(
-                        metas?.title ?? '',
-                        style: MTextStyles.bold20Black36,
-                      ),
-                      Text(
-                        metas?.artist ?? '',
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      SizedBox(
-                        height: 40,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 15, right: 15),
-                          child: StreamBuilder(
-                              stream: PlayMusic.getSongLengthStream(),
-                              builder: (context, snapshot) {
-                                if (!snapshot.hasData) {
-                                  return SizedBox.shrink();
-                                }
+                          title: Column(
+                            children: [
+                              Text(
+                                item.title,
+                                style: index == playing.index
+                                    ? MTextStyles.bold14Grey06
+                                    : MTextStyles.bold14White,
+                              ),
+                              Text(
+                                item.artist,
+                                style: MTextStyles.regular12WarmGrey_underline,
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  }
 
-                                final RealtimePlayingInfos infos =
-                                    snapshot.data;
-                                position = infos.currentPosition;
-                                musicLength = infos.duration;
-                                return MainPlayerPositionSeekWidget(
-                                    position: position,
-                                    infos: infos,
-                                    musicLength: musicLength);
-                              }),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 40,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          IconButton(
-                            onPressed: () {
-                              PlayMusic.previous();
-                            },
-                            icon: Icon(Icons.skip_previous),
-                          ),
-                          IconButton(
-                            iconSize: 50,
-                            onPressed: () {
-                              setState(() {
-                                PlayMusic.playOrPauseFunc();
-                              });
-                            },
-                            icon: Icon(
-                              isPlaying == true
-                                  ? FontAwesomeIcons.pause
-                                  : FontAwesomeIcons.play,
-                              // color: MColors.tomato,
-                            ),
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              PlayMusic.next();
-                            },
-                            icon: Icon(Icons.skip_next),
-                          ),
-                        ],
-                      ),
-                    ],
-                  );
-                });
-          }),
+                  // return ListView.builder(
+                  //   itemCount: audios.length,
+                  //   itemBuilder: (BuildContext context, int index) {
+                  //     final item = audios[index].metas.title;
+                  //     return Text(item);
+                  //   },
+                  // );
+                }),
+          )
+        ],
+      ),
     );
     // }
   }

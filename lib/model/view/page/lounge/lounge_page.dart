@@ -89,8 +89,6 @@ class _LoungePageState extends State<LoungePage>
     }));
     _subscriptions.add(_assetsAudioPlayer.playerState.listen((playerState) {
       print("playerState : $playerState");
-
-      setState(() {});
     }));
     _subscriptions.add(_assetsAudioPlayer.isPlaying.listen((isplaying) {
       print("isplaying : $isplaying");
@@ -117,6 +115,12 @@ class _LoungePageState extends State<LoungePage>
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+
+    //선택된 항목이 없으면 사라지게함.
+    if (!selectedList.contains(true)) {
+      Provider.of<MiniWidgetStatusProvider>(context, listen: false)
+          .bottomSeletListWidget = BottomWidgets.none;
+    }
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -136,6 +140,7 @@ class _LoungePageState extends State<LoungePage>
     return Padding(
       padding: const EdgeInsets.only(left: 10, right: 10),
       child: Stack(
+        fit: StackFit.expand,
         children: [
           SingleChildScrollView(
             physics: ScrollPhysics(),
@@ -155,18 +160,23 @@ class _LoungePageState extends State<LoungePage>
                         child: CircularProgressIndicator(),
                       );
                     } else {
-                      musicList =
-                          FirebaseDBHelper.getMusicDatabase(snapshot.data);
                       List<MusicInfoData> _twentyList =
                           new List<MusicInfoData>();
+                      _twentyList =
+                          FirebaseDBHelper.getMusicDatabase(snapshot.data);
+
+                      //favorite 로 정렬
+                      _twentyList
+                          .sort((a, b) => b.favorite.compareTo(a.favorite));
+
                       if (selectedList?.length != snapshot.data.docs.length) {
                         selectedList = null;
                         selectedList = List.generate(
                             snapshot.data.docs.length, (index) => false);
                       }
-                      musicList.length > 20
-                          ? _twentyList = musicList.sublist(0, 20)
-                          : _twentyList = musicList;
+                      if (_twentyList.length > 20)
+                        _twentyList = _twentyList.sublist(0, 20);
+
                       return TopTwentyMusicWidget(
                           _twentyList, playOrpauseMusic);
                     }
@@ -176,7 +186,7 @@ class _LoungePageState extends State<LoungePage>
                   padding:
                       const EdgeInsets.only(left: 20.0, top: 40, bottom: 12.0),
                   child: Text(
-                    'All Music',
+                    '최신음악',
                     style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -235,10 +245,12 @@ class _LoungePageState extends State<LoungePage>
                 child: CircularProgressIndicator(),
               );
             } else {
+              musicList = FirebaseDBHelper.getMusicDatabase(snapshot.data);
+              musicList.sort((a, b) => a.dateTime.compareTo(b.dateTime));
               return ListView.builder(
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
-                itemCount: snapshot.data.docs.length,
+                itemCount: musicList.length,
                 itemBuilder: (context, index) {
                   return Column(
                     children: [
@@ -247,7 +259,7 @@ class _LoungePageState extends State<LoungePage>
                         child: Container(
                           height: 72,
                           color: selectedList[index] == true
-                              ? Colors.blueGrey[100]
+                              ? MColors.golden_rod
                               : Colors.transparent,
                           child: StreamBuilder(
                               stream: PlayMusic.getCurrentStream(),
@@ -282,8 +294,7 @@ class _LoungePageState extends State<LoungePage>
                                           // borderRadius:
                                           //     BorderRadius.circular(4.0),
                                           child: ExtendedImage.network(
-                                            snapshot.data.docs[index]
-                                                ['imagePath'],
+                                            musicList[index].imagePath,
                                             cache: true,
                                             width: 50,
                                             height: 50,
@@ -298,16 +309,14 @@ class _LoungePageState extends State<LoungePage>
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              snapshot.data.docs[index]
-                                                  ['title'],
+                                              musicList[index].title,
                                               style: MTextStyles.bold16Grey06,
                                             ),
                                             SizedBox(
                                               width: 6,
                                             ),
                                             Text(
-                                              snapshot.data.docs[index]
-                                                  ['artist'],
+                                              musicList[index].artist,
                                               maxLines: 1,
                                               style: MTextStyles
                                                   .regular12WarmGrey_underline,
@@ -335,37 +344,9 @@ class _LoungePageState extends State<LoungePage>
                                                 onPressed: () {
                                                   MusicInfoData musicInfoData =
                                                       MusicInfoData.fromMap(
-                                                          snapshot
-                                                              .data.docs[index]
-                                                              .data());
-                                                  // MusicInfoData musicInfoData =
-                                                  //     new MusicInfoData(
-                                                  //   id: snapshot
-                                                  //       .data.docs[index]['id'],
-                                                  //   title: snapshot.data
-                                                  //       .docs[index]['title'],
-                                                  //   artist: snapshot.data
-                                                  //       .docs[index]['artist'],
-                                                  //   musicPath: snapshot
-                                                  //           .data.docs[index]
-                                                  //       ['musicPath'],
-                                                  //   imagePath: snapshot
-                                                  //           .data.docs[index]
-                                                  //       ['imagePath'],
-                                                  //   dateTime: snapshot
-                                                  //           .data.docs[index]
-                                                  //       ['dateTime'],
-                                                  //   favorite: snapshot
-                                                  //           .data.docs[index]
-                                                  //       ['favorite'],
-                                                  //   musicType:
-                                                  //       EnumToString.fromString(
-                                                  //           MusicTypeEnum
-                                                  //               .values,
-                                                  //           snapshot.data
-                                                  //                   .docs[index]
-                                                  //               ['musicType']),
-                                                  // );
+                                                          musicList[index]
+                                                              .toMap());
+
                                                   playOrpauseMusic(
                                                       musicInfoData,
                                                       currentMusicId);
@@ -452,12 +433,10 @@ class _LoungePageState extends State<LoungePage>
   }
 
   void visibleMiniPlayer() {
-    // setState(() {
     Provider.of<MiniWidgetStatusProvider>(context, listen: false)
         .bottomPlayListWidget = BottomWidgets.miniPlayer;
     Provider.of<MiniWidgetStatusProvider>(context, listen: false)
         .bottomSeletListWidget = BottomWidgets.none;
-    // });
   }
 
   void showAndHideSnackBar(String content) {
@@ -491,6 +470,7 @@ class _LoungePageState extends State<LoungePage>
         PlayMusic.playUrlFunc(musicInfoData);
       });
     }
+
     Provider.of<MiniWidgetStatusProvider>(context, listen: false)
         .bottomPlayListWidget = BottomWidgets.miniPlayer;
   }

@@ -33,6 +33,7 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
 
   AssetsAudioPlayer _assetsAudioPlayer;
   final List<StreamSubscription> _subscriptions = [];
+
   List<MusicInfoData> _myMusicList = new List<MusicInfoData>();
   List<MusicInfoData> selectedMusicList = new List<MusicInfoData>();
   List<bool> _selectedList;
@@ -66,7 +67,7 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
     _subscriptions.add(_assetsAudioPlayer.playerState.listen((playerState) {
       print("playerState : $playerState");
 
-      setState(() {});
+      // setState(() {});
     }));
     _subscriptions.add(_assetsAudioPlayer.isPlaying.listen((isplaying) {
       print("isplaying : $isplaying");
@@ -117,6 +118,7 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
     return Padding(
       padding: const EdgeInsets.only(left: 10, right: 10),
       child: Stack(
+        fit: StackFit.expand,
         children: [
           SingleChildScrollView(
             child: Column(
@@ -159,9 +161,8 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
 
   Widget mySelectedMusicListWidget() {
     String mainCollection = FirebaseDBHelper.myMusicCollection;
-    String mainDoc = Provider.of<UserProfileProvider>(context, listen: false)
-        .userProfileData
-        .id;
+    String mainDoc =
+        Provider.of<UserProfileProvider>(context).userProfileData.id;
     String subCollection = FirebaseDBHelper.mySelectedMusicCollection;
     List<String> dataList = new List<String>();
     return Container(
@@ -292,30 +293,7 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
                                                         MusicInfoData.fromMap(
                                                             _myMusicList[index]
                                                                 .toMap());
-                                                    // new MusicInfoData(
-                                                    //     id: _myMusicList[index]
-                                                    //         .id,
-                                                    //     title: _myMusicList[
-                                                    //             index]
-                                                    //         .title,
-                                                    //     artist: _myMusicList[
-                                                    //             index]
-                                                    //         .artist,
-                                                    //     musicPath: _myMusicList[
-                                                    //             index]
-                                                    //         .musicPath,
-                                                    //     imagePath:
-                                                    //         _myMusicList[index]
-                                                    //             .imagePath,
-                                                    //     dateTime:
-                                                    //         _myMusicList[index]
-                                                    //             .dateTime,
-                                                    //     favorite:
-                                                    //         _myMusicList[index]
-                                                    //             .favorite,
-                                                    //     musicType:
-                                                    //         _myMusicList[index]
-                                                    //             .musicType);
+
                                                     playOrpauseMusic(
                                                         musicInfoData,
                                                         currentMusicId);
@@ -343,12 +321,10 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
   }
 
   refreshSelectedListAndWidgetFunc() {
-    setState(() {
-      Provider.of<MiniWidgetStatusProvider>(context).myBottomSelectListWidget =
-          BottomWidgets.none;
-      _selectedList.forEach((element) {
-        element = false;
-      });
+    Provider.of<MiniWidgetStatusProvider>(context, listen: false)
+        .myBottomSelectListWidget = BottomWidgets.none;
+    _selectedList.forEach((element) {
+      element = false;
     });
   }
 
@@ -386,9 +362,9 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
         }
       }
       _selectedList.contains(true)
-          ? Provider.of<MiniWidgetStatusProvider>(context)
+          ? Provider.of<MiniWidgetStatusProvider>(context, listen: false)
               .myBottomSelectListWidget = BottomWidgets.myMiniSelctList
-          : Provider.of<MiniWidgetStatusProvider>(context)
+          : Provider.of<MiniWidgetStatusProvider>(context, listen: false)
               .myBottomSelectListWidget = BottomWidgets.none;
     });
   }

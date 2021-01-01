@@ -31,6 +31,8 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
 
   @override
   Widget build(BuildContext context) {
+    //TODO : Provder listen 용으로 하나 썼는데.. 다른 방법이 없는가 흠...
+    Provider.of<MiniWidgetStatusProvider>(context).bottomPlayListWidget;
     if (Provider.of<MiniWidgetStatusProvider>(context, listen: false)
             .bMinButtonClick ==
         true) {
@@ -242,9 +244,6 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
                                 listen: false)
                             .bMinButtonClick;
                   });
-
-                  // Provider.of<MiniWidgetStatusProvider>(context, listen: false)
-                  //     .bottomPlayListWidget = LoungeBottomWidgets.none;
                 },
                 child: CircleAvatar(
                   radius: 15,

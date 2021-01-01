@@ -57,6 +57,15 @@ class FirebaseDBHelper {
         .delete();
   }
 
+  static Future<void> deleteAllSubDoc(String collection, String doc) async {
+    return await firestoreinstance
+        .collection(collection)
+        .doc()
+        .collection('mySelectedMusic')
+        .doc(doc)
+        .delete();
+  }
+
   static Future<DocumentSnapshot> getData(String collection, String doc) async {
     return await firestoreinstance.collection(collection).doc(doc).get();
   }
@@ -64,7 +73,16 @@ class FirebaseDBHelper {
   static Stream<QuerySnapshot> getDataStream(String collection) {
     return firestoreinstance
         .collection(collection)
-        .orderBy('favorite', descending: true)
+        // .orderBy('favorite', descending: true)
+        .snapshots();
+  }
+
+  static Stream<QuerySnapshot> getMyMusicDataStream(
+      String collection, String artist) {
+    return firestoreinstance
+        .collection(collection)
+        .where('artist', isEqualTo: artist)
+        // .orderBy('favorite', descending: true)
         .snapshots();
   }
 

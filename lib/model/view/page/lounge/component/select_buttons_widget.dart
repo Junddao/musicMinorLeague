@@ -19,15 +19,15 @@ class SelectButtonsWidget extends StatelessWidget {
           children: [
             IconButton(
               icon: Icon(
-                Icons.check,
-                size: 14,
+                Icons.select_all,
+                // size: 14,
               ),
               onPressed: () {
                 _selectAllMusicFunc();
               },
             ),
             Text(
-              '전체',
+              '모두선택',
               style: MTextStyles.bold10PinkishGrey,
             ),
           ],

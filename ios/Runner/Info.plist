@@ -52,20 +52,21 @@
 	        </array>
 	    </dict>
 	</array>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Example usage description</string>
+	
 	<key>NSCameraUsageDescription</key>
 	<string>Example usage description</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Used to capture audio for image picker plugin</string>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>Explain why your app uses music</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Explain why your app uses photo library</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
 		<string>remote-notification</string>
 	</array>
-	<key>NSAppleMusicUsageDescription</key>
-	<string>Explain why your app uses music</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Explain why your app uses photo library</string>
+	
+	
 </dict>
 </plist>
