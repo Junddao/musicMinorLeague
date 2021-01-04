@@ -184,12 +184,16 @@ class _MyMusicPlayerPageState extends State<MyMusicPlayerPage> {
                       });
                 }),
           ),
-          Divider(
-            height: 20,
-            // thickness: 2,
-            indent: 20,
-            endIndent: 20,
+
+          SizedBox(
+            height: 30,
           ),
+          // Divider(
+          //   height: 20,
+          //   // thickness: 2,
+          //   indent: 20,
+          //   endIndent: 20,
+          // ),
           Expanded(
             child: StreamBuilder(
                 stream: PlayMusic.getCurrentStream(),
@@ -201,13 +205,13 @@ class _MyMusicPlayerPageState extends State<MyMusicPlayerPage> {
                   } else {
                     final Playing playing = currentSnapshot.data;
                     return ListView.builder(
-                      itemCount: playing.playlist.audios.length,
+                      itemCount: playing?.playlist?.audios?.length ?? 0,
                       itemBuilder: (context, index) {
                         final item = playing.playlist.audios[index].metas;
                         return ListTile(
                           tileColor: index == playing.index
-                              ? MColors.kakao_yellow
-                              : MColors.grey_06,
+                              ? MColors.grey_06
+                              : Colors.transparent,
                           onTap: () {
                             PlayMusic.playlistPlayAtIndex(index);
                           },
@@ -230,8 +234,8 @@ class _MyMusicPlayerPageState extends State<MyMusicPlayerPage> {
                               Text(
                                 item.title,
                                 style: index == playing.index
-                                    ? MTextStyles.bold14Grey06
-                                    : MTextStyles.bold14White,
+                                    ? MTextStyles.bold14White
+                                    : MTextStyles.bold14Grey06,
                               ),
                               Text(
                                 item.artist,

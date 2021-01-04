@@ -58,15 +58,14 @@ class _SmallSelectListWidgetState extends State<SmallSelectListWidget> {
               width: SizeConfig.screenWidth - 20,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(
-                  Radius.circular(16),
+                  Radius.circular(4),
                 ),
-                border: Border.all(color: MColors.black, width: 0.2),
+                border: Border.all(color: MColors.black, width: 0.1),
                 color: MColors.white,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey,
-                    offset: Offset(0.0, 1.0),
-                    blurRadius: 3.0,
+                    blurRadius: 1.0,
                   ),
                 ],
               ),
@@ -126,14 +125,14 @@ class _SmallSelectListWidgetState extends State<SmallSelectListWidget> {
             child: selectedMusicList == null
                 ? SizedBox.shrink()
                 : CircleAvatar(
-                    radius: 15,
-                    backgroundColor: MColors.tomato,
+                    radius: 12,
+                    backgroundColor: MColors.grey_06,
                     child: Text(
                       widget._selectedList
                           .where((element) => element == true)
                           .length
                           .toString(),
-                      style: MTextStyles.bold14White,
+                      style: MTextStyles.bold12White,
                     ),
                   ),
           ),

@@ -1,3 +1,4 @@
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -74,112 +75,129 @@ class _TopTwentyMusicWidgetState extends State<TopTwentyMusicWidget> {
                 itemBuilder: (context, index) {
                   final item = widget._topTwentyMusicList[index];
                   return Padding(
-                    padding: const EdgeInsets.only(right: 6.0),
+                    padding: const EdgeInsets.only(right: 8.0),
                     child: Transform.translate(
-                      offset: Offset(20.0, 0),
+                      offset: Offset(0.0, 0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.all(Radius.circular(8)),
-                        child: Container(
-                          width: 120,
-                          height: 120,
-                          child: Stack(
-                            children: <Widget>[
-                              Positioned.fill(
-                                  child: item.imagePath == null
-                                      ? Container()
-                                      : ExtendedImage.network(
-                                          item.imagePath,
-                                          fit: BoxFit.cover,
-                                          cache: true,
-                                          clearMemoryCacheWhenDispose: true,
-                                        )),
-                              Container(
-                                color: const Color(0x66000000),
-                              ),
-                              Positioned(
-                                right: 10,
-                                bottom: 10,
-                                child: InkWell(
-                                  child: Container(
-                                    width: 20,
-                                    height: 20,
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                        border: Border.all(
-                                            width: 1, color: Colors.white)),
-                                    child: Icon(
-                                      Provider.of<NowPlayMusicProvider>(context,
-                                                          listen: false)
-                                                      .isPlay ==
-                                                  true &&
-                                              widget._topTwentyMusicList[index]
-                                                      .id ==
-                                                  Provider.of<NowPlayMusicProvider>(
-                                                          context,
-                                                          listen: false)
-                                                      .nowMusicId
-                                          ? FontAwesomeIcons.pause
-                                          : FontAwesomeIcons.play,
-                                      color: Provider.of<NowPlayMusicProvider>(
-                                                          context,
-                                                          listen: false)
-                                                      .isPlay ==
-                                                  true &&
-                                              widget._topTwentyMusicList[index]
-                                                      .id ==
-                                                  Provider.of<NowPlayMusicProvider>(
-                                                          context,
-                                                          listen: false)
-                                                      .nowMusicId
-                                          ? MColors.kakao_yellow
-                                          : MColors.white,
-                                      size: 8,
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    setState(() {
-                                      widget.playOrpauseMusic(
-                                          widget._topTwentyMusicList[index]);
-                                      // playOrPauseMusic(index);
-                                    });
-                                  },
-                                ),
-                              ),
-                              Center(
-                                child: Container(
-                                    height: 100,
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 10.0, vertical: 4.0),
-                                    decoration: BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(15)),
-                                      // border: Border.all(
-                                      //     color: MColors.white, width: 1),
-                                    ),
-                                    child: // 마케팅
-                                        Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          item.title,
-                                          style: MTextStyles.bold14White,
-                                          textAlign: TextAlign.center,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        Text(
-                                          item.artist,
-                                          style: MTextStyles.regular12White,
-                                          textAlign: TextAlign.center,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
-                                    )),
-                              ),
-                            ],
-                          ),
-                        ),
+                        child: StreamBuilder(
+                            stream: PlayMusic.getCurrentStream(),
+                            builder: (context, currentSnapshot) {
+                              final Playing playing = currentSnapshot.data;
+
+                              final String currentMusicId =
+                                  playing?.audio?.audio?.metas?.id;
+                              return StreamBuilder(
+                                  stream: PlayMusic.isPlayingFunc(),
+                                  builder: (context, playingSnapshot) {
+                                    final isPlaying = playingSnapshot.data;
+                                    return Container(
+                                      width: 120,
+                                      height: 120,
+                                      child: Stack(
+                                        children: <Widget>[
+                                          Positioned.fill(
+                                              child: item.imagePath == null
+                                                  ? Container()
+                                                  : ExtendedImage.network(
+                                                      item.imagePath,
+                                                      fit: BoxFit.cover,
+                                                      cache: true,
+                                                      clearMemoryCacheWhenDispose:
+                                                          true,
+                                                    )),
+                                          Container(
+                                            color: const Color(0x66000000),
+                                          ),
+                                          Positioned(
+                                            right: 10,
+                                            bottom: 10,
+                                            child: InkWell(
+                                              child: Container(
+                                                width: 20,
+                                                height: 20,
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            100),
+                                                    border: Border.all(
+                                                        width: 1,
+                                                        color: Colors.white)),
+                                                child: Icon(
+                                                  isPlaying == true &&
+                                                          widget
+                                                                  ._topTwentyMusicList[
+                                                                      index]
+                                                                  .id ==
+                                                              currentMusicId
+                                                      ? FontAwesomeIcons.pause
+                                                      : FontAwesomeIcons.play,
+                                                  color: isPlaying == true &&
+                                                          widget
+                                                                  ._topTwentyMusicList[
+                                                                      index]
+                                                                  .id ==
+                                                              currentMusicId
+                                                      ? MColors.kakao_yellow
+                                                      : MColors.white,
+                                                  size: 8,
+                                                ),
+                                              ),
+                                              onTap: () {
+                                                setState(() {
+                                                  widget.playOrpauseMusic(
+                                                      widget._topTwentyMusicList[
+                                                          index],
+                                                      currentMusicId);
+                                                  // playOrPauseMusic(index);
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                          Center(
+                                            child: Container(
+                                                height: 100,
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 10.0,
+                                                    vertical: 4.0),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(15)),
+                                                  // border: Border.all(
+                                                  //     color: MColors.white, width: 1),
+                                                ),
+                                                child: // 마케팅
+                                                    Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                      item.title,
+                                                      style: MTextStyles
+                                                          .bold14White,
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                    Text(
+                                                      item.artist,
+                                                      style: MTextStyles
+                                                          .regular12White,
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ],
+                                                )),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  });
+                            }),
                       ),
                     ),
                   );

@@ -150,6 +150,9 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
               musicList: _myMusicList,
               selectedList: _selectedList,
               snackBarFunc: showAndHideSnackBar,
+              visibleMiniPlayerFunc: visibleMiniPlayer,
+              playOrPauseMusicForSelectedListFunc:
+                  playOrPauseMusicForSelectedList,
               refreshSelectedListAndWidgetFunc:
                   refreshSelectedListAndWidgetFunc,
             ),
@@ -197,11 +200,11 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
                     return Column(
                       children: [
                         ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0),
+                          borderRadius: BorderRadius.circular(0.0),
                           child: Container(
                             height: 72,
                             color: _selectedList[index] == true
-                                ? Colors.blueGrey[100]
+                                ? MColors.grey_06
                                 : Colors.transparent,
                             child: StreamBuilder(
                                 stream: PlayMusic.getCurrentStream(),
@@ -256,7 +259,10 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
                                             children: [
                                               Text(
                                                 _myMusicList[index].title,
-                                                style: MTextStyles.bold14Grey06,
+                                                style: _selectedList[index] ==
+                                                        true
+                                                    ? MTextStyles.bold14White
+                                                    : MTextStyles.bold16Grey06,
                                               ),
                                               SizedBox(
                                                 width: 6,
@@ -285,7 +291,10 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
                                                           _myMusicList[index]
                                                                   .id ==
                                                               currentMusicId
-                                                      ? MColors.black
+                                                      ? _selectedList[index] ==
+                                                              true
+                                                          ? MColors.white
+                                                          : MColors.black
                                                       : MColors.warm_grey,
                                                   onPressed: () {
                                                     MusicInfoData
@@ -378,11 +387,27 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
     }
   }
 
+  void visibleMiniPlayer() {
+    Provider.of<MiniWidgetStatusProvider>(context, listen: false)
+        .bottomPlayListWidget = BottomWidgets.miniPlayer;
+    Provider.of<MiniWidgetStatusProvider>(context, listen: false)
+        .myBottomSelectListWidget = BottomWidgets.none;
+  }
+
+  void playOrPauseMusicForSelectedList() {
+    PlayMusic.stopFunc().whenComplete(() {
+      PlayMusic.clearAudioPlayer();
+      PlayMusic.makeNewPlayer();
+      PlayMusic.playListFunc(selectedMusicList);
+    });
+  }
+
   void playOrpauseMusic(MusicInfoData musicInfoData, String currentPlayingId) {
     if (currentPlayingId == musicInfoData.id) {
       PlayMusic.playOrPauseFunc();
     } else {
       PlayMusic.stopFunc().whenComplete(() {
+        PlayMusic.clearAudioPlayer();
         PlayMusic.makeNewPlayer();
         PlayMusic.playUrlFunc(musicInfoData);
       });

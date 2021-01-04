@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
 import 'package:music_minorleague/model/enum/music_type_enum.dart';
+import 'package:music_minorleague/model/provider/user_profile_provider.dart';
 
 class FirebaseDBHelper {
   static final userCollection = 'user';
@@ -43,6 +44,21 @@ class FirebaseDBHelper {
     });
   }
 
+  static Future<void> updateMusicArtist(
+      String collection, String newArtist, String userId) async {
+    await firestoreinstance
+        .collection(collection)
+        .where('userId', isEqualTo: userId)
+        .get()
+        .then((querySnapshot) {
+      querySnapshot.docs.forEach((element) {
+        firestoreinstance.collection(collection).doc(element.id).update({
+          'artist': newArtist,
+        });
+      });
+    });
+  }
+
   static Future<void> deleteDoc(String collection, String doc) async {
     return await firestoreinstance.collection(collection).doc(doc).delete();
   }
@@ -60,10 +76,17 @@ class FirebaseDBHelper {
   static Future<void> deleteAllSubDoc(String collection, String doc) async {
     return await firestoreinstance
         .collection(collection)
-        .doc()
-        .collection('mySelectedMusic')
-        .doc(doc)
-        .delete();
+        .get()
+        .then((querySnapshot) {
+      querySnapshot.docs.forEach((result) {
+        firestoreinstance
+            .collection(collection)
+            .doc(result.id)
+            .collection("mySelectedMusic")
+            .doc(doc)
+            .delete();
+      });
+    });
   }
 
   static Future<DocumentSnapshot> getData(String collection, String doc) async {
@@ -78,10 +101,10 @@ class FirebaseDBHelper {
   }
 
   static Stream<QuerySnapshot> getMyMusicDataStream(
-      String collection, String artist) {
+      String collection, String userId) {
     return firestoreinstance
         .collection(collection)
-        .where('artist', isEqualTo: artist)
+        .where('userId', isEqualTo: userId)
         // .orderBy('favorite', descending: true)
         .snapshots();
   }
@@ -99,21 +122,18 @@ class FirebaseDBHelper {
     List<MusicInfoData> musicList = new List<MusicInfoData>();
     for (int idx = 0; idx < qs.docs.length; idx++) {
       MusicInfoData musicInfoData = new MusicInfoData();
-      musicInfoData.id = qs.docs[idx].data()['id'];
-      musicInfoData.artist = qs.docs[idx].data()['artist'];
-      musicInfoData.dateTime = qs.docs[idx].data()['dateTime'];
-      musicInfoData.favorite = qs.docs[idx].data()['favorite'];
-      musicInfoData.imagePath = qs.docs[idx].data()['imagePath'];
-      musicInfoData.musicPath = qs.docs[idx].data()['musicPath'];
+      musicInfoData = MusicInfoData.fromMap(qs.docs[idx].data());
+      // musicInfoData.id = qs.docs[idx].data()['id'];
+      // musicInfoData.artist = qs.docs[idx].data()['artist'];
+      // musicInfoData.dateTime = qs.docs[idx].data()['dateTime'];
+      // musicInfoData.favorite = qs.docs[idx].data()['favorite'];
+      // musicInfoData.imagePath = qs.docs[idx].data()['imagePath'];
+      // musicInfoData.musicPath = qs.docs[idx].data()['musicPath'];
 
-      musicInfoData.musicType = EnumToString.fromString(
-          MusicTypeEnum.values, qs.docs[idx].data()['musicType']);
-      musicInfoData.title = qs.docs[idx].data()['title'];
+      // musicInfoData.musicType = EnumToString.fromString(
+      //     MusicTypeEnum.values, qs.docs[idx].data()['musicType']);
+      // musicInfoData.title = qs.docs[idx].data()['title'];
       musicList.add(musicInfoData);
-
-      int favoriteNum = qs.docs[idx].data()['favorite'];
-
-      print(favoriteNum);
     }
 
     return musicList;

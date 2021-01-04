@@ -5,7 +5,6 @@ enum MusicTypeEnum {
   electronic,
   folk,
   hiphop,
-  jazz,
   pop,
   rap,
   rock,

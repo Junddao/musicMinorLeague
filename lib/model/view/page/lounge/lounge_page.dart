@@ -8,6 +8,7 @@ import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
+import 'package:music_minorleague/model/data/user_profile_data.dart';
 import 'package:music_minorleague/model/enum/lounge_bottom_widget_enum.dart';
 import 'package:music_minorleague/model/enum/music_type_enum.dart';
 import 'package:music_minorleague/model/provider/mini_widget_status_provider.dart';
@@ -255,11 +256,11 @@ class _LoungePageState extends State<LoungePage>
                   return Column(
                     children: [
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(10.0),
+                        borderRadius: BorderRadius.circular(0.0),
                         child: Container(
                           height: 72,
                           color: selectedList[index] == true
-                              ? MColors.golden_rod
+                              ? MColors.grey_06
                               : Colors.transparent,
                           child: StreamBuilder(
                               stream: PlayMusic.getCurrentStream(),
@@ -290,16 +291,38 @@ class _LoungePageState extends State<LoungePage>
                                                       .bottomSeletListWidget =
                                                   BottomWidgets.none;
                                         },
-                                        leading: ClipOval(
-                                          // borderRadius:
-                                          //     BorderRadius.circular(4.0),
-                                          child: ExtendedImage.network(
-                                            musicList[index].imagePath,
-                                            cache: true,
-                                            width: 50,
-                                            height: 50,
-                                            fit: BoxFit.cover,
-                                            clearMemoryCacheWhenDispose: false,
+                                        leading: InkWell(
+                                          onTap: () {
+                                            String collection =
+                                                FirebaseDBHelper.userCollection;
+                                            String doc =
+                                                musicList[index].userId;
+
+                                            FirebaseDBHelper.getData(
+                                                    collection, doc)
+                                                .then((value) {
+                                              UserProfileData
+                                                  otherUserProfileData =
+                                                  UserProfileData.fromMap(
+                                                      value.data());
+                                              Navigator.of(context).pushNamed(
+                                                  'OtherUserProfilePage',
+                                                  arguments:
+                                                      otherUserProfileData);
+                                            });
+                                          },
+                                          child: ClipOval(
+                                            // borderRadius:
+                                            //     BorderRadius.circular(4.0),
+                                            child: ExtendedImage.network(
+                                              musicList[index].imagePath,
+                                              cache: true,
+                                              width: 50,
+                                              height: 50,
+                                              fit: BoxFit.cover,
+                                              clearMemoryCacheWhenDispose:
+                                                  false,
+                                            ),
                                           ),
                                         ),
                                         title: Column(
@@ -310,7 +333,9 @@ class _LoungePageState extends State<LoungePage>
                                           children: [
                                             Text(
                                               musicList[index].title,
-                                              style: MTextStyles.bold16Grey06,
+                                              style: selectedList[index] == true
+                                                  ? MTextStyles.bold14White
+                                                  : MTextStyles.bold16Grey06,
                                             ),
                                             SizedBox(
                                               width: 6,
@@ -339,7 +364,10 @@ class _LoungePageState extends State<LoungePage>
                                                 color: isPlaying == true &&
                                                         musicList[index].id ==
                                                             currentMusicId
-                                                    ? MColors.black
+                                                    ? selectedList[index] ==
+                                                            true
+                                                        ? MColors.white
+                                                        : MColors.black
                                                     : MColors.warm_grey,
                                                 onPressed: () {
                                                   MusicInfoData musicInfoData =
@@ -456,6 +484,7 @@ class _LoungePageState extends State<LoungePage>
 
   void playOrPauseMusicForSelectedList() {
     PlayMusic.stopFunc().whenComplete(() {
+      PlayMusic.clearAudioPlayer();
       PlayMusic.makeNewPlayer();
       PlayMusic.playListFunc(selectedMusicList);
     });
@@ -466,6 +495,7 @@ class _LoungePageState extends State<LoungePage>
       PlayMusic.playOrPauseFunc();
     } else {
       PlayMusic.stopFunc().whenComplete(() {
+        PlayMusic.clearAudioPlayer();
         PlayMusic.makeNewPlayer();
         PlayMusic.playUrlFunc(musicInfoData);
       });
@@ -490,8 +520,9 @@ class _LoungePageState extends State<LoungePage>
     int data = musicList[index].favorite;
 
     FirebaseDBHelper.updateFavoriteData(collection, doc, data + 1);
-    setState(() {
-      selectedThumbIndex = index;
-    });
+    selectedThumbIndex = index;
+    // setState(() {
+    //   selectedThumbIndex = index;
+    // });
   }
 }

@@ -9,6 +9,7 @@ import 'package:music_minorleague/tabstates.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'model/provider/other_user_profile_provider.dart';
 import 'model/provider/user_profile_provider.dart';
 import 'model/view/style/colors.dart';
 import 'model/view/style/custom_animation.dart';
@@ -46,6 +47,9 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<UserProfileProvider>(
           create: (_) => UserProfileProvider(),
+        ),
+        ChangeNotifierProvider<OtherUserProfileProvider>(
+          create: (_) => OtherUserProfileProvider(),
         ),
         ChangeNotifierProvider<TabStates>(
           create: (_) => TabStates(),

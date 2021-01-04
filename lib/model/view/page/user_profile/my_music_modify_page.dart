@@ -1,5 +1,6 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
@@ -192,6 +193,7 @@ class _MyMusicModifyPageState extends State<MyMusicModifyPage> {
       PlayMusic.playOrPauseFunc();
     } else {
       PlayMusic.stopFunc().whenComplete(() {
+        PlayMusic.clearAudioPlayer();
         PlayMusic.makeNewPlayer();
         PlayMusic.playUrlFunc(musicInfoData);
       });
@@ -202,9 +204,26 @@ class _MyMusicModifyPageState extends State<MyMusicModifyPage> {
 
   void deleteMyMusic(int index) {
     String doc = _myMusicList[index].id;
+    // allmusic db delete
     FirebaseDBHelper.deleteDoc(FirebaseDBHelper.allMusicCollection, doc);
 
+    // mymusic db delete
     FirebaseDBHelper.deleteAllSubDoc(FirebaseDBHelper.myMusicCollection, doc);
+
+    //  image file delete
+    FirebaseStorage.instance
+        .refFromURL(_myMusicList[index].imagePath)
+        .delete()
+        .then((value) {
+      print('image delete complete!');
+    });
+    //  music file delete
+    FirebaseStorage.instance
+        .refFromURL(_myMusicList[index].musicPath)
+        .delete()
+        .then((value) {
+      print('music delete complete!');
+    });
 
     Provider.of<MiniWidgetStatusProvider>(context, listen: false)
         .bottomPlayListWidget = BottomWidgets.none;

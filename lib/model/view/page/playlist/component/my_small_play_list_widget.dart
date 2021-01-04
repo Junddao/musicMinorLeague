@@ -48,14 +48,14 @@ class _MySmallPlayListWidgetState extends State<MySmallPlayListWidget> {
                 width: SizeConfig.screenWidth - 20,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(
-                    Radius.circular(16),
+                    Radius.circular(4),
                   ),
-                  border: Border.all(color: MColors.black, width: 0.2),
+                  border: Border.all(color: MColors.black, width: 0.1),
                   color: MColors.white,
                   boxShadow: [
                     BoxShadow(
                       color: Colors.grey,
-                      blurRadius: 3.0,
+                      blurRadius: 1.0,
                     ),
                   ],
                 ),
@@ -101,14 +101,14 @@ class _MySmallPlayListWidgetState extends State<MySmallPlayListWidget> {
                 width: SizeConfig.screenWidth - 20,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(
-                    Radius.circular(16),
+                    Radius.circular(4),
                   ),
-                  border: Border.all(color: MColors.black, width: 0.2),
+                  border: Border.all(color: MColors.black, width: 0.1),
                   color: MColors.white,
                   boxShadow: [
                     BoxShadow(
                       color: Colors.grey,
-                      blurRadius: 3.0,
+                      blurRadius: 1.0,
                     ),
                   ],
                 ),

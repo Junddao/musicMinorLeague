@@ -21,16 +21,23 @@ class MyPlaylistSmallSelectListWidget extends StatefulWidget {
     List<MusicInfoData> musicList,
     Function snackBarFunc,
     List<bool> selectedList,
+    Function visibleMiniPlayerFunc,
+    Function playOrPauseMusicForSelectedListFunc,
     Function refreshSelectedListAndWidgetFunc,
   })  : _musicList = musicList,
         _selectedList = selectedList,
         _snackBarFunc = snackBarFunc,
+        _visibleMiniPlayerFunc = visibleMiniPlayerFunc,
+        _playOrPauseMusicForSelectedListFunc =
+            playOrPauseMusicForSelectedListFunc,
         _refreshSelectedListAndWidgetFunc = refreshSelectedListAndWidgetFunc,
         super(key: key);
 
   final List<MusicInfoData> _musicList;
   final List<bool> _selectedList;
   final Function _snackBarFunc;
+  final Function _visibleMiniPlayerFunc;
+  final Function _playOrPauseMusicForSelectedListFunc;
   final Function _refreshSelectedListAndWidgetFunc;
 
   @override
@@ -59,15 +66,14 @@ class _MyPlaylistSmallSelectListWidget
               width: SizeConfig.screenWidth - 20,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(
-                  Radius.circular(16),
+                  Radius.circular(4),
                 ),
-                border: Border.all(color: MColors.black, width: 0.2),
+                border: Border.all(color: MColors.black, width: 0.1),
                 color: MColors.white,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey,
-                    offset: Offset(0.0, 1.0),
-                    blurRadius: 3.0,
+                    blurRadius: 1.0,
                   ),
                 ],
               ),
@@ -124,17 +130,17 @@ class _MyPlaylistSmallSelectListWidget
           ),
           Positioned(
             left: 10,
-            child: widget._musicList == null
+            child: widget._selectedList == null
                 ? SizedBox.shrink()
                 : CircleAvatar(
-                    radius: 15,
-                    backgroundColor: MColors.tomato,
+                    radius: 12,
+                    backgroundColor: MColors.grey_06,
                     child: Text(
                       widget._selectedList
                           .where((element) => element == true)
                           .length
                           .toString(),
-                      style: MTextStyles.bold14White,
+                      style: MTextStyles.bold12White,
                     ),
                   ),
           ),
@@ -153,17 +159,18 @@ class _MyPlaylistSmallSelectListWidget
   }
 
   playSelectMusic() {
-    Provider.of<MiniWidgetStatusProvider>(context, listen: false)
-        .bottomPlayListWidget = BottomWidgets.miniPlayer;
-    playOrPauseMusicForSelectedList();
+    widget._visibleMiniPlayerFunc();
+    widget._playOrPauseMusicForSelectedListFunc();
+
+    // playOrPauseMusicForSelectedList();
   }
 
-  void playOrPauseMusicForSelectedList() {
-    PlayMusic.stopFunc().whenComplete(() {
-      PlayMusic.makeNewPlayer();
-      PlayMusic.playListFunc(selectedMusicList);
-    });
-  }
+  // void playOrPauseMusicForSelectedList() {
+  //   PlayMusic.stopFunc().whenComplete(() {
+  //     PlayMusic.makeNewPlayer();
+  //     PlayMusic.playListFunc(selectedMusicList);
+  //   });
+  // }
 
   void deleteMyMusicList() {
     String mainCollection = FirebaseDBHelper.myMusicCollection;

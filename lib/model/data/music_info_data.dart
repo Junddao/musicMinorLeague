@@ -6,6 +6,7 @@ import 'package:music_minorleague/model/enum/music_type_enum.dart';
 
 class MusicInfoData {
   String id;
+  String userId;
   String title;
   String artist;
   String musicPath;
@@ -15,6 +16,7 @@ class MusicInfoData {
   MusicTypeEnum musicType;
   MusicInfoData({
     this.id,
+    this.userId,
     this.title,
     this.artist,
     this.musicPath,
@@ -28,6 +30,7 @@ class MusicInfoData {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
+      'userId': userId,
       'title': title,
       'artist': artist,
       'musicPath': musicPath,
@@ -43,6 +46,7 @@ class MusicInfoData {
 
     return MusicInfoData(
       id: map['id'],
+      userId: map['userId'],
       title: map['title'],
       artist: map['artist'],
       musicPath: map['musicPath'],

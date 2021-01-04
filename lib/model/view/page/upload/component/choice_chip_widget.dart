@@ -58,26 +58,22 @@ class _ChoiceChipWidgetState extends State<ChoiceChipWidget> {
     String returnString;
     switch (value) {
       case MusicTypeEnum.classical:
-        returnString = '클래식';
+        returnString = '차분함';
         break;
       case MusicTypeEnum.contry:
-        returnString = '컨트리';
+        returnString = '낭만적';
         break;
       case MusicTypeEnum.dance:
-        returnString = '댄스';
+        returnString = '밝음';
         break;
       case MusicTypeEnum.electronic:
-        returnString = '일렉트로닉';
+        returnString = '신나는';
         break;
-
       case MusicTypeEnum.folk:
-        returnString = '포크';
+        returnString = '영감적인';
         break;
       case MusicTypeEnum.hiphop:
         returnString = '힙합';
-        break;
-      case MusicTypeEnum.jazz:
-        returnString = '재즈';
         break;
       case MusicTypeEnum.pop:
         returnString = '팝';

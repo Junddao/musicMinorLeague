@@ -32,7 +32,8 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
   @override
   Widget build(BuildContext context) {
     //TODO : Provder listen 용으로 하나 썼는데.. 다른 방법이 없는가 흠...
-    Provider.of<MiniWidgetStatusProvider>(context).bottomPlayListWidget;
+    Provider.of<MiniWidgetStatusProvider>(context, listen: false)
+        .bottomPlayListWidget;
     if (Provider.of<MiniWidgetStatusProvider>(context, listen: false)
             .bMinButtonClick ==
         true) {
@@ -47,14 +48,14 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
                 width: SizeConfig.screenWidth - 20,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(
-                    Radius.circular(16),
+                    Radius.circular(4),
                   ),
-                  border: Border.all(color: MColors.black, width: 0.2),
+                  border: Border.all(color: MColors.black, width: 0.1),
                   color: MColors.white,
                   boxShadow: [
                     BoxShadow(
                       color: Colors.grey,
-                      blurRadius: 3.0,
+                      blurRadius: 1.0,
                     ),
                   ],
                 ),
@@ -97,14 +98,14 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
                   width: SizeConfig.screenWidth - 20,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(
-                      Radius.circular(16),
+                      Radius.circular(4),
                     ),
-                    border: Border.all(color: MColors.black, width: 0.2),
+                    border: Border.all(color: MColors.black, width: 0.1),
                     color: MColors.white,
                     boxShadow: [
                       BoxShadow(
                         color: Colors.grey,
-                        blurRadius: 3.0,
+                        blurRadius: 1.0,
                       ),
                     ],
                   ),

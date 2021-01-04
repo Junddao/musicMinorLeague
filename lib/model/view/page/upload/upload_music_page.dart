@@ -26,7 +26,7 @@ import 'package:uuid/uuid.dart';
 
 import 'component/cancel_Dialog.dart';
 import 'component/choice_chip_widget.dart';
-
+import 'package:intl/intl.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:music_minorleague/model/api_service/api_service_provider.dart';
 
@@ -48,6 +48,7 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
   String imageFileUrl, musicFileUrl;
 
   String _artist;
+  String _userId;
   Reference ref;
   MusicTypeEnum _typeOfMusic;
 
@@ -61,6 +62,7 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
   @override
   void initState() {
     uniqueId = Uuid().v4();
+    _typeOfMusic = MusicTypeEnum.etc;
     super.initState();
   }
 
@@ -136,7 +138,9 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
   }
 
   _body() {
-    _artist = Provider.of<UserProfileProvider>(context).userProfileData.id;
+    _artist =
+        Provider.of<UserProfileProvider>(context).userProfileData.userName;
+    _userId = Provider.of<UserProfileProvider>(context).userProfileData.id;
     List<MusicTypeEnum> typeOfMusicList = List.generate(
         MusicTypeEnum.values.length, (index) => MusicTypeEnum.values[index]);
     return SingleChildScrollView(
@@ -188,7 +192,6 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
       );
     } else {
       musicContentsWidget = RawMaterialButton(
-        onPressed: () {},
         child: Stack(
           children: [
             Padding(
@@ -517,9 +520,10 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
   // }
 
   Future<void> uploadMusicFile() async {
-    String filename = uniqueId + '_music';
+    String formattedDate = DateFormat('yyyyMMddhhmmss').format(DateTime.now());
+    String filename = _titleController.text + '_' + formattedDate + '_music';
 
-    ref = FirebaseStorage.instance.ref().child(_artist).child(filename);
+    ref = FirebaseStorage.instance.ref().child(_userId).child(filename);
 
     UploadTask uploadTask = ref.putFile(_musicFile);
 
@@ -532,9 +536,10 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
   }
 
   Future<void> uploadImageFile() async {
-    String filename = uniqueId + '_image';
+    String formattedDate = DateFormat('yyyyMMddhhmmss').format(DateTime.now());
+    String filename = _titleController.text + '_' + formattedDate + '_image';
 
-    ref = FirebaseStorage.instance.ref().child(_artist).child(filename);
+    ref = FirebaseStorage.instance.ref().child(_userId).child(filename);
 
     UploadTask uploadTask = ref.putFile(_coverImage);
 
@@ -553,6 +558,7 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
         imageFileUrl != null) {
       var data = {
         "id": uniqueId,
+        "userId": _userId,
         "title": _titleController.text,
         "artist": _artist,
         "musicType": EnumToString.convertToString(_typeOfMusic),

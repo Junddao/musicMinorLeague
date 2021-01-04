@@ -423,16 +423,19 @@ class _MyProfileModifyPageState extends State<MyProfileModifyPage> {
     await uploadImageFile();
   }
 
-  Future<String> uploadImageFile() async {
-    String _artist = Provider.of<UserProfileProvider>(context, listen: false)
+  Future<void> uploadImageFile() async {
+    String _userId = Provider.of<UserProfileProvider>(context, listen: false)
         .userProfileData
         .id;
     String filename = 'profileImage';
 
-    ref = FirebaseStorage.instance.ref().child(_artist).child(filename);
-    String url;
+    ref = FirebaseStorage.instance.ref().child(_userId).child(filename);
+
     if (_profileImage == null) {
-      url = Provider.of<UserProfileProvider>(context).userProfileData.photoUrl;
+      imageFileUrl = Provider.of<UserProfileProvider>(context, listen: false)
+          .userProfileData
+          .photoUrl;
+      updateDatabase();
     } else {
       UploadTask uploadTask = ref.putFile(_profileImage);
 
@@ -443,8 +446,6 @@ class _MyProfileModifyPageState extends State<MyProfileModifyPage> {
         });
       });
     }
-
-    return url;
   }
 
   updateDatabase() {
@@ -460,6 +461,14 @@ class _MyProfileModifyPageState extends State<MyProfileModifyPage> {
         'youtubeUrl': _youtubeUrlTextEditingController.text,
         'introduce': _introduceTextEditingController.text,
       };
+
+      String newArtistName = _nameTextEditingController.text;
+      String userId = Provider.of<UserProfileProvider>(context, listen: false)
+          .userProfileData
+          .id;
+      FirebaseDBHelper.updateMusicArtist(
+          FirebaseDBHelper.allMusicCollection, newArtistName, userId);
+
       FirebaseDBHelper.updateData(collection, doc, data).whenComplete(
         () {
           EasyLoading.dismiss();

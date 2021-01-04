@@ -4,8 +4,8 @@ import 'package:music_minorleague/model/data/music_info_data.dart';
 class PlayMusic {
   static AssetsAudioPlayer _assetsAudioPlayer = new AssetsAudioPlayer();
 
-  static disposeAudioPlayer() {
-    _assetsAudioPlayer.dispose();
+  static clearAudioPlayer() {
+    AssetsAudioPlayer.allPlayers().clear();
   }
 
   static makeNewPlayer() {
