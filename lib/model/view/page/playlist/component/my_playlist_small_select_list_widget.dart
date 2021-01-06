@@ -19,15 +19,11 @@ class MyPlaylistSmallSelectListWidget extends StatefulWidget {
   const MyPlaylistSmallSelectListWidget({
     Key key,
     List<MusicInfoData> musicList,
-    Function snackBarFunc,
     List<bool> selectedList,
-    Function visibleMiniPlayerFunc,
     Function playOrPauseMusicForSelectedListFunc,
     Function refreshSelectedListAndWidgetFunc,
   })  : _musicList = musicList,
         _selectedList = selectedList,
-        _snackBarFunc = snackBarFunc,
-        _visibleMiniPlayerFunc = visibleMiniPlayerFunc,
         _playOrPauseMusicForSelectedListFunc =
             playOrPauseMusicForSelectedListFunc,
         _refreshSelectedListAndWidgetFunc = refreshSelectedListAndWidgetFunc,
@@ -35,8 +31,7 @@ class MyPlaylistSmallSelectListWidget extends StatefulWidget {
 
   final List<MusicInfoData> _musicList;
   final List<bool> _selectedList;
-  final Function _snackBarFunc;
-  final Function _visibleMiniPlayerFunc;
+
   final Function _playOrPauseMusicForSelectedListFunc;
   final Function _refreshSelectedListAndWidgetFunc;
 
@@ -133,14 +128,18 @@ class _MyPlaylistSmallSelectListWidget
             child: widget._selectedList == null
                 ? SizedBox.shrink()
                 : CircleAvatar(
-                    radius: 12,
+                    radius: 13,
                     backgroundColor: MColors.grey_06,
-                    child: Text(
-                      widget._selectedList
-                          .where((element) => element == true)
-                          .length
-                          .toString(),
-                      style: MTextStyles.bold12White,
+                    child: CircleAvatar(
+                      radius: 12,
+                      backgroundColor: MColors.white,
+                      child: Text(
+                        widget._selectedList
+                            .where((element) => element == true)
+                            .length
+                            .toString(),
+                        style: MTextStyles.bold12Black,
+                      ),
                     ),
                   ),
           ),
@@ -159,7 +158,8 @@ class _MyPlaylistSmallSelectListWidget
   }
 
   playSelectMusic() {
-    widget._visibleMiniPlayerFunc();
+    Provider.of<MiniWidgetStatusProvider>(context, listen: false)
+        .myBottomSelectListWidget = BottomWidgets.none;
     widget._playOrPauseMusicForSelectedListFunc();
 
     // playOrPauseMusicForSelectedList();

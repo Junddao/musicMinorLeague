@@ -149,8 +149,6 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
             child: MyPlaylistSmallSelectListWidget(
               musicList: _myMusicList,
               selectedList: _selectedList,
-              snackBarFunc: showAndHideSnackBar,
-              visibleMiniPlayerFunc: visibleMiniPlayer,
               playOrPauseMusicForSelectedListFunc:
                   playOrPauseMusicForSelectedList,
               refreshSelectedListAndWidgetFunc:
@@ -167,7 +165,7 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
     String mainDoc =
         Provider.of<UserProfileProvider>(context).userProfileData.id;
     String subCollection = FirebaseDBHelper.mySelectedMusicCollection;
-    List<String> dataList = new List<String>();
+
     return Container(
       child: StreamBuilder<Object>(
           stream: FirebaseDBHelper.getSubDataStream(
@@ -387,18 +385,16 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
     }
   }
 
-  void visibleMiniPlayer() {
-    Provider.of<MiniWidgetStatusProvider>(context, listen: false)
-        .bottomPlayListWidget = BottomWidgets.miniPlayer;
-    Provider.of<MiniWidgetStatusProvider>(context, listen: false)
-        .myBottomSelectListWidget = BottomWidgets.none;
-  }
-
   void playOrPauseMusicForSelectedList() {
     PlayMusic.stopFunc().whenComplete(() {
       PlayMusic.clearAudioPlayer();
       PlayMusic.makeNewPlayer();
       PlayMusic.playListFunc(selectedMusicList);
+    });
+
+    Future.delayed(Duration(seconds: 0), () {
+      context.read<MiniWidgetStatusProvider>().bottomPlayListWidget =
+          BottomWidgets.miniPlayer;
     });
   }
 
@@ -412,7 +408,10 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
         PlayMusic.playUrlFunc(musicInfoData);
       });
     }
-    Provider.of<MiniWidgetStatusProvider>(context, listen: false)
-        .bottomPlayListWidget = BottomWidgets.miniPlayer;
+
+    Future.delayed(Duration(seconds: 0), () {
+      context.read<MiniWidgetStatusProvider>().bottomPlayListWidget =
+          BottomWidgets.miniPlayer;
+    });
   }
 }

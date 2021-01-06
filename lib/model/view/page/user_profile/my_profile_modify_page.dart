@@ -450,11 +450,6 @@ class _MyProfileModifyPageState extends State<MyProfileModifyPage> {
 
   updateDatabase() {
     if (_nameTextEditingController.text != null && imageFileUrl != null) {
-      String collection = FirebaseDBHelper.userCollection;
-      String doc = Provider.of<UserProfileProvider>(context, listen: false)
-          .userProfileData
-          .id;
-
       Map<String, dynamic> data = {
         'userName': _nameTextEditingController.text,
         'photoUrl': imageFileUrl,
@@ -462,12 +457,23 @@ class _MyProfileModifyPageState extends State<MyProfileModifyPage> {
         'introduce': _introduceTextEditingController.text,
       };
 
+      // all music 에 artist 이름 변경
       String newArtistName = _nameTextEditingController.text;
       String userId = Provider.of<UserProfileProvider>(context, listen: false)
           .userProfileData
           .id;
-      FirebaseDBHelper.updateMusicArtist(
+
+      FirebaseDBHelper.updateAllMusicArtist(
           FirebaseDBHelper.allMusicCollection, newArtistName, userId);
+
+      FirebaseDBHelper.updateMyMusicArtist(
+          FirebaseDBHelper.myMusicCollection, newArtistName, userId);
+
+      // user 에 이름 artist 변경
+      String collection = FirebaseDBHelper.userCollection;
+      String doc = Provider.of<UserProfileProvider>(context, listen: false)
+          .userProfileData
+          .id;
 
       FirebaseDBHelper.updateData(collection, doc, data).whenComplete(
         () {

@@ -80,7 +80,7 @@ class PlayMusic {
   }
 
   static Stream getCurrentStream() {
-    return _assetsAudioPlayer.current;
+    return _assetsAudioPlayer.current.asBroadcastStream();
   }
 
   static Stream getPositionStream() {
@@ -96,6 +96,6 @@ class PlayMusic {
   }
 
   static Stream<bool> isPlayingFunc() {
-    return _assetsAudioPlayer.isPlaying;
+    return _assetsAudioPlayer.isPlaying.asBroadcastStream();
   }
 }

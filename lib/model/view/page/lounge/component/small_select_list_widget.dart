@@ -3,6 +3,8 @@ import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
+import 'package:music_minorleague/model/enum/lounge_bottom_widget_enum.dart';
+import 'package:music_minorleague/model/provider/mini_widget_status_provider.dart';
 import 'package:music_minorleague/model/provider/user_profile_provider.dart';
 import 'package:music_minorleague/model/view/page/upload/component/upload_result_Dialog.dart';
 import 'package:music_minorleague/model/view/style/colors.dart';
@@ -18,12 +20,10 @@ class SmallSelectListWidget extends StatefulWidget {
     List<MusicInfoData> musicList,
     Function snackBarFunc,
     List<bool> selectedList,
-    Function visibleMiniPlayerFunc,
     Function playOrPauseMusicForSelectedListFunc,
   })  : _musicList = musicList,
         _selectedList = selectedList,
         _snackBarFunc = snackBarFunc,
-        _visibleMiniPlayerFunc = visibleMiniPlayerFunc,
         _playOrPauseMusicForSelectedListFunc =
             playOrPauseMusicForSelectedListFunc,
         super(key: key);
@@ -31,7 +31,7 @@ class SmallSelectListWidget extends StatefulWidget {
   final List<MusicInfoData> _musicList;
   final List<bool> _selectedList;
   final Function _snackBarFunc;
-  final Function _visibleMiniPlayerFunc;
+
   final Function _playOrPauseMusicForSelectedListFunc;
 
   @override
@@ -125,14 +125,18 @@ class _SmallSelectListWidgetState extends State<SmallSelectListWidget> {
             child: selectedMusicList == null
                 ? SizedBox.shrink()
                 : CircleAvatar(
-                    radius: 12,
+                    radius: 13,
                     backgroundColor: MColors.grey_06,
-                    child: Text(
-                      widget._selectedList
-                          .where((element) => element == true)
-                          .length
-                          .toString(),
-                      style: MTextStyles.bold12White,
+                    child: CircleAvatar(
+                      radius: 12,
+                      backgroundColor: MColors.white,
+                      child: Text(
+                        widget._selectedList
+                            .where((element) => element == true)
+                            .length
+                            .toString(),
+                        style: MTextStyles.bold12Black,
+                      ),
                     ),
                   ),
           ),
@@ -151,7 +155,8 @@ class _SmallSelectListWidgetState extends State<SmallSelectListWidget> {
   }
 
   playSelectMusic() {
-    widget._visibleMiniPlayerFunc();
+    Provider.of<MiniWidgetStatusProvider>(context, listen: false)
+        .bottomSeletListWidget = BottomWidgets.none;
     widget._playOrPauseMusicForSelectedListFunc();
   }
 

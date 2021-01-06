@@ -3,6 +3,8 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
+import 'package:music_minorleague/model/enum/lounge_bottom_widget_enum.dart';
+import 'package:music_minorleague/model/provider/mini_widget_status_provider.dart';
 import 'package:music_minorleague/model/provider/now_play_music_provider.dart';
 import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
@@ -39,7 +41,9 @@ class _TopTwentyMusicWidgetState extends State<TopTwentyMusicWidget> {
             ),
             SizedBox(width: 10),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                playOrPauseMusicForSelectedList();
+              },
               child: Container(
                 height: 20,
                 // width: 80,
@@ -49,9 +53,18 @@ class _TopTwentyMusicWidgetState extends State<TopTwentyMusicWidget> {
                 child: Padding(
                   padding: const EdgeInsets.only(left: 8, right: 8),
                   child: Center(
-                      child: Text(
-                    '모두재생',
-                    style: MTextStyles.bold10Tomato,
+                      child: Row(
+                    children: [
+                      Text(
+                        '베스트 20 모두재생 ',
+                        style: MTextStyles.bold10Tomato,
+                      ),
+                      Icon(
+                        Icons.play_circle_fill,
+                        color: MColors.tomato,
+                        size: 10,
+                      ),
+                    ],
                   )),
                 ),
               ),
@@ -205,5 +218,16 @@ class _TopTwentyMusicWidgetState extends State<TopTwentyMusicWidget> {
               ),
             ),
     ]);
+  }
+
+  void playOrPauseMusicForSelectedList() {
+    PlayMusic.stopFunc().whenComplete(() {
+      PlayMusic.clearAudioPlayer();
+      PlayMusic.makeNewPlayer();
+      PlayMusic.playListFunc(widget._topTwentyMusicList);
+    });
+
+    Provider.of<MiniWidgetStatusProvider>(context, listen: false)
+        .bottomPlayListWidget = BottomWidgets.miniPlayer;
   }
 }

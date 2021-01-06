@@ -22,9 +22,14 @@ class FirebaseDBHelper {
     await firestoreinstance
         .collection(mainCollection)
         .doc(mainDoc)
-        .collection(subCollection)
-        .doc(subDoc)
-        .set(data);
+        .set({'id': mainDoc}).then((value) {
+      firestoreinstance
+          .collection(mainCollection)
+          .doc(mainDoc)
+          .collection(subCollection)
+          .doc(subDoc)
+          .set(data);
+    });
   }
 
   static Future<void> updateFavoriteData(
@@ -44,7 +49,7 @@ class FirebaseDBHelper {
     });
   }
 
-  static Future<void> updateMusicArtist(
+  static Future<void> updateAllMusicArtist(
       String collection, String newArtist, String userId) async {
     await firestoreinstance
         .collection(collection)
@@ -54,6 +59,34 @@ class FirebaseDBHelper {
       querySnapshot.docs.forEach((element) {
         firestoreinstance.collection(collection).doc(element.id).update({
           'artist': newArtist,
+        });
+      });
+    });
+  }
+
+  static Future<void> updateMyMusicArtist(
+      String collection, String newArtist, String userId) async {
+    return await firestoreinstance
+        .collection(collection)
+        .get()
+        .then((querySnapshot) {
+      querySnapshot.docs.forEach((result) {
+        firestoreinstance
+            .collection(collection)
+            .doc(result.id)
+            .collection(FirebaseDBHelper.mySelectedMusicCollection)
+            .get()
+            .then((querySnapshot) {
+          querySnapshot.docs.forEach((element) {
+            firestoreinstance
+                .collection(collection)
+                .doc(result.id)
+                .collection(FirebaseDBHelper.mySelectedMusicCollection)
+                .doc(element.id)
+                .update({
+              'artist': newArtist,
+            });
+          });
         });
       });
     });

@@ -11,6 +11,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:music_minorleague/model/data/send_file.dart';
+import 'package:music_minorleague/model/enum/music_approval_enum.dart';
 import 'package:music_minorleague/model/enum/music_type_enum.dart';
 import 'package:music_minorleague/model/provider/user_profile_provider.dart';
 import 'package:music_minorleague/model/view/page/upload/component/upload_result_dialog.dart';
@@ -191,7 +192,7 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
         ),
       );
     } else {
-      musicContentsWidget = RawMaterialButton(
+      musicContentsWidget = Container(
         child: Stack(
           children: [
             Padding(
@@ -466,59 +467,6 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
     await uploadMusicFile();
   }
 
-  //bunny cdn 작업중
-
-  // Future<void> uploadImageFile(File imageFile) async {
-  //   String fileExtension = _coverImagePath.split('.').last;
-  //   String filename =
-  //       _titleController.text + uniqueId + '_image.' + fileExtension;
-
-  //   SendFile sendFile = new SendFile(
-  //     filePath: _coverImagePath,
-  //   );
-  //   ApiServiceProvider apiserviceProvider = new ApiServiceProvider();
-  //   await apiserviceProvider
-  //       .bunnyCdnUploadFile(sendFile, _artist, filename)
-  //       .then((value) {
-  //     if (value == true) {
-  //       imageFileUrl = 'https://junddao.b-cdn.net/' + _artist + '/' + filename;
-  //       // if (musicFileUrl != null) updateDatabase();
-  //     }
-  //   });
-  // }
-
-  // Future<void> uploadMusicFile(File _musicFile) async {
-  //   var now = DateTime.now();
-  //   String fileExtension = _musicPath.split('.').last;
-  //   String filename =
-  //       _titleController.text + uniqueId + '_music.' + fileExtension;
-  //   ApiServiceProvider apiserviceProvider = new ApiServiceProvider();
-  //   SendFile sendFile = new SendFile(
-  //     filePath: _musicPath,
-  //   );
-
-  //   //bunnyCdn file upload, firebase database
-  //   await apiserviceProvider
-  //       .bunnyCdnUploadFile(sendFile, _artist, filename)
-  //       .then((value) {
-  //     if (value == true) {
-  //       musicFileUrl = 'https://junddao.b-cdn.net/' + _artist + '/' + filename;
-  //       // if (imageFileUrl != null) updateDatabase();
-  //     }
-  //   });
-
-  // ref = FirebaseStorage.instance.ref().child(_artist).child(filename);
-
-  // UploadTask uploadTask = ref.putFile(_musicFile);
-
-  // await uploadTask.then((TaskSnapshot snapshot) {
-  //   snapshot.ref.getDownloadURL().then((fileUrl) {
-  //     musicFileUrl = fileUrl;
-  //     if (imageFileUrl != null) updateDatabase();
-  //   });
-  // });
-  // }
-
   Future<void> uploadMusicFile() async {
     String formattedDate = DateFormat('yyyyMMddhhmmss').format(DateTime.now());
     String filename = _titleController.text + '_' + formattedDate + '_music';
@@ -562,6 +510,7 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
         "title": _titleController.text,
         "artist": _artist,
         "musicType": EnumToString.convertToString(_typeOfMusic),
+        "approval": EnumToString.convertToString(MusicApprovalEnum.request),
         "musicPath": musicFileUrl,
         "imagePath": imageFileUrl,
         "dateTime": DateTime.now().toIso8601String(),

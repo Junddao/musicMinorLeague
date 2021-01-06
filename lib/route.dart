@@ -8,6 +8,7 @@ import 'package:music_minorleague/rootpage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'model/view/onboarding_screen_page.dart';
 import 'model/view/page/user_profile/my_music_modify_page.dart';
 import 'model/view/page/user_profile/my_profile_modify_page.dart';
 import 'model/view/page/user_profile/other_user_profile_page.dart';
@@ -33,6 +34,8 @@ class Routers {
         return CupertinoPageRoute(builder: (_) => MyProfileModifyPage());
       case 'MyMusicModifyPage':
         return CupertinoPageRoute(builder: (_) => MyMusicModifyPage());
+      case 'OnBoardingScreenPage':
+        return CupertinoPageRoute(builder: (_) => OnboardingScreenPage());
       case 'OtherUserProfilePage':
         return CupertinoPageRoute(
             builder: (_) => OtherUserProfilePage(otherUserProfile: arguments));

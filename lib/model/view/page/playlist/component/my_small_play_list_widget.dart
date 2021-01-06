@@ -34,8 +34,7 @@ class _MySmallPlayListWidgetState extends State<MySmallPlayListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (Provider.of<MiniWidgetStatusProvider>(context, listen: false)
-            .bMinButtonClick ==
+    if (Provider.of<MiniWidgetStatusProvider>(context).bMinButtonClick ==
         true) {
       return Positioned(
         bottom: 30,

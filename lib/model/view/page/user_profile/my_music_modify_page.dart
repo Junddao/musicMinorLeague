@@ -198,8 +198,11 @@ class _MyMusicModifyPageState extends State<MyMusicModifyPage> {
         PlayMusic.playUrlFunc(musicInfoData);
       });
     }
-    Provider.of<MiniWidgetStatusProvider>(context, listen: false)
-        .bottomPlayListWidget = BottomWidgets.miniPlayer;
+
+    Future.delayed(Duration(seconds: 0), () {
+      context.read<MiniWidgetStatusProvider>().bottomPlayListWidget =
+          BottomWidgets.miniPlayer;
+    });
   }
 
   void deleteMyMusic(int index) {

@@ -614,4 +614,22 @@ class MTextStyles {
       fontFamily: "NotoSansKR",
       fontStyle: FontStyle.normal,
       fontSize: 20.0);
+
+  static const bold26white = const TextStyle(
+    color: Colors.white,
+    fontWeight: FontWeight.w700,
+    fontFamily: 'NotoSansKR',
+    fontSize: 26.0,
+    fontStyle: FontStyle.normal,
+    // height: 1.5,
+  );
+
+  static const regular18white = const TextStyle(
+    color: Colors.white,
+    fontWeight: FontWeight.w400,
+    fontFamily: 'NotoSansKR',
+    fontSize: 18.0,
+    fontStyle: FontStyle.normal,
+    // height: 1.2,
+  );
 }

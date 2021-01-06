@@ -31,11 +31,7 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    //TODO : Provder listen 용으로 하나 썼는데.. 다른 방법이 없는가 흠...
-    Provider.of<MiniWidgetStatusProvider>(context, listen: false)
-        .bottomPlayListWidget;
-    if (Provider.of<MiniWidgetStatusProvider>(context, listen: false)
-            .bMinButtonClick ==
+    if (Provider.of<MiniWidgetStatusProvider>(context).bMinButtonClick ==
         true) {
       return Positioned(
         bottom: 30,
@@ -189,9 +185,7 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
                                                   ? MColors.black
                                                   : MColors.warm_grey,
                                               onPressed: () {
-                                                setState(() {
-                                                  PlayMusic.playOrPauseFunc();
-                                                });
+                                                PlayMusic.playOrPauseFunc();
                                               }),
                                           IconButton(
                                             icon: Icon(

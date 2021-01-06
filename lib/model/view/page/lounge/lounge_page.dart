@@ -118,9 +118,12 @@ class _LoungePageState extends State<LoungePage>
     SizeConfig().init(context);
 
     //선택된 항목이 없으면 사라지게함.
+    // 1 fream 끝나고 provider 돌리게
     if (!selectedList.contains(true)) {
-      Provider.of<MiniWidgetStatusProvider>(context, listen: false)
-          .bottomSeletListWidget = BottomWidgets.none;
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        Provider.of<MiniWidgetStatusProvider>(context, listen: false)
+            .bottomSeletListWidget = BottomWidgets.none;
+      });
     }
     return Scaffold(
       key: _scaffoldKey,
@@ -220,7 +223,6 @@ class _LoungePageState extends State<LoungePage>
               musicList: musicList,
               selectedList: selectedList,
               snackBarFunc: showAndHideSnackBar,
-              visibleMiniPlayerFunc: visibleMiniPlayer,
               playOrPauseMusicForSelectedListFunc:
                   playOrPauseMusicForSelectedList,
             ),
@@ -452,19 +454,12 @@ class _LoungePageState extends State<LoungePage>
           selectedMusicList.add(musicList[i]);
         }
       }
-      selectedList.contains(true)
-          ? Provider.of<MiniWidgetStatusProvider>(context, listen: false)
-              .bottomSeletListWidget = BottomWidgets.miniSelectList
-          : Provider.of<MiniWidgetStatusProvider>(context, listen: false)
-              .bottomSeletListWidget = BottomWidgets.none;
     });
-  }
-
-  void visibleMiniPlayer() {
-    Provider.of<MiniWidgetStatusProvider>(context, listen: false)
-        .bottomPlayListWidget = BottomWidgets.miniPlayer;
-    Provider.of<MiniWidgetStatusProvider>(context, listen: false)
-        .bottomSeletListWidget = BottomWidgets.none;
+    selectedList.contains(true)
+        ? Provider.of<MiniWidgetStatusProvider>(context, listen: false)
+            .bottomSeletListWidget = BottomWidgets.miniSelectList
+        : Provider.of<MiniWidgetStatusProvider>(context, listen: false)
+            .bottomSeletListWidget = BottomWidgets.none;
   }
 
   void showAndHideSnackBar(String content) {
@@ -488,6 +483,11 @@ class _LoungePageState extends State<LoungePage>
       PlayMusic.makeNewPlayer();
       PlayMusic.playListFunc(selectedMusicList);
     });
+
+    Future.delayed(Duration(seconds: 0), () {
+      context.read<MiniWidgetStatusProvider>().bottomPlayListWidget =
+          BottomWidgets.miniPlayer;
+    });
   }
 
   void playOrpauseMusic(MusicInfoData musicInfoData, String currentPlayingId) {
@@ -501,8 +501,10 @@ class _LoungePageState extends State<LoungePage>
       });
     }
 
-    Provider.of<MiniWidgetStatusProvider>(context, listen: false)
-        .bottomPlayListWidget = BottomWidgets.miniPlayer;
+    Future.delayed(Duration(seconds: 0), () {
+      context.read<MiniWidgetStatusProvider>().bottomPlayListWidget =
+          BottomWidgets.miniPlayer;
+    });
   }
 
   void getSelectedMusicList() {

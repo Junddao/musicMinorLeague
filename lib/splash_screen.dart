@@ -56,7 +56,8 @@ class _SplashScreenState extends State<SplashScreen> {
           UserProfileData.fromMap(value.data());
     });
 
-    Navigator.of(context).pushNamed('TabPage');
+    // Navigator.of(context).pushNamed('TabPage');
+    Navigator.of(context).pushNamed('OnBoardingScreenPage');
   }
 
   void _navigatorToLogin() {
@@ -66,13 +67,25 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: MColors.white),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          stops: [0.1, 0.4, 0.7, 0.9],
+          colors: [
+            Color(0xFF3594DD),
+            Color(0xFF4563DB),
+            Color(0xFF5036D5),
+            Color(0xFF5B16D0),
+          ],
+        ),
+      ),
       child: Stack(
         alignment: Alignment.center,
         children: [
           Text(
             'J T B',
-            style: MTextStyles.bold20Black36,
+            style: MTextStyles.bold26white,
           ),
         ],
       ),

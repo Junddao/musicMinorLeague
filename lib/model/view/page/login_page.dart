@@ -48,7 +48,8 @@ class _LoginPageState extends State<LoginPage> {
 
     updateDatabase(userProfileData);
 
-    Navigator.of(context).pushNamed('TabPage');
+    // Navigator.of(context).pushNamed('TabPage');
+    _navigatorToOnBoardingScreen();
   }
 
   @override
@@ -114,5 +115,9 @@ class _LoginPageState extends State<LoginPage> {
     FirebaseDBHelper.setData(
         FirebaseDBHelper.userCollection, doc, userProfileData);
     // firestoreinstance.collection('User').doc(_id).set(data);
+  }
+
+  void _navigatorToOnBoardingScreen() {
+    Navigator.of(context).pushNamed('OnBoardingScreenPage');
   }
 }
