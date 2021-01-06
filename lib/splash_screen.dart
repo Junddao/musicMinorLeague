@@ -56,8 +56,8 @@ class _SplashScreenState extends State<SplashScreen> {
           UserProfileData.fromMap(value.data());
     });
 
-    // Navigator.of(context).pushNamed('TabPage');
-    Navigator.of(context).pushNamed('OnBoardingScreenPage');
+    Navigator.of(context).pushNamed('TabPage');
+    // Navigator.of(context).pushNamed('OnBoardingScreenPage');
   }
 
   void _navigatorToLogin() {
