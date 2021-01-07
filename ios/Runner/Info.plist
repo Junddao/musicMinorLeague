@@ -52,7 +52,8 @@
 	        </array>
 	    </dict>
 	</array>
-	
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<string>NO</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Example usage description</string>
 	<key>NSMicrophoneUsageDescription</key>

@@ -33,6 +33,7 @@ dependencies:
   file_picker: ^2.0.13
   firebase_auth: ^0.18.3
   firebase_core: ^0.5.2
+  firebase_messaging: ^7.0.3
   firebase_storage: ^5.0.1
   flare_flutter: ^2.0.6
   flutter_absolute_path: ^1.0.6

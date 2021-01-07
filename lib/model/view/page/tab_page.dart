@@ -8,6 +8,7 @@ import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 import 'package:music_minorleague/tabstates.dart';
 import 'package:flutter/material.dart';
+import 'package:music_minorleague/utils/push_manager.dart';
 
 import 'package:provider/provider.dart';
 
@@ -27,6 +28,8 @@ class _TabPageState extends State<TabPage> {
 
   @override
   void initState() {
+    PushManager().registerToken();
+    PushManager().listenFirebaseMessaging();
     super.initState();
   }
 
