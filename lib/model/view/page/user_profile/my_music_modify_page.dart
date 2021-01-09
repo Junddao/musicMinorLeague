@@ -195,14 +195,12 @@ class _MyMusicModifyPageState extends State<MyMusicModifyPage> {
       PlayMusic.stopFunc().whenComplete(() {
         PlayMusic.clearAudioPlayer();
         PlayMusic.makeNewPlayer();
-        PlayMusic.playUrlFunc(musicInfoData);
+        PlayMusic.playUrlFunc(musicInfoData).whenComplete(() {
+          context.read<MiniWidgetStatusProvider>().bottomPlayListWidget =
+              BottomWidgets.miniPlayer;
+        });
       });
     }
-
-    Future.delayed(Duration(seconds: 0), () {
-      context.read<MiniWidgetStatusProvider>().bottomPlayListWidget =
-          BottomWidgets.miniPlayer;
-    });
   }
 
   void deleteMyMusic(int index) {

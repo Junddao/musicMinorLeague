@@ -3,11 +3,13 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
+import 'package:music_minorleague/model/data/user_profile_data.dart';
 import 'package:music_minorleague/model/enum/lounge_bottom_widget_enum.dart';
 import 'package:music_minorleague/model/provider/mini_widget_status_provider.dart';
 import 'package:music_minorleague/model/provider/now_play_music_provider.dart';
 import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
+import 'package:music_minorleague/utils/firebase_db_helper.dart';
 import 'package:music_minorleague/utils/play_func.dart';
 import 'package:provider/provider.dart';
 
@@ -104,109 +106,130 @@ class _TopTwentyMusicWidgetState extends State<TopTwentyMusicWidget> {
                                   stream: PlayMusic.isPlayingFunc(),
                                   builder: (context, playingSnapshot) {
                                     final isPlaying = playingSnapshot.data;
-                                    return Container(
-                                      width: 120,
-                                      height: 120,
-                                      child: Stack(
-                                        children: <Widget>[
-                                          Positioned.fill(
-                                              child: item.imagePath == null
-                                                  ? Container()
-                                                  : ExtendedImage.network(
-                                                      item.imagePath,
-                                                      fit: BoxFit.cover,
-                                                      cache: true,
-                                                      clearMemoryCacheWhenDispose:
-                                                          true,
-                                                    )),
-                                          Container(
-                                            color: const Color(0x66000000),
-                                          ),
-                                          Positioned(
-                                            right: 10,
-                                            bottom: 10,
-                                            child: InkWell(
-                                              child: Container(
-                                                width: 20,
-                                                height: 20,
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            100),
-                                                    border: Border.all(
-                                                        width: 1,
-                                                        color: Colors.white)),
-                                                child: Icon(
-                                                  isPlaying == true &&
-                                                          widget
-                                                                  ._topTwentyMusicList[
-                                                                      index]
-                                                                  .id ==
-                                                              currentMusicId
-                                                      ? FontAwesomeIcons.pause
-                                                      : FontAwesomeIcons.play,
-                                                  color: isPlaying == true &&
-                                                          widget
-                                                                  ._topTwentyMusicList[
-                                                                      index]
-                                                                  .id ==
-                                                              currentMusicId
-                                                      ? MColors.kakao_yellow
-                                                      : MColors.white,
-                                                  size: 8,
-                                                ),
-                                              ),
-                                              onTap: () {
-                                                setState(() {
-                                                  widget.playOrpauseMusic(
-                                                      widget._topTwentyMusicList[
-                                                          index],
-                                                      currentMusicId);
-                                                  // playOrPauseMusic(index);
-                                                });
-                                              },
+                                    return InkWell(
+                                      onTap: () {
+                                        String collection =
+                                            FirebaseDBHelper.userCollection;
+                                        String doc = widget
+                                            ._topTwentyMusicList[index].userId;
+
+                                        FirebaseDBHelper.getData(
+                                                collection, doc)
+                                            .then((value) {
+                                          UserProfileData otherUserProfileData =
+                                              UserProfileData.fromMap(
+                                                  value.data());
+                                          Navigator.of(context).pushNamed(
+                                              'OtherUserProfilePage',
+                                              arguments: otherUserProfileData);
+                                        });
+                                      },
+                                      child: Container(
+                                        width: 120,
+                                        height: 120,
+                                        child: Stack(
+                                          children: <Widget>[
+                                            Positioned.fill(
+                                                child: item.imagePath == null
+                                                    ? Container()
+                                                    : ExtendedImage.network(
+                                                        item.imagePath,
+                                                        fit: BoxFit.cover,
+                                                        cache: true,
+                                                        clearMemoryCacheWhenDispose:
+                                                            true,
+                                                      )),
+                                            Container(
+                                              color: const Color(0x66000000),
                                             ),
-                                          ),
-                                          Center(
-                                            child: Container(
-                                                height: 100,
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 10.0,
-                                                    vertical: 4.0),
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(15)),
-                                                  // border: Border.all(
-                                                  //     color: MColors.white, width: 1),
+                                            Positioned(
+                                              right: 10,
+                                              bottom: 10,
+                                              child: InkWell(
+                                                child: Container(
+                                                  width: 20,
+                                                  height: 20,
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              100),
+                                                      border: Border.all(
+                                                          width: 1,
+                                                          color: Colors.white)),
+                                                  child: Icon(
+                                                    isPlaying == true &&
+                                                            widget
+                                                                    ._topTwentyMusicList[
+                                                                        index]
+                                                                    .id ==
+                                                                currentMusicId
+                                                        ? FontAwesomeIcons.pause
+                                                        : FontAwesomeIcons.play,
+                                                    color: isPlaying == true &&
+                                                            widget
+                                                                    ._topTwentyMusicList[
+                                                                        index]
+                                                                    .id ==
+                                                                currentMusicId
+                                                        ? MColors.kakao_yellow
+                                                        : MColors.white,
+                                                    size: 8,
+                                                  ),
                                                 ),
-                                                child: // 마케팅
-                                                    Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Text(
-                                                      item.title,
-                                                      style: MTextStyles
-                                                          .bold14White,
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    ),
-                                                    Text(
-                                                      item.artist,
-                                                      style: MTextStyles
-                                                          .regular12White,
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    ),
-                                                  ],
-                                                )),
-                                          ),
-                                        ],
+                                                onTap: () {
+                                                  setState(() {
+                                                    widget.playOrpauseMusic(
+                                                        widget._topTwentyMusicList[
+                                                            index],
+                                                        currentMusicId);
+                                                    // playOrPauseMusic(index);
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                            Center(
+                                              child: Container(
+                                                  height: 100,
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 10.0,
+                                                      vertical: 4.0),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                15)),
+                                                    // border: Border.all(
+                                                    //     color: MColors.white, width: 1),
+                                                  ),
+                                                  child: // 마케팅
+                                                      Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Text(
+                                                        item.title,
+                                                        style: MTextStyles
+                                                            .bold14White,
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                      Text(
+                                                        item.artist,
+                                                        style: MTextStyles
+                                                            .regular12White,
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ],
+                                                  )),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     );
                                   });
@@ -224,10 +247,10 @@ class _TopTwentyMusicWidgetState extends State<TopTwentyMusicWidget> {
     PlayMusic.stopFunc().whenComplete(() {
       PlayMusic.clearAudioPlayer();
       PlayMusic.makeNewPlayer();
-      PlayMusic.playListFunc(widget._topTwentyMusicList);
+      PlayMusic.playListFunc(widget._topTwentyMusicList).then((value) {
+        Provider.of<MiniWidgetStatusProvider>(context, listen: false)
+            .bottomPlayListWidget = BottomWidgets.miniPlayer;
+      });
     });
-
-    Provider.of<MiniWidgetStatusProvider>(context, listen: false)
-        .bottomPlayListWidget = BottomWidgets.miniPlayer;
   }
 }

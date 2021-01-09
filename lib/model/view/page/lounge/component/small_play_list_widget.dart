@@ -2,12 +2,14 @@ import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:music_minorleague/model/data/user_profile_data.dart';
 import 'package:music_minorleague/model/provider/mini_widget_status_provider.dart';
 
 import 'package:music_minorleague/model/view/page/lounge/component/position_seek_widget.dart';
 import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
+import 'package:music_minorleague/utils/firebase_db_helper.dart';
 import 'package:music_minorleague/utils/play_func.dart';
 import 'package:provider/provider.dart';
 
@@ -122,21 +124,41 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
                                   builder: (context, playingSnapshot) {
                                     final isPlaying = playingSnapshot.data;
                                     return ListTile(
-                                      leading: ClipOval(
-                                        // borderRadius:
-                                        //     BorderRadius.circular(4.0),
-                                        child: playing == null
-                                            ? CircularProgressIndicator()
-                                            : ExtendedImage.network(
-                                                metas?.image?.path ??
-                                                    'https://cdn.pixabay.com/photo/2018/03/04/09/51/space-3197611_1280.jpg',
-                                                cache: true,
-                                                width: 50,
-                                                height: 50,
-                                                fit: BoxFit.cover,
-                                                clearMemoryCacheWhenDispose:
-                                                    true,
-                                              ),
+                                      leading: InkWell(
+                                        onTap: () {
+                                          String collection =
+                                              FirebaseDBHelper.userCollection;
+                                          String doc = metas.extra['userId'];
+
+                                          FirebaseDBHelper.getData(
+                                                  collection, doc)
+                                              .then((value) {
+                                            UserProfileData
+                                                otherUserProfileData =
+                                                UserProfileData.fromMap(
+                                                    value.data());
+                                            Navigator.of(context).pushNamed(
+                                                'OtherUserProfilePage',
+                                                arguments:
+                                                    otherUserProfileData);
+                                          });
+                                        },
+                                        child: ClipOval(
+                                          // borderRadius:
+                                          //     BorderRadius.circular(4.0),
+                                          child: playing == null
+                                              ? CircularProgressIndicator()
+                                              : ExtendedImage.network(
+                                                  metas?.image?.path ??
+                                                      'https://cdn.pixabay.com/photo/2018/03/04/09/51/space-3197611_1280.jpg',
+                                                  cache: true,
+                                                  width: 50,
+                                                  height: 50,
+                                                  fit: BoxFit.cover,
+                                                  clearMemoryCacheWhenDispose:
+                                                      true,
+                                                ),
+                                        ),
                                       ),
                                       title: InkWell(
                                         onTap: () {
@@ -209,7 +231,10 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
                           child: StreamBuilder(
                               stream: PlayMusic.getSongLengthStream(),
                               builder: (context, snapshot) {
-                                if (!snapshot.hasData) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return SizedBox.shrink();
+                                } else if (!snapshot.hasData) {
                                   return SizedBox.shrink();
                                 }
 

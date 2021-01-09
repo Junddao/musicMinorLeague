@@ -156,16 +156,7 @@ class FirebaseDBHelper {
     for (int idx = 0; idx < qs.docs.length; idx++) {
       MusicInfoData musicInfoData = new MusicInfoData();
       musicInfoData = MusicInfoData.fromMap(qs.docs[idx].data());
-      // musicInfoData.id = qs.docs[idx].data()['id'];
-      // musicInfoData.artist = qs.docs[idx].data()['artist'];
-      // musicInfoData.dateTime = qs.docs[idx].data()['dateTime'];
-      // musicInfoData.favorite = qs.docs[idx].data()['favorite'];
-      // musicInfoData.imagePath = qs.docs[idx].data()['imagePath'];
-      // musicInfoData.musicPath = qs.docs[idx].data()['musicPath'];
 
-      // musicInfoData.musicType = EnumToString.fromString(
-      //     MusicTypeEnum.values, qs.docs[idx].data()['musicType']);
-      // musicInfoData.title = qs.docs[idx].data()['title'];
       musicList.add(musicInfoData);
     }
 

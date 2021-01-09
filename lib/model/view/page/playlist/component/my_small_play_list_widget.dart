@@ -216,7 +216,10 @@ class _MySmallPlayListWidgetState extends State<MySmallPlayListWidget> {
                         child: StreamBuilder(
                             stream: PlayMusic.getSongLengthStream(),
                             builder: (context, snapshot) {
-                              if (!snapshot.hasData) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return SizedBox.shrink();
+                              } else if (!snapshot.hasData) {
                                 return SizedBox.shrink();
                               }
 

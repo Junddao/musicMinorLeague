@@ -16,22 +16,24 @@ class PlayMusic {
     await _assetsAudioPlayer.stop();
   }
 
-  static playUrlFunc(MusicInfoData currentMusicData) {
+  static Future<void> playUrlFunc(MusicInfoData currentMusicData) async {
     final audio = Audio.network(currentMusicData.musicPath,
         metas: Metas(
           id: currentMusicData.id,
           title: currentMusicData.title,
           artist: currentMusicData.artist,
           image: MetasImage.network(currentMusicData.imagePath),
+          extra: currentMusicData.toMap(),
         ));
     _assetsAudioPlayer.open(audio, showNotification: true);
   }
 
-  static playFileFunc(String filePath) {
+  static Future<void> playFileFunc(String filePath) {
     _assetsAudioPlayer.open(Audio.file(filePath));
   }
 
-  static playListFunc(List<MusicInfoData> selectedMusicList) {
+  static Future<void> playListFunc(
+      List<MusicInfoData> selectedMusicList) async {
     List<Audio> audios = List.generate(
         selectedMusicList.length,
         (index) => new Audio.network(selectedMusicList[index].musicPath,
@@ -40,6 +42,7 @@ class PlayMusic {
               title: selectedMusicList[index].title,
               artist: selectedMusicList[index].artist,
               image: MetasImage.network(selectedMusicList[index].imagePath),
+              extra: selectedMusicList[index].toMap(),
             )));
     _assetsAudioPlayer.open(
       Playlist(

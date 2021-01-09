@@ -10,11 +10,13 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
 import 'package:music_minorleague/model/data/user_profile_data.dart';
 import 'package:music_minorleague/model/enum/lounge_bottom_widget_enum.dart';
+import 'package:music_minorleague/model/enum/lounge_music_type_enum.dart';
 import 'package:music_minorleague/model/enum/music_type_enum.dart';
 import 'package:music_minorleague/model/provider/mini_widget_status_provider.dart';
 import 'package:music_minorleague/model/provider/now_play_music_provider.dart';
 
 import 'package:music_minorleague/model/view/page/lounge/component/select_buttons_widget.dart';
+import 'package:music_minorleague/model/view/page/user_profile/other_user_profile_page.dart';
 import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
@@ -23,6 +25,7 @@ import 'package:music_minorleague/utils/firebase_db_helper.dart';
 import 'package:music_minorleague/utils/play_func.dart';
 import 'package:provider/provider.dart';
 
+import 'component/lounge_choice_chip_widget.dart';
 import 'component/small_play_list_widget.dart';
 import 'component/small_select_list_widget.dart';
 import 'component/top_twenty_music_widget.dart';
@@ -51,6 +54,9 @@ class _LoungePageState extends State<LoungePage>
   final List<StreamSubscription> _subscriptions = [];
   AssetsAudioPlayer _assetsAudioPlayer;
 
+  LoungeMusicTypeEnum _typeOfMusic;
+  List<LoungeMusicTypeEnum> typeOfMusicList;
+
   @override
   void initState() {
     super.initState();
@@ -62,6 +68,10 @@ class _LoungePageState extends State<LoungePage>
     topTwentyMusicList = new List<MusicInfoData>();
     selectedMusicList = new List<MusicInfoData>();
     selectedList = new List<bool>();
+    _typeOfMusic = LoungeMusicTypeEnum.all;
+    typeOfMusicList = List.generate(LoungeMusicTypeEnum.values.length,
+        (index) => LoungeMusicTypeEnum.values[index]);
+
     _initSubscription();
   }
 
@@ -117,14 +127,6 @@ class _LoungePageState extends State<LoungePage>
   Widget build(BuildContext context) {
     SizeConfig().init(context);
 
-    //선택된 항목이 없으면 사라지게함.
-    // 1 fream 끝나고 provider 돌리게
-    if (!selectedList.contains(true)) {
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        Provider.of<MiniWidgetStatusProvider>(context, listen: false)
-            .bottomSeletListWidget = BottomWidgets.none;
-      });
-    }
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -173,11 +175,6 @@ class _LoungePageState extends State<LoungePage>
                       _twentyList
                           .sort((a, b) => b.favorite.compareTo(a.favorite));
 
-                      if (selectedList?.length != snapshot.data.docs.length) {
-                        selectedList = null;
-                        selectedList = List.generate(
-                            snapshot.data.docs.length, (index) => false);
-                      }
                       if (_twentyList.length > 20)
                         _twentyList = _twentyList.sublist(0, 20);
 
@@ -195,6 +192,22 @@ class _LoungePageState extends State<LoungePage>
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: MColors.blackColor),
+                  ),
+                ),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Wrap(
+                    alignment: WrapAlignment.start,
+                    direction: Axis.horizontal,
+                    spacing: 5.0, // gap between adjacent chips
+                    runSpacing: 5.0, // gap between lines
+
+                    children: [
+                      LoungeChoiceChipWidget(
+                        typeOfMusicList: typeOfMusicList,
+                        returnDataFunc: returnDataFunc,
+                      ),
+                    ],
                   ),
                 ),
                 SelectButtonsWidget(selectAllMusicFunc: selectAllMusicFunc),
@@ -248,8 +261,27 @@ class _LoungePageState extends State<LoungePage>
                 child: CircularProgressIndicator(),
               );
             } else {
-              musicList = FirebaseDBHelper.getMusicDatabase(snapshot.data);
+              var allMusicList =
+                  FirebaseDBHelper.getMusicDatabase(snapshot.data);
+              if (_typeOfMusic == LoungeMusicTypeEnum.all) {
+                musicList = allMusicList;
+              } else {
+                musicList.clear();
+                allMusicList.forEach((element) {
+                  if (EnumToString.convertToString(element.musicType) ==
+                      EnumToString.convertToString(_typeOfMusic)) {
+                    musicList.add(element);
+                  }
+                });
+              }
+
               musicList.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+
+              if (selectedList?.length != musicList.length) {
+                selectedList.clear();
+                selectedList =
+                    List.generate(musicList.length, (index) => false);
+              }
               return ListView.builder(
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
@@ -307,6 +339,7 @@ class _LoungePageState extends State<LoungePage>
                                                   otherUserProfileData =
                                                   UserProfileData.fromMap(
                                                       value.data());
+
                                               Navigator.of(context).pushNamed(
                                                   'OtherUserProfilePage',
                                                   arguments:
@@ -337,7 +370,7 @@ class _LoungePageState extends State<LoungePage>
                                               musicList[index].title,
                                               style: selectedList[index] == true
                                                   ? MTextStyles.bold14White
-                                                  : MTextStyles.bold16Grey06,
+                                                  : MTextStyles.bold14Grey06,
                                             ),
                                             SizedBox(
                                               width: 6,
@@ -381,25 +414,41 @@ class _LoungePageState extends State<LoungePage>
                                                       musicInfoData,
                                                       currentMusicId);
                                                 }),
-                                            GestureDetector(
-                                              onTap: () {
-                                                _handleOnPressThumb(index);
-                                              },
-                                              child: Container(
+                                            Container(
                                                 height: 28,
                                                 width: 28,
-                                                child: FlareActor(
-                                                  'assets/icons/thumb.flr',
-                                                  alignment: Alignment.center,
-                                                  fit: BoxFit.cover,
-                                                  animation:
-                                                      selectedThumbIndex ==
-                                                              index
-                                                          ? "click"
-                                                          : "idle",
+                                                child: IconButton(
+                                                    icon: Icon(Icons
+                                                        .thumb_up_alt_outlined),
+                                                    onPressed: () {
+                                                      _handleOnPressThumb(
+                                                          index);
+                                                    },
+                                                    iconSize: 15,
+                                                    color:
+                                                        selectedList[index] ==
+                                                                true
+                                                            ? Colors.white
+                                                            : MColors.grey_06)
+                                                // child: Icon(
+                                                //     Icons.thumb_up_alt_outlined,
+                                                //     size: 15,
+                                                //     color:
+                                                //         selectedList[index] ==
+                                                //                 true
+                                                //             ? Colors.white
+                                                //             : MColors.grey_06),
+                                                // child: FlareActor(
+                                                //     'assets/icons/thumb.flr',
+                                                //     alignment: Alignment.center,
+                                                //     fit: BoxFit.cover,
+                                                //     animation:
+                                                //         selectedThumbIndex ==
+                                                //                 index
+                                                //             ? "click"
+                                                //             : "idle",
+                                                //     ),
                                                 ),
-                                              ),
-                                            ),
                                             SizedBox(
                                               width: 20,
                                               child: Text(
@@ -409,8 +458,11 @@ class _LoungePageState extends State<LoungePage>
                                                     : musicList[index]
                                                         .favorite
                                                         .toString(),
-                                                style:
-                                                    MTextStyles.regular8Grey06,
+                                                style: selectedList[index] ==
+                                                        true
+                                                    ? MTextStyles.regular8White
+                                                    : MTextStyles
+                                                        .regular8Grey06,
                                               ),
                                             ),
                                           ],
@@ -449,11 +501,7 @@ class _LoungePageState extends State<LoungePage>
           selectedList[i] = true;
         }
       }
-      for (int i = 0; i < selectedList.length; i++) {
-        if (selectedList[i] == true) {
-          selectedMusicList.add(musicList[i]);
-        }
-      }
+      getSelectedMusicList();
     });
     selectedList.contains(true)
         ? Provider.of<MiniWidgetStatusProvider>(context, listen: false)
@@ -481,12 +529,10 @@ class _LoungePageState extends State<LoungePage>
     PlayMusic.stopFunc().whenComplete(() {
       PlayMusic.clearAudioPlayer();
       PlayMusic.makeNewPlayer();
-      PlayMusic.playListFunc(selectedMusicList);
-    });
-
-    Future.delayed(Duration(seconds: 0), () {
-      context.read<MiniWidgetStatusProvider>().bottomPlayListWidget =
-          BottomWidgets.miniPlayer;
+      PlayMusic.playListFunc(selectedMusicList).then((value) {
+        context.read<MiniWidgetStatusProvider>().bottomPlayListWidget =
+            BottomWidgets.miniPlayer;
+      });
     });
   }
 
@@ -497,14 +543,12 @@ class _LoungePageState extends State<LoungePage>
       PlayMusic.stopFunc().whenComplete(() {
         PlayMusic.clearAudioPlayer();
         PlayMusic.makeNewPlayer();
-        PlayMusic.playUrlFunc(musicInfoData);
+        PlayMusic.playUrlFunc(musicInfoData).then((value) {
+          context.read<MiniWidgetStatusProvider>().bottomPlayListWidget =
+              BottomWidgets.miniPlayer;
+        });
       });
     }
-
-    Future.delayed(Duration(seconds: 0), () {
-      context.read<MiniWidgetStatusProvider>().bottomPlayListWidget =
-          BottomWidgets.miniPlayer;
-    });
   }
 
   void getSelectedMusicList() {
@@ -526,5 +570,13 @@ class _LoungePageState extends State<LoungePage>
     // setState(() {
     //   selectedThumbIndex = index;
     // });
+  }
+
+  void returnDataFunc(LoungeMusicTypeEnum selectedData) {
+    setState(() {
+      selectedList.clear();
+      selectedMusicList.clear();
+      _typeOfMusic = selectedData;
+    });
   }
 }

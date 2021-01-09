@@ -276,6 +276,8 @@ class _OtherUserProfilePageState extends State<OtherUserProfilePage> {
                                 Container(
                                   child: Row(
                                     crossAxisAlignment: CrossAxisAlignment.end,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       SizedBox(
                                         width: SizeConfig.screenWidth * 0.5,

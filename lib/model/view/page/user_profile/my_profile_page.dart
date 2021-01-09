@@ -121,7 +121,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                 ),
                               ),
                               Positioned(
-                                top: 120,
+                                top: 110,
                                 left: 100,
                                 child: Column(
                                   children: [
@@ -135,10 +135,52 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                             .userName,
                                         style: MTextStyles.bold14Black,
                                         overflow: TextOverflow.ellipsis,
-                                        maxLines: 2,
                                       ),
                                     ),
                                   ],
+                                ),
+                              ),
+                              Positioned(
+                                top: 130,
+                                left: 100,
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      width: SizeConfig.screenWidth - 200,
+                                      child: Text(
+                                        Provider.of<UserProfileProvider>(
+                                                context,
+                                                listen: false)
+                                            .userProfileData
+                                            .userEmail,
+                                        style: MTextStyles.regular10Grey06,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Positioned(
+                                top: 120,
+                                right: 40,
+                                child: InkWell(
+                                  onTap: () {
+                                    _launchURL(url);
+                                  },
+                                  child: Container(
+                                    height: 30,
+                                    width: 30,
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                        border: Border.all(
+                                            width: 1, color: MColors.tomato)),
+                                    child: Icon(
+                                      Icons.mail,
+                                      size: 15,
+                                      color: MColors.tomato,
+                                    ),
+                                  ),
                                 ),
                               ),
                               Positioned(
@@ -171,10 +213,16 @@ class _MyProfilePageState extends State<MyProfilePage> {
                           height: 50,
                           alignment: Alignment.topLeft,
                           child: Text(
-                            Provider.of<UserProfileProvider>(context)
+                            context
+                                        .watch<UserProfileProvider>()
+                                        .userProfileData
+                                        .introduce !=
+                                    ''
+                                ? context
+                                    .watch<UserProfileProvider>()
                                     .userProfileData
-                                    .introduce ??
-                                '소개글은 프로필 편집에서 입력 가능합니다.',
+                                    .introduce
+                                : '소개글은 프로필 편집에서 입력 가능합니다. 😃',
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: MTextStyles.regular12Black,
@@ -277,6 +325,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
 
                                   return Row(
                                     crossAxisAlignment: CrossAxisAlignment.end,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         '내가 등록한 노래',

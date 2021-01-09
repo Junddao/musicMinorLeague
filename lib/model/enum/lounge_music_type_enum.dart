@@ -1,4 +1,5 @@
-enum MusicTypeEnum {
+enum LoungeMusicTypeEnum {
+  all,
   classical,
   contry,
   dance,

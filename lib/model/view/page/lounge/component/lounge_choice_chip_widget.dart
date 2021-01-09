@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:music_minorleague/model/enum/music_type_enum.dart';
+import 'package:music_minorleague/model/enum/lounge_music_type_enum.dart';
+
 import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 
-class ChoiceChipWidget extends StatefulWidget {
-  const ChoiceChipWidget({
+class LoungeChoiceChipWidget extends StatefulWidget {
+  const LoungeChoiceChipWidget({
     Key key,
-    List<MusicTypeEnum> typeOfMusicList,
+    List<LoungeMusicTypeEnum> typeOfMusicList,
     Function returnDataFunc,
   })  : _typeOfMusicList = typeOfMusicList,
         _returnDataFunc = returnDataFunc,
         super(key: key);
-  final List<MusicTypeEnum> _typeOfMusicList;
+  final List<LoungeMusicTypeEnum> _typeOfMusicList;
   final Function _returnDataFunc;
 
   @override
-  _ChoiceChipWidgetState createState() => new _ChoiceChipWidgetState();
+  _LoungeChoiceChipWidgetState createState() =>
+      new _LoungeChoiceChipWidgetState();
 }
 
-class _ChoiceChipWidgetState extends State<ChoiceChipWidget> {
-  MusicTypeEnum selectedChoice;
+class _LoungeChoiceChipWidgetState extends State<LoungeChoiceChipWidget> {
+  LoungeMusicTypeEnum selectedChoice;
 
   _buildChoiceList() {
     List<Widget> choices = List();
@@ -51,7 +53,7 @@ class _ChoiceChipWidgetState extends State<ChoiceChipWidget> {
 
   @override
   void initState() {
-    selectedChoice = MusicTypeEnum.etc;
+    selectedChoice = LoungeMusicTypeEnum.all;
     super.initState();
   }
 
@@ -62,41 +64,44 @@ class _ChoiceChipWidgetState extends State<ChoiceChipWidget> {
     );
   }
 
-  String getLabelTypeOfMusicList(MusicTypeEnum value) {
+  String getLabelTypeOfMusicList(LoungeMusicTypeEnum value) {
     String returnString;
     switch (value) {
-      case MusicTypeEnum.classical:
+      case LoungeMusicTypeEnum.all:
+        returnString = '전체';
+        break;
+      case LoungeMusicTypeEnum.classical:
         returnString = '차분함';
         break;
-      case MusicTypeEnum.contry:
+      case LoungeMusicTypeEnum.contry:
         returnString = '낭만적';
         break;
-      case MusicTypeEnum.dance:
+      case LoungeMusicTypeEnum.dance:
         returnString = '밝음';
         break;
-      case MusicTypeEnum.electronic:
+      case LoungeMusicTypeEnum.electronic:
         returnString = '신남';
         break;
-      case MusicTypeEnum.folk:
+      case LoungeMusicTypeEnum.folk:
         returnString = '감성적';
         break;
-      case MusicTypeEnum.hiphop:
+      case LoungeMusicTypeEnum.hiphop:
         returnString = '힙합';
         break;
-      case MusicTypeEnum.pop:
+      case LoungeMusicTypeEnum.pop:
         returnString = '팝';
         break;
-      case MusicTypeEnum.rap:
+      case LoungeMusicTypeEnum.rap:
         returnString = '랩';
         break;
-      case MusicTypeEnum.rock:
+      case LoungeMusicTypeEnum.rock:
         returnString = '락';
         break;
-      case MusicTypeEnum.trot:
+      case LoungeMusicTypeEnum.trot:
         returnString = '트로트';
         break;
 
-      case MusicTypeEnum.etc:
+      case LoungeMusicTypeEnum.etc:
         returnString = '기타';
         break;
     }

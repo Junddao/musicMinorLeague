@@ -260,7 +260,7 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
                                                 style: _selectedList[index] ==
                                                         true
                                                     ? MTextStyles.bold14White
-                                                    : MTextStyles.bold16Grey06,
+                                                    : MTextStyles.bold14Grey06,
                                               ),
                                               SizedBox(
                                                 width: 6,
@@ -389,12 +389,10 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
     PlayMusic.stopFunc().whenComplete(() {
       PlayMusic.clearAudioPlayer();
       PlayMusic.makeNewPlayer();
-      PlayMusic.playListFunc(selectedMusicList);
-    });
-
-    Future.delayed(Duration(seconds: 0), () {
-      context.read<MiniWidgetStatusProvider>().bottomPlayListWidget =
-          BottomWidgets.miniPlayer;
+      PlayMusic.playListFunc(selectedMusicList).then((value) {
+        context.read<MiniWidgetStatusProvider>().bottomPlayListWidget =
+            BottomWidgets.miniPlayer;
+      });
     });
   }
 
@@ -405,13 +403,11 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
       PlayMusic.stopFunc().whenComplete(() {
         PlayMusic.clearAudioPlayer();
         PlayMusic.makeNewPlayer();
-        PlayMusic.playUrlFunc(musicInfoData);
+        PlayMusic.playUrlFunc(musicInfoData).then((value) {
+          context.read<MiniWidgetStatusProvider>().bottomPlayListWidget =
+              BottomWidgets.miniPlayer;
+        });
       });
     }
-
-    Future.delayed(Duration(seconds: 0), () {
-      context.read<MiniWidgetStatusProvider>().bottomPlayListWidget =
-          BottomWidgets.miniPlayer;
-    });
   }
 }
