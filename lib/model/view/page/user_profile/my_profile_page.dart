@@ -165,7 +165,14 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                 right: 40,
                                 child: InkWell(
                                   onTap: () {
-                                    _launchURL(url);
+                                    if (url.isNotEmpty) {
+                                      _launchURL(url);
+                                    } else {
+                                      Scaffold.of(context).showSnackBar(
+                                          SnackBar(
+                                              content:
+                                                  Text("이메일을 등록하지 않으셨습니다.")));
+                                    }
                                   },
                                   child: Container(
                                     height: 30,
@@ -188,7 +195,14 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                 right: 0,
                                 child: InkWell(
                                   onTap: () {
-                                    _launchURL(url);
+                                    if (url.isNotEmpty) {
+                                      _launchURL(url);
+                                    } else {
+                                      Scaffold.of(context).showSnackBar(
+                                          SnackBar(
+                                              content: Text(
+                                                  "Youtube 주소를 입력하지 않으셨습니다.")));
+                                    }
                                   },
                                   child: Container(
                                     height: 30,

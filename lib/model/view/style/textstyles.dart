@@ -631,8 +631,26 @@ class MTextStyles {
     // height: 1.5,
   );
 
+  static const bold26black = const TextStyle(
+    color: Colors.black,
+    fontWeight: FontWeight.w700,
+    fontFamily: 'NotoSansKR',
+    fontSize: 26.0,
+    fontStyle: FontStyle.normal,
+    // height: 1.5,
+  );
+
   static const regular18white = const TextStyle(
     color: Colors.white,
+    fontWeight: FontWeight.w400,
+    fontFamily: 'NotoSansKR',
+    fontSize: 18.0,
+    fontStyle: FontStyle.normal,
+    // height: 1.2,
+  );
+
+  static const regular18black = const TextStyle(
+    color: Colors.black,
     fontWeight: FontWeight.w400,
     fontFamily: 'NotoSansKR',
     fontSize: 18.0,

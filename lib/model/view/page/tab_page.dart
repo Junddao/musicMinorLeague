@@ -1,3 +1,4 @@
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:music_minorleague/model/view/page/lounge/lounge_page.dart';
@@ -8,6 +9,7 @@ import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 import 'package:music_minorleague/tabstates.dart';
 import 'package:flutter/material.dart';
+import 'package:music_minorleague/utils/admob_service.dart';
 import 'package:music_minorleague/utils/push_manager.dart';
 
 import 'package:provider/provider.dart';

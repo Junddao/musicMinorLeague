@@ -85,6 +85,9 @@ class _SmallSelectListWidgetState extends State<SmallSelectListWidget> {
                           updateMyMusicListInFirebase().whenComplete(
                             () => widget._snackBarFunc('내 재생목록에 등록 완료'),
                           );
+                          context
+                              .read<MiniWidgetStatusProvider>()
+                              .bottomSeletListWidget = BottomWidgets.none;
                           // .catchError(
                           //   () => widget._snackBarFunc('등록 실패'),
                           // );

@@ -31,12 +31,14 @@ dependencies:
   enum_to_string: ^1.0.13
   extended_image: ^1.4.0
   file_picker: ^2.0.13
+  firebase_admob: ^0.10.3
   firebase_auth: ^0.18.3
   firebase_core: ^0.5.2
   firebase_messaging: ^7.0.3
   firebase_storage: ^5.0.1
   flare_flutter: ^2.0.6
   flutter_absolute_path: ^1.0.6
+  flutter_admob_app_open: ^0.0.5
   flutter_easyloading: ^2.2.1
   flutter_svg: ^0.19.1
   font_awesome_flutter: ^8.10.0

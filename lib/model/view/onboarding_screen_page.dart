@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:music_minorleague/model/view/style/colors.dart';
 
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 
@@ -29,7 +30,7 @@ class _OnboardingScreenPageState extends State<OnboardingScreenPage> {
       height: 8.0,
       width: isActive ? 24.0 : 16.0,
       decoration: BoxDecoration(
-        color: isActive ? Colors.white : Color(0xFF7B51D3),
+        color: isActive ? MColors.black : Color(0xFF7B51D3),
         borderRadius: BorderRadius.all(Radius.circular(12)),
       ),
     );
@@ -48,19 +49,19 @@ class _OnboardingScreenPageState extends State<OnboardingScreenPage> {
         body: AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle.light,
           child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                stops: [0.1, 0.4, 0.7, 0.9],
-                colors: [
-                  Color(0xFF3594DD),
-                  Color(0xFF4563DB),
-                  Color(0xFF5036D5),
-                  Color(0xFF5B16D0),
-                ],
-              ),
-            ),
+            // decoration: BoxDecoration(
+            //   gradient: LinearGradient(
+            //     begin: Alignment.topCenter,
+            //     end: Alignment.bottomCenter,
+            //     stops: [0.1, 0.4, 0.7, 0.9],
+            //     colors: [
+            //       Color(0xFF3594DD),
+            //       Color(0xFF4563DB),
+            //       Color(0xFF5036D5),
+            //       Color(0xFF5B16D0),
+            //     ],
+            //   ),
+            // ),
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 40.0),
               child: Column(
@@ -75,7 +76,7 @@ class _OnboardingScreenPageState extends State<OnboardingScreenPage> {
                       child: Text(
                         'Skip',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: MColors.black,
                           fontSize: 20.0,
                         ),
                       ),
@@ -106,13 +107,13 @@ class _OnboardingScreenPageState extends State<OnboardingScreenPage> {
                               ),
                               SizedBox(height: 30.0),
                               Text(
-                                '당신의 목소리를\n모두에게 들려주세요.',
-                                style: MTextStyles.bold26white,
+                                '자신의 음악을\n모두에게 들려주세요.',
+                                style: MTextStyles.bold26black,
                               ),
                               SizedBox(height: 15.0),
                               Text(
                                 '당신이 만든 음악을 모두에게 들려줄 수 있는 공간입니다.',
-                                style: MTextStyles.regular18white,
+                                style: MTextStyles.regular18black,
                               ),
                             ],
                           ),
@@ -131,13 +132,13 @@ class _OnboardingScreenPageState extends State<OnboardingScreenPage> {
                               ),
                               SizedBox(height: 30.0),
                               Text(
-                                '숨은 아티스트의 음악을\n감상하세요.',
-                                style: MTextStyles.bold26white,
+                                '저작권에 주의하세요.',
+                                style: MTextStyles.bold26black,
                               ),
                               SizedBox(height: 15.0),
                               Text(
-                                '쉽게 들을수 없었던 실력있는 아티스트들의 노래를 마음껏 즐기세요..',
-                                style: MTextStyles.regular18white,
+                                '기존 가수의 음악 또는 커버곡 등록은 문제될 수 있어요.',
+                                style: MTextStyles.regular18black,
                               ),
                             ],
                           ),
@@ -156,13 +157,13 @@ class _OnboardingScreenPageState extends State<OnboardingScreenPage> {
                               ),
                               SizedBox(height: 30.0),
                               Text(
-                                '메이저리그로 나가기 위한 발판을 마음껏 활용하세요.',
-                                style: MTextStyles.bold26white,
+                                '자신의 음악을\n마음껏 홍보하세요.',
+                                style: MTextStyles.bold26black,
                               ),
                               SizedBox(height: 15.0),
                               Text(
-                                '여러분의 연결공간입니다. 메이저리그로 가기 위한 발판으로 저희를 활용하세요.',
-                                style: MTextStyles.regular18white,
+                                '메이저리그로 가기 위한 발판으로 저희를 활용하세요.',
+                                style: MTextStyles.regular18black,
                               ),
                             ],
                           ),
@@ -192,14 +193,14 @@ class _OnboardingScreenPageState extends State<OnboardingScreenPage> {
                                   Text(
                                     'Next',
                                     style: TextStyle(
-                                      color: Colors.white,
+                                      color: MColors.black,
                                       fontSize: 22.0,
                                     ),
                                   ),
                                   SizedBox(width: 10.0),
                                   Icon(
                                     Icons.arrow_forward,
-                                    color: Colors.white,
+                                    color: MColors.black,
                                     size: 30.0,
                                   ),
                                 ],
@@ -217,7 +218,7 @@ class _OnboardingScreenPageState extends State<OnboardingScreenPage> {
             ? Container(
                 height: 100.0,
                 width: double.infinity,
-                color: Colors.white,
+                color: Color(0xFF5B16D0),
                 child: GestureDetector(
                   onTap: () {
                     print('Get started');
@@ -229,7 +230,7 @@ class _OnboardingScreenPageState extends State<OnboardingScreenPage> {
                       child: Text(
                         '시작하기!',
                         style: TextStyle(
-                          color: Color(0xFF5B16D0),
+                          color: MColors.white,
                           fontSize: 20.0,
                           fontWeight: FontWeight.bold,
                         ),

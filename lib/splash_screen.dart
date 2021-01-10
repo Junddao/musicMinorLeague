@@ -1,12 +1,12 @@
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 import 'package:flutter/material.dart';
+import 'package:music_minorleague/utils/admob_service.dart';
 import 'package:music_minorleague/utils/firebase_db_helper.dart';
 import 'package:provider/provider.dart';
-
 import 'model/data/user_profile_data.dart';
 import 'model/provider/user_profile_provider.dart';
-import 'model/view/style/colors.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -22,14 +22,16 @@ class _SplashScreenState extends State<SplashScreen> {
       _user = FirebaseAuth.instance.currentUser;
       _user != null ? result = true : result = false;
     });
+
     return result;
   }
 
   @override
   void initState() {
     super.initState();
+    WidgetsFlutterBinding.ensureInitialized();
 
-    _mockCheckForSession().then((value) {
+    _mockCheckForSession().then((value) async {
       if (value == true)
         _navigatorToHome();
       else {
@@ -47,6 +49,16 @@ class _SplashScreenState extends State<SplashScreen> {
     //   '',
     //   '',
     // );
+
+    // 초기에 광고 하나 보여주자
+    AdMobService ams = AdMobService();
+    InterstitialAd newAd = ams.getNewInterstitial();
+    newAd.load();
+    newAd.show(
+      anchorType: AnchorType.bottom,
+      anchorOffset: 0.0,
+      horizontalCenterOffset: 0.0,
+    );
 
     String collection = FirebaseDBHelper.userCollection;
     String doc = _user.email.substring(0, _user.email.indexOf('@'));
@@ -67,25 +79,25 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          stops: [0.1, 0.4, 0.7, 0.9],
-          colors: [
-            Color(0xFF3594DD),
-            Color(0xFF4563DB),
-            Color(0xFF5036D5),
-            Color(0xFF5B16D0),
-          ],
-        ),
-      ),
+      // decoration: BoxDecoration(
+      //   gradient: LinearGradient(
+      //     begin: Alignment.topCenter,
+      //     end: Alignment.bottomCenter,
+      //     stops: [0.1, 0.4, 0.7, 0.9],
+      //     colors: [
+      //       Color(0xFF3594DD),
+      //       Color(0xFF4563DB),
+      //       Color(0xFF5036D5),
+      //       Color(0xFF5B16D0),
+      //     ],
+      //   ),
+      // ),
       child: Stack(
         alignment: Alignment.center,
         children: [
           Text(
             'J T B',
-            style: MTextStyles.bold26white,
+            style: MTextStyles.bold26black,
           ),
         ],
       ),

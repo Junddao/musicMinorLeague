@@ -67,7 +67,8 @@
 		<string>fetch</string>
 		<string>remote-notification</string>
 	</array>
-	
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-9695790043722201~2171273127</string>
 	
 </dict>
 </plist>

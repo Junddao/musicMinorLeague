@@ -158,7 +158,7 @@ class _OtherUserProfilePageState extends State<OtherUserProfilePage> {
                                         ),
                                       ),
                                       Positioned(
-                                        top: 120,
+                                        top: 110,
                                         left: 100,
                                         child: Column(
                                           children: [
@@ -177,11 +177,68 @@ class _OtherUserProfilePageState extends State<OtherUserProfilePage> {
                                         ),
                                       ),
                                       Positioned(
+                                        top: 130,
+                                        left: 100,
+                                        child: Column(
+                                          children: [
+                                            SizedBox(
+                                              width:
+                                                  SizeConfig.screenWidth - 200,
+                                              child: Text(
+                                                widget
+                                                    .otherUserProfile.userEmail,
+                                                style:
+                                                    MTextStyles.regular10Grey06,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: 120,
+                                        right: 40,
+                                        child: InkWell(
+                                          onTap: () {
+                                            if (url.isNotEmpty) {
+                                              _launchURL(url);
+                                            } else {
+                                              Scaffold.of(context).showSnackBar(
+                                                  SnackBar(
+                                                      content: Text(
+                                                          "이메일을 등록하지 않으셨습니다.")));
+                                            }
+                                          },
+                                          child: Container(
+                                            height: 30,
+                                            width: 30,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(100),
+                                                border: Border.all(
+                                                    width: 1,
+                                                    color: MColors.tomato)),
+                                            child: Icon(
+                                              Icons.mail,
+                                              size: 15,
+                                              color: MColors.tomato,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
                                         top: 120,
                                         right: 0,
                                         child: InkWell(
                                           onTap: () {
-                                            if (url != null) _launchURL(url);
+                                            if (url.isNotEmpty) {
+                                              _launchURL(url);
+                                            } else {
+                                              Scaffold.of(context).showSnackBar(
+                                                  SnackBar(
+                                                      content: Text(
+                                                          "Youtube 주소를 등록하지 않으셨습니다.")));
+                                            }
                                           },
                                           child: Container(
                                             height: 30,
@@ -207,8 +264,9 @@ class _OtherUserProfilePageState extends State<OtherUserProfilePage> {
                                   height: 50,
                                   alignment: Alignment.topLeft,
                                   child: Text(
-                                    widget.otherUserProfile.introduce ??
-                                        '아직 소개글을 입력하지 않으셨습니다.',
+                                    widget.otherUserProfile.introduce != ''
+                                        ? widget.otherUserProfile.introduce
+                                        : '아직 소개글을 입력하지 않으셨네요. 😃',
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                     style: MTextStyles.regular12Black,
@@ -280,7 +338,7 @@ class _OtherUserProfilePageState extends State<OtherUserProfilePage> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       SizedBox(
-                                        width: SizeConfig.screenWidth * 0.5,
+                                        width: SizeConfig.screenWidth * 0.8,
                                         child: Text(
                                           widget.otherUserProfile.userName +
                                               '님이 등록한 노래',
