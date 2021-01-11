@@ -41,6 +41,7 @@ class _LoginPageState extends State<LoginPage> {
       'id': user.email.substring(0, user.email.indexOf('@')), // id
       'youtubeUrl': '',
       'introduce': '',
+      'backgroundPhotoUrl': '',
     };
 
     Provider.of<UserProfileProvider>(context, listen: false).userProfileData =

@@ -3,6 +3,7 @@ import 'dart:convert';
 class UserProfileData {
   final String userName;
   final String photoUrl;
+  final String backgroundPhotoUrl;
   final String userEmail;
   final String id;
   final String youtubeUrl;
@@ -10,6 +11,7 @@ class UserProfileData {
   UserProfileData(
     this.userName,
     this.photoUrl,
+    this.backgroundPhotoUrl,
     this.userEmail,
     this.id,
     this.youtubeUrl,
@@ -20,6 +22,7 @@ class UserProfileData {
     return {
       'userName': userName,
       'photoUrl': photoUrl,
+      'backgroundPhotoUrl': backgroundPhotoUrl,
       'userEmail': userEmail,
       'id': id,
       'youtubeUrl': youtubeUrl,
@@ -33,6 +36,7 @@ class UserProfileData {
     return UserProfileData(
       map['userName'],
       map['photoUrl'],
+      map['backgroundPhotoUrl'],
       map['userEmail'],
       map['id'],
       map['youtubeUrl'],

@@ -44,6 +44,7 @@ class FirebaseDBHelper {
     await firestoreinstance.collection(collection).doc(doc).update({
       'userName': data['userName'],
       'photoUrl': data['photoUrl'],
+      'backgroundPhotoUrl': data['backgroundPhotoUrl'],
       'youtubeUrl': data['youtubeUrl'],
       'introduce': data['introduce'],
     });

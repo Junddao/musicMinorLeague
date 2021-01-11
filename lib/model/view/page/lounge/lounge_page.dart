@@ -72,7 +72,7 @@ class _LoungePageState extends State<LoungePage>
     typeOfMusicList = List.generate(LoungeMusicTypeEnum.values.length,
         (index) => LoungeMusicTypeEnum.values[index]);
 
-    _initSubscription();
+    // _initSubscription();
   }
 
   _initSubscription() {

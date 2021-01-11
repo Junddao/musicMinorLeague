@@ -3,14 +3,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:music_minorleague/model/data/default_url.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
 import 'package:music_minorleague/model/data/user_profile_data.dart';
+import 'package:music_minorleague/model/enum/lounge_bottom_widget_enum.dart';
+import 'package:music_minorleague/model/provider/mini_widget_status_provider.dart';
 
 import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 import 'package:music_minorleague/utils/firebase_db_helper.dart';
 import 'package:music_minorleague/utils/play_func.dart';
+import 'package:provider/provider.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 
@@ -43,7 +47,7 @@ class _OtherUserProfilePageState extends State<OtherUserProfilePage> {
   @override
   void dispose() {
     // 나갈때 노래 끄기
-    stopMusic();
+    // stopMusic();
     super.dispose();
   }
 
@@ -75,7 +79,8 @@ class _OtherUserProfilePageState extends State<OtherUserProfilePage> {
   }
 
   _body() {
-    String url = widget.otherUserProfile?.youtubeUrl;
+    String youtubeUrl = widget.otherUserProfile?.youtubeUrl;
+    String emailUrl = widget.otherUserProfile?.userEmail;
     SizeConfig().init(context);
     return ConstrainedBox(
       constraints: BoxConstraints(
@@ -129,7 +134,10 @@ class _OtherUserProfilePageState extends State<OtherUserProfilePage> {
                               height: 100,
                               width: SizeConfig.screenWidth,
                               child: Image.network(
-                                widget.otherUserProfile.photoUrl,
+                                widget.otherUserProfile.backgroundPhotoUrl
+                                        .isNotEmpty
+                                    ? widget.otherUserProfile.backgroundPhotoUrl
+                                    : DefaultUrl.default_image_url,
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -151,7 +159,12 @@ class _OtherUserProfilePageState extends State<OtherUserProfilePage> {
                                           width: 100,
                                           child: ClipOval(
                                             child: Image.network(
-                                              widget.otherUserProfile?.photoUrl,
+                                              widget.otherUserProfile.photoUrl
+                                                      .isNotEmpty
+                                                  ? widget
+                                                      .otherUserProfile.photoUrl
+                                                  : DefaultUrl
+                                                      .default_image_url,
                                               fit: BoxFit.cover,
                                             ),
                                           ),
@@ -200,8 +213,8 @@ class _OtherUserProfilePageState extends State<OtherUserProfilePage> {
                                         right: 40,
                                         child: InkWell(
                                           onTap: () {
-                                            if (url.isNotEmpty) {
-                                              _launchURL(url);
+                                            if (emailUrl.isNotEmpty) {
+                                              _createEmail(emailUrl);
                                             } else {
                                               Scaffold.of(context).showSnackBar(
                                                   SnackBar(
@@ -231,8 +244,8 @@ class _OtherUserProfilePageState extends State<OtherUserProfilePage> {
                                         right: 0,
                                         child: InkWell(
                                           onTap: () {
-                                            if (url.isNotEmpty) {
-                                              _launchURL(url);
+                                            if (youtubeUrl.isNotEmpty) {
+                                              _launchURL(youtubeUrl);
                                             } else {
                                               Scaffold.of(context).showSnackBar(
                                                   SnackBar(
@@ -482,6 +495,17 @@ class _OtherUserProfilePageState extends State<OtherUserProfilePage> {
     }
   }
 
+  void _createEmail(String url) async {
+    final Uri _emailLaunchUri =
+        Uri(scheme: 'mailto', path: url, queryParameters: {'subject': ''});
+
+    if (await canLaunch(_emailLaunchUri.toString())) {
+      await launch(_emailLaunchUri.toString());
+    } else {
+      throw 'Could not Email';
+    }
+  }
+
   void stopMusic() {
     PlayMusic.stopFunc();
   }
@@ -490,7 +514,10 @@ class _OtherUserProfilePageState extends State<OtherUserProfilePage> {
     PlayMusic.stopFunc().whenComplete(() {
       PlayMusic.clearAudioPlayer();
       PlayMusic.makeNewPlayer();
-      PlayMusic.playUrlFunc(selectedMusic);
+      PlayMusic.playUrlFunc(selectedMusic).then((value) {
+        context.read<MiniWidgetStatusProvider>().bottomPlayListWidget =
+            BottomWidgets.miniPlayer;
+      });
     });
   }
 }

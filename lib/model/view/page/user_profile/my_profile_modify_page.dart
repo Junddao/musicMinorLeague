@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:music_minorleague/model/data/default_url.dart';
 import 'package:music_minorleague/model/data/user_profile_data.dart';
 import 'package:music_minorleague/model/provider/user_profile_provider.dart';
 import 'package:music_minorleague/model/view/page/upload/component/upload_result_dialog.dart';
@@ -30,9 +31,11 @@ class _MyProfileModifyPageState extends State<MyProfileModifyPage> {
 
   Reference ref;
   final firestoreinstance = FirebaseFirestore.instance;
-  String imageFileUrl;
+  String _imageFileUrl;
+  String _backgroundImageFileUrl;
 
   File _profileImage;
+  File _profileBackgroundImage;
 
   final picker = ImagePicker();
   @override
@@ -40,6 +43,11 @@ class _MyProfileModifyPageState extends State<MyProfileModifyPage> {
     _nameTextEditingController = new TextEditingController();
     _introduceTextEditingController = new TextEditingController();
     _youtubeUrlTextEditingController = new TextEditingController();
+
+    _imageFileUrl =
+        context.read<UserProfileProvider>().userProfileData.photoUrl;
+    _backgroundImageFileUrl =
+        context.read<UserProfileProvider>().userProfileData.backgroundPhotoUrl;
 
     super.initState();
   }
@@ -125,49 +133,58 @@ class _MyProfileModifyPageState extends State<MyProfileModifyPage> {
             child: Container(
               height: 100,
               width: SizeConfig.screenWidth,
-              child: _profileImage == null
+              child: _profileBackgroundImage == null
                   ? Image.network(
-                      Provider.of<UserProfileProvider>(context)
-                          .userProfileData
-                          .photoUrl,
+                      context
+                              .watch<UserProfileProvider>()
+                              .userProfileData
+                              .backgroundPhotoUrl
+                              .isNotEmpty
+                          ? context
+                              .watch<UserProfileProvider>()
+                              .userProfileData
+                              .backgroundPhotoUrl
+                          : DefaultUrl.default_image_url,
                       fit: BoxFit.cover,
                     )
                   : Image.file(
-                      _profileImage,
+                      _profileBackgroundImage,
                       fit: BoxFit.cover,
                     ),
             ),
           ),
-          // Positioned(
-          //   top: 60,
-          //   right: 10,
-          //   child: GestureDetector(
-          //     onTap: () {},
-          //     child: Container(
-          //       alignment: Alignment.center,
-          //       height: 30,
-          //       width: 100,
-          //       decoration: BoxDecoration(
-          //           color: MColors.tomato_10,
-          //           borderRadius: BorderRadius.circular(16),
-          //           border: Border.all(width: 1, color: MColors.white)),
-          //       child: Row(
-          //         mainAxisAlignment: MainAxisAlignment.center,
-          //         children: [
-          //           Icon(
-          //             Icons.camera_alt,
-          //             color: Colors.white,
-          //             size: 16,
-          //           ),
-          //           SizedBox(
-          //             width: 8,
-          //           ),
-          //           Text('배경 편집', style: MTextStyles.bold12White),
-          //         ],
-          //       ),
-          //     ),
-          //   ),
-          // ),
+          Positioned(
+            top: 60,
+            right: 10,
+            child: GestureDetector(
+              onTap: () {
+                getBackgroundImage();
+              },
+              child: Container(
+                alignment: Alignment.center,
+                height: 30,
+                width: 100,
+                decoration: BoxDecoration(
+                    color: MColors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(width: 1, color: MColors.grey_06)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.camera_alt,
+                      color: MColors.grey_06,
+                      size: 16,
+                    ),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    Text('배경 편집', style: MTextStyles.bold12Grey06),
+                  ],
+                ),
+              ),
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.only(left: 20, right: 20),
             child: Column(
@@ -185,9 +202,16 @@ class _MyProfileModifyPageState extends State<MyProfileModifyPage> {
                           child: ClipOval(
                             child: _profileImage == null
                                 ? Image.network(
-                                    Provider.of<UserProfileProvider>(context)
-                                        .userProfileData
-                                        .photoUrl,
+                                    context
+                                            .watch<UserProfileProvider>()
+                                            .userProfileData
+                                            .photoUrl
+                                            .isNotEmpty
+                                        ? context
+                                            .watch<UserProfileProvider>()
+                                            .userProfileData
+                                            .photoUrl
+                                        : DefaultUrl.default_image_url,
                                     fit: BoxFit.cover,
                                   )
                                 : Image.file(
@@ -212,13 +236,13 @@ class _MyProfileModifyPageState extends State<MyProfileModifyPage> {
                                 color: MColors.white,
                                 borderRadius: BorderRadius.circular(16),
                                 border: Border.all(
-                                    width: 1, color: MColors.brownish_grey)),
+                                    width: 1, color: MColors.grey_06)),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(
                                   Icons.camera_alt,
-                                  color: MColors.brownish_grey,
+                                  color: MColors.grey_06,
                                   size: 16,
                                 ),
                               ],
@@ -402,6 +426,18 @@ class _MyProfileModifyPageState extends State<MyProfileModifyPage> {
     );
   }
 
+  Future getBackgroundImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        _profileBackgroundImage = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
   Future getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
@@ -420,7 +456,11 @@ class _MyProfileModifyPageState extends State<MyProfileModifyPage> {
       maskType: EasyLoadingMaskType.black,
     );
 
-    await uploadImageFile();
+    uploadBackgroundImageFile().then((value) async {
+      uploadImageFile().then((value) {
+        updateDatabase();
+      });
+    });
   }
 
   Future<void> uploadImageFile() async {
@@ -431,28 +471,38 @@ class _MyProfileModifyPageState extends State<MyProfileModifyPage> {
 
     ref = FirebaseStorage.instance.ref().child(_userId).child(filename);
 
-    if (_profileImage == null) {
-      imageFileUrl = Provider.of<UserProfileProvider>(context, listen: false)
-          .userProfileData
-          .photoUrl;
-      updateDatabase();
-    } else {
-      UploadTask uploadTask = ref.putFile(_profileImage);
+    UploadTask uploadTask = ref.putFile(_profileImage);
 
-      await uploadTask.then((TaskSnapshot snapshot) {
-        snapshot.ref.getDownloadURL().then((fileUrl) {
-          imageFileUrl = fileUrl;
-          updateDatabase();
-        });
+    await uploadTask.then((TaskSnapshot snapshot) {
+      snapshot.ref.getDownloadURL().then((fileUrl) {
+        _imageFileUrl = fileUrl;
       });
-    }
+    });
+  }
+
+  Future<void> uploadBackgroundImageFile() async {
+    String _userId = Provider.of<UserProfileProvider>(context, listen: false)
+        .userProfileData
+        .id;
+    String filename = 'backgroundImage';
+
+    ref = FirebaseStorage.instance.ref().child(_userId).child(filename);
+
+    UploadTask uploadTask = ref.putFile(_profileBackgroundImage);
+
+    await uploadTask.then((TaskSnapshot snapshot) {
+      snapshot.ref.getDownloadURL().then((fileUrl) {
+        _backgroundImageFileUrl = fileUrl;
+      });
+    });
   }
 
   updateDatabase() {
-    if (_nameTextEditingController.text != null && imageFileUrl != null) {
+    if (_nameTextEditingController.text != null) {
       Map<String, dynamic> data = {
         'userName': _nameTextEditingController.text,
-        'photoUrl': imageFileUrl,
+        'photoUrl': _imageFileUrl,
+        'backgroundPhotoUrl': _backgroundImageFileUrl,
         'youtubeUrl': _youtubeUrlTextEditingController.text,
         'introduce': _introduceTextEditingController.text,
       };

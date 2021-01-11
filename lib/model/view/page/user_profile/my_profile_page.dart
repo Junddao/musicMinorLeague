@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:music_minorleague/model/data/default_url.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
 import 'package:music_minorleague/model/provider/user_profile_provider.dart';
 import 'package:music_minorleague/model/view/style/colors.dart';
@@ -89,9 +90,16 @@ class _MyProfilePageState extends State<MyProfilePage> {
                       height: 100,
                       width: SizeConfig.screenWidth,
                       child: Image.network(
-                        Provider.of<UserProfileProvider>(context)
-                            .userProfileData
-                            .photoUrl,
+                        context
+                                .watch<UserProfileProvider>()
+                                .userProfileData
+                                .backgroundPhotoUrl
+                                .isNotEmpty
+                            ? context
+                                .watch<UserProfileProvider>()
+                                .userProfileData
+                                .backgroundPhotoUrl
+                            : DefaultUrl.default_image_url,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -112,9 +120,16 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                   width: 100,
                                   child: ClipOval(
                                     child: Image.network(
-                                      Provider.of<UserProfileProvider>(
-                                        context,
-                                      ).userProfileData.photoUrl,
+                                      context
+                                              .watch<UserProfileProvider>()
+                                              .userProfileData
+                                              .photoUrl
+                                              .isNotEmpty
+                                          ? context
+                                              .watch<UserProfileProvider>()
+                                              .userProfileData
+                                              .photoUrl
+                                          : DefaultUrl.default_image_url,
                                       fit: BoxFit.cover,
                                     ),
                                   ),
