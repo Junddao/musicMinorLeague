@@ -177,36 +177,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
                               ),
                               Positioned(
                                 top: 120,
-                                right: 40,
-                                child: InkWell(
-                                  onTap: () {
-                                    if (url.isNotEmpty) {
-                                      _launchURL(url);
-                                    } else {
-                                      Scaffold.of(context).showSnackBar(
-                                          SnackBar(
-                                              content:
-                                                  Text("이메일을 등록하지 않으셨습니다.")));
-                                    }
-                                  },
-                                  child: Container(
-                                    height: 30,
-                                    width: 30,
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                        border: Border.all(
-                                            width: 1, color: MColors.tomato)),
-                                    child: Icon(
-                                      Icons.mail,
-                                      size: 15,
-                                      color: MColors.tomato,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                top: 120,
                                 right: 0,
                                 child: InkWell(
                                   onTap: () {
