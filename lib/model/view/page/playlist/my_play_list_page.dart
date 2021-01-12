@@ -6,6 +6,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
+import 'package:music_minorleague/model/data/user_profile_data.dart';
 import 'package:music_minorleague/model/enum/lounge_bottom_widget_enum.dart';
 
 import 'package:music_minorleague/model/provider/mini_widget_status_provider.dart';
@@ -14,10 +15,11 @@ import 'package:music_minorleague/model/provider/user_profile_provider.dart';
 
 import 'package:music_minorleague/model/view/page/playlist/component/my_playlist_small_select_list_widget.dart';
 import 'package:music_minorleague/model/view/page/playlist/component/my_select_buttons_widget.dart';
-import 'package:music_minorleague/model/view/page/playlist/component/my_small_play_list_widget.dart';
+
 import 'package:music_minorleague/model/view/style/colors.dart';
-import 'package:music_minorleague/model/view/style/size_config.dart';
+
 import 'package:music_minorleague/model/view/style/textstyles.dart';
+import 'package:music_minorleague/model/view/widgets/small_play_list_widget.dart';
 
 import 'package:music_minorleague/utils/firebase_db_helper.dart';
 import 'package:music_minorleague/utils/play_func.dart';
@@ -138,7 +140,7 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
                     BottomWidgets.miniPlayer
                 ? true
                 : false,
-            child: MySmallPlayListWidget(),
+            child: SmallPlayListWidget(),
           ),
           Visibility(
             visible: Provider.of<MiniWidgetStatusProvider>(context)
@@ -237,16 +239,40 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
                                                         .myBottomSelectListWidget =
                                                     BottomWidgets.none;
                                           },
-                                          leading: ClipOval(
-                                            // borderRadius:
-                                            //     BorderRadius.circular(4.0),
-                                            child: ExtendedImage.network(
-                                              _myMusicList[index]?.imagePath,
-                                              cache: true,
-                                              width: 50,
-                                              height: 50,
-                                              fit: BoxFit.cover,
-                                              clearMemoryCacheWhenDispose: true,
+                                          leading: InkWell(
+                                            onTap: () {
+                                              String collection =
+                                                  FirebaseDBHelper
+                                                      .userCollection;
+                                              String doc =
+                                                  _myMusicList[index].userId;
+
+                                              FirebaseDBHelper.getData(
+                                                      collection, doc)
+                                                  .then((value) {
+                                                UserProfileData
+                                                    otherUserProfileData =
+                                                    UserProfileData.fromMap(
+                                                        value.data());
+
+                                                Navigator.of(context).pushNamed(
+                                                    'OtherUserProfilePage',
+                                                    arguments:
+                                                        otherUserProfileData);
+                                              });
+                                            },
+                                            child: ClipOval(
+                                              // borderRadius:
+                                              //     BorderRadius.circular(4.0),
+                                              child: ExtendedImage.network(
+                                                _myMusicList[index]?.imagePath,
+                                                cache: true,
+                                                width: 50,
+                                                height: 50,
+                                                fit: BoxFit.cover,
+                                                clearMemoryCacheWhenDispose:
+                                                    true,
+                                              ),
                                             ),
                                           ),
                                           title: Column(

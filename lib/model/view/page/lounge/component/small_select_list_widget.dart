@@ -185,6 +185,7 @@ class _SmallSelectListWidgetState extends State<SmallSelectListWidget> {
                 "imagePath": element.imagePath,
                 "dateTime": element.dateTime,
                 "favorite": element.favorite,
+                "userId": element.userId,
               };
               FirebaseDBHelper.setSubCollection(
                   mainCollection, mainDoc, subCollection, subDoc, data);

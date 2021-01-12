@@ -133,7 +133,7 @@ class _OtherUserProfilePageState extends State<OtherUserProfilePage> {
                             child: Container(
                               height: 100,
                               width: SizeConfig.screenWidth,
-                              child: Image.network(
+                              child: ExtendedImage.network(
                                 widget.otherUserProfile.backgroundPhotoUrl
                                         .isNotEmpty
                                     ? widget.otherUserProfile.backgroundPhotoUrl
@@ -158,7 +158,7 @@ class _OtherUserProfilePageState extends State<OtherUserProfilePage> {
                                           height: 100,
                                           width: 100,
                                           child: ClipOval(
-                                            child: Image.network(
+                                            child: ExtendedImage.network(
                                               widget.otherUserProfile.photoUrl
                                                       .isNotEmpty
                                                   ? widget

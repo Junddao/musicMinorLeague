@@ -20,13 +20,14 @@ import 'package:music_minorleague/model/view/page/user_profile/other_user_profil
 import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
+import 'package:music_minorleague/model/view/widgets/small_play_list_widget.dart';
 
 import 'package:music_minorleague/utils/firebase_db_helper.dart';
 import 'package:music_minorleague/utils/play_func.dart';
 import 'package:provider/provider.dart';
 
 import 'component/lounge_choice_chip_widget.dart';
-import 'component/small_play_list_widget.dart';
+
 import 'component/small_select_list_widget.dart';
 import 'component/top_twenty_music_widget.dart';
 
@@ -275,7 +276,7 @@ class _LoungePageState extends State<LoungePage>
                 });
               }
 
-              musicList.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+              musicList.sort((a, b) => b.dateTime.compareTo(a.dateTime));
 
               if (selectedList?.length != musicList.length) {
                 selectedList.clear();

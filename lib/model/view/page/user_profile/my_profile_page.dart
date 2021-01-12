@@ -89,7 +89,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     child: Container(
                       height: 100,
                       width: SizeConfig.screenWidth,
-                      child: Image.network(
+                      child: ExtendedImage.network(
                         context
                                 .watch<UserProfileProvider>()
                                 .userProfileData
@@ -119,7 +119,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                   height: 100,
                                   width: 100,
                                   child: ClipOval(
-                                    child: Image.network(
+                                    child: ExtendedImage.network(
                                       context
                                               .watch<UserProfileProvider>()
                                               .userProfileData

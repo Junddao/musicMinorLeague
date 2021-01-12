@@ -64,14 +64,11 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
               right: 10,
               child: GestureDetector(
                 onTap: () {
-                  setState(() {
-                    Provider.of<MiniWidgetStatusProvider>(context,
-                                listen: false)
-                            .bMinButtonClick =
-                        !Provider.of<MiniWidgetStatusProvider>(context,
-                                listen: false)
-                            .bMinButtonClick;
-                  });
+                  Provider.of<MiniWidgetStatusProvider>(context, listen: false)
+                      .bMinButtonClick = !Provider.of<MiniWidgetStatusProvider>(
+                          context,
+                          listen: false)
+                      .bMinButtonClick;
                 },
                 child: CircleAvatar(
                   radius: 15,
@@ -256,14 +253,11 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
               right: 10,
               child: GestureDetector(
                 onTap: () {
-                  setState(() {
-                    Provider.of<MiniWidgetStatusProvider>(context,
-                                listen: false)
-                            .bMinButtonClick =
-                        !Provider.of<MiniWidgetStatusProvider>(context,
-                                listen: false)
-                            .bMinButtonClick;
-                  });
+                  Provider.of<MiniWidgetStatusProvider>(context, listen: false)
+                      .bMinButtonClick = !Provider.of<MiniWidgetStatusProvider>(
+                          context,
+                          listen: false)
+                      .bMinButtonClick;
                 },
                 child: CircleAvatar(
                   radius: 15,

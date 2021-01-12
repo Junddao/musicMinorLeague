@@ -9,11 +9,10 @@ import 'package:music_minorleague/model/provider/mini_widget_status_provider.dar
 import 'package:music_minorleague/model/provider/user_profile_provider.dart';
 import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
+import 'package:music_minorleague/model/view/widgets/small_play_list_widget.dart';
 import 'package:music_minorleague/utils/firebase_db_helper.dart';
 import 'package:music_minorleague/utils/play_func.dart';
 import 'package:provider/provider.dart';
-
-import 'component/small_player_widget.dart';
 
 class MyMusicModifyPage extends StatefulWidget {
   @override
@@ -181,7 +180,7 @@ class _MyMusicModifyPageState extends State<MyMusicModifyPage> {
                     BottomWidgets.miniPlayer
                 ? true
                 : false,
-            child: SmallPlayerWidget(),
+            child: SmallPlayListWidget(),
           ),
         ],
       ),
