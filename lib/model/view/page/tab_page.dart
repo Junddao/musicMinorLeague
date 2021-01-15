@@ -1,5 +1,6 @@
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:music_minorleague/model/provider/thumb_up_provider.dart';
 
 import 'package:music_minorleague/model/view/page/lounge/lounge_page.dart';
 import 'package:music_minorleague/model/view/page/playlist/my_play_list_page.dart';
@@ -32,6 +33,13 @@ class _TabPageState extends State<TabPage> {
   void initState() {
     PushManager().registerToken();
     PushManager().listenFirebaseMessaging();
+
+    ThumbUpData thumbUpData = new ThumbUpData();
+    thumbUpData.todayCnt = 3;
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      context.read<ThumbUpProvider>().thumbUpData = thumbUpData;
+    });
+
     super.initState();
   }
 

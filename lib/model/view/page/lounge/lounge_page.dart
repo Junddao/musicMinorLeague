@@ -14,6 +14,7 @@ import 'package:music_minorleague/model/enum/lounge_music_type_enum.dart';
 import 'package:music_minorleague/model/enum/music_type_enum.dart';
 import 'package:music_minorleague/model/provider/mini_widget_status_provider.dart';
 import 'package:music_minorleague/model/provider/now_play_music_provider.dart';
+import 'package:music_minorleague/model/provider/thumb_up_provider.dart';
 
 import 'package:music_minorleague/model/view/page/lounge/component/select_buttons_widget.dart';
 import 'package:music_minorleague/model/view/page/user_profile/other_user_profile_page.dart';
@@ -422,8 +423,16 @@ class _LoungePageState extends State<LoungePage>
                                                     icon: Icon(Icons
                                                         .thumb_up_alt_outlined),
                                                     onPressed: () {
-                                                      _handleOnPressThumb(
-                                                          index);
+                                                      context
+                                                                  .read<
+                                                                      ThumbUpProvider>()
+                                                                  .thumbUpData
+                                                                  .todayCnt >
+                                                              0
+                                                          ? _handleOnPressThumb(
+                                                              index)
+                                                          : showToastMessage(
+                                                              '추천 갯수가 소진됐습니다.\n앱 종료 후 다시 실행시 추천 갯수는 보충됩니다.😛');
                                                     },
                                                     iconSize: 15,
                                                     color:
@@ -571,6 +580,8 @@ class _LoungePageState extends State<LoungePage>
     // setState(() {
     //   selectedThumbIndex = index;
     // });
+
+    context.read<ThumbUpProvider>().thumbUpData.todayCnt--;
   }
 
   void returnDataFunc(LoungeMusicTypeEnum selectedData) {
@@ -579,5 +590,10 @@ class _LoungePageState extends State<LoungePage>
       selectedMusicList.clear();
       _typeOfMusic = selectedData;
     });
+  }
+
+  showToastMessage(String msg) {
+    Scaffold.of(context).showSnackBar(
+        SnackBar(duration: Duration(seconds: 2), content: Text(msg)));
   }
 }

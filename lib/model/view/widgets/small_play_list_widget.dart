@@ -5,10 +5,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:music_minorleague/model/data/user_profile_data.dart';
 import 'package:music_minorleague/model/provider/mini_widget_status_provider.dart';
 
-import 'package:music_minorleague/model/view/page/lounge/component/position_seek_widget.dart';
 import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
+import 'package:music_minorleague/model/view/widgets/position_seek_widget.dart';
 import 'package:music_minorleague/utils/firebase_db_helper.dart';
 import 'package:music_minorleague/utils/play_func.dart';
 import 'package:provider/provider.dart';

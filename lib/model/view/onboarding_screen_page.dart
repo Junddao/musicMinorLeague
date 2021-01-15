@@ -30,7 +30,7 @@ class _OnboardingScreenPageState extends State<OnboardingScreenPage> {
       height: 8.0,
       width: isActive ? 24.0 : 16.0,
       decoration: BoxDecoration(
-        color: isActive ? MColors.black : Color(0xFF7B51D3),
+        color: isActive ? MColors.tomato : MColors.tomato_10,
         borderRadius: BorderRadius.all(Radius.circular(12)),
       ),
     );

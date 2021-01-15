@@ -1,5 +1,6 @@
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 import 'package:flutter/material.dart';
 import 'package:music_minorleague/utils/admob_service.dart';
@@ -29,7 +30,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsFlutterBinding.ensureInitialized();
 
     _mockCheckForSession().then((value) async {
       if (value == true)
@@ -78,6 +78,8 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // 하루 3번 추천 가능하게 하자.
+
     return Container(
       // decoration: BoxDecoration(
       //   gradient: LinearGradient(

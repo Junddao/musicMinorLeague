@@ -218,6 +218,8 @@ class _OtherUserProfilePageState extends State<OtherUserProfilePage> {
                                             } else {
                                               Scaffold.of(context).showSnackBar(
                                                   SnackBar(
+                                                      duration:
+                                                          Duration(seconds: 1),
                                                       content: Text(
                                                           "이메일을 등록하지 않으셨습니다.")));
                                             }

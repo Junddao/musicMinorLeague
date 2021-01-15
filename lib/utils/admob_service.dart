@@ -22,12 +22,12 @@ class AdMobService {
 
   String getInterstitialAdId() {
     if (Platform.isIOS) {
-      // return 'ca-app-pub-9695790043722201/5618922910'; // 내꺼
-      return 'ca-app-pub-3940256099942544/4411468910'; // test광고
+      return 'ca-app-pub-9695790043722201/5618922910'; // 내꺼
+      // return 'ca-app-pub-3940256099942544/4411468910'; // test광고
     } else if (Platform.isAndroid) {
       // my admob
-      // return "ca-app-pub-9695790043722201/5374368577"; // 내꺼
-      return 'ca-app-pub-3940256099942544/1033173712'; //test 광고
+      return "ca-app-pub-9695790043722201/5374368577"; // 내꺼
+      // return 'ca-app-pub-3940256099942544/1033173712'; //test 광고
     }
     return null;
   }

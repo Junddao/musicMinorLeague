@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:music_minorleague/model/data/default_url.dart';
@@ -45,9 +46,24 @@ class _MyProfilePageState extends State<MyProfilePage> {
         '마이 페이지',
         style: MTextStyles.bold18Black,
       ),
+      actions: [
+        IconButton(
+          icon: Icon(Icons.login_outlined),
+          onPressed: () {
+            _signOut();
+          },
+        )
+      ],
       backgroundColor: Colors.transparent,
       elevation: 0.0,
     );
+  }
+
+  Future<void> _signOut() async {
+    await FirebaseAuth.instance.signOut().then((value) {
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil("LoginPage", (route) => false);
+    });
   }
 
   _body() {

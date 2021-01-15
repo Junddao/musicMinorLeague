@@ -5,6 +5,7 @@ import 'package:flutter_admob_app_open/flutter_admob_app_open.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:music_minorleague/model/provider/mini_widget_status_provider.dart';
 import 'package:music_minorleague/model/provider/now_play_music_provider.dart';
+import 'package:music_minorleague/model/provider/thumb_up_provider.dart';
 
 import 'package:music_minorleague/route.dart';
 import 'package:music_minorleague/splash_screen.dart';
@@ -31,10 +32,10 @@ void main() async {
 
 Future<void> addAdmob() async {
   AdMobService ams = new AdMobService();
-  final admobAppId = FlutterAdmobAppOpen.testAppId;
-  final appAppOpenAdUnitId = FlutterAdmobAppOpen.testAppOpenAdId;
-  // final admobAppId = ams.getAdMobID();
-  // final appAppOpenAdUnitId = ams.getAppOpenAdId();
+  // final admobAppId = FlutterAdmobAppOpen.testAppId;
+  // final appAppOpenAdUnitId = FlutterAdmobAppOpen.testAppOpenAdId;
+  final admobAppId = ams.getAdMobID();
+  final appAppOpenAdUnitId = ams.getAppOpenAdId();
 
   MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
     keywords: <String>['flutterio', 'beautiful apps'],
@@ -90,6 +91,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<NowPlayMusicProvider>(
           create: (_) => NowPlayMusicProvider(),
+        ),
+        ChangeNotifierProvider<ThumbUpProvider>(
+          create: (_) => ThumbUpProvider(),
         ),
       ],
       child: MaterialApp(

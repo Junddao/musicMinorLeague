@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -134,7 +135,7 @@ class _MyProfileModifyPageState extends State<MyProfileModifyPage> {
               height: 100,
               width: SizeConfig.screenWidth,
               child: _profileBackgroundImage == null
-                  ? Image.network(
+                  ? ExtendedImage.network(
                       context
                               .watch<UserProfileProvider>()
                               .userProfileData
@@ -201,7 +202,7 @@ class _MyProfileModifyPageState extends State<MyProfileModifyPage> {
                           width: 100,
                           child: ClipOval(
                             child: _profileImage == null
-                                ? Image.network(
+                                ? ExtendedImage.network(
                                     context
                                             .watch<UserProfileProvider>()
                                             .userProfileData
