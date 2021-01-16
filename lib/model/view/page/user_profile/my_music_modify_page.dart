@@ -211,18 +211,25 @@ class _MyMusicModifyPageState extends State<MyMusicModifyPage> {
     FirebaseDBHelper.deleteAllSubDoc(FirebaseDBHelper.myMusicCollection, doc);
 
     //  image file delete
+
     FirebaseStorage.instance
-        .refFromURL(_myMusicList[index].imagePath)
+        .ref()
+        .child(_myMusicList[index].userId)
+        .child(_myMusicList[index].imageFileName)
         .delete()
         .then((value) {
       print('image delete complete!');
     });
+
     //  music file delete
+
     FirebaseStorage.instance
-        .refFromURL(_myMusicList[index].musicPath)
+        .ref()
+        .child(_myMusicList[index].userId)
+        .child(_myMusicList[index].musicFileName)
         .delete()
         .then((value) {
-      print('music delete complete!');
+      print('image delete complete!');
     });
 
     Provider.of<MiniWidgetStatusProvider>(context, listen: false)

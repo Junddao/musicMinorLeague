@@ -47,6 +47,7 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
 
   File _coverImage, _musicFile;
   String imageFileUrl, musicFileUrl;
+  String musicFileName, imageFileName;
 
   String _artist;
   String _userId;
@@ -469,9 +470,9 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
 
   Future<void> uploadMusicFile() async {
     String formattedDate = DateFormat('yyyyMMddhhmmss').format(DateTime.now());
-    String filename = _titleController.text + '_' + formattedDate + '_music';
+    musicFileName = _titleController.text + '_' + formattedDate + '_music';
 
-    ref = FirebaseStorage.instance.ref().child(_userId).child(filename);
+    ref = FirebaseStorage.instance.ref().child(_userId).child(musicFileName);
 
     UploadTask uploadTask = ref.putFile(_musicFile);
 
@@ -485,9 +486,9 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
 
   Future<void> uploadImageFile() async {
     String formattedDate = DateFormat('yyyyMMddhhmmss').format(DateTime.now());
-    String filename = _titleController.text + '_' + formattedDate + '_image';
+    imageFileName = _titleController.text + '_' + formattedDate + '_image';
 
-    ref = FirebaseStorage.instance.ref().child(_userId).child(filename);
+    ref = FirebaseStorage.instance.ref().child(_userId).child(imageFileName);
 
     UploadTask uploadTask = ref.putFile(_coverImage);
 
@@ -513,6 +514,8 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
         "approval": EnumToString.convertToString(MusicApprovalEnum.request),
         "musicPath": musicFileUrl,
         "imagePath": imageFileUrl,
+        "musicFileName": musicFileName,
+        "imageFileName": imageFileName,
         "dateTime": DateTime.now().toIso8601String(),
         "favorite": 0,
       };
