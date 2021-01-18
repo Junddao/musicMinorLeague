@@ -276,14 +276,14 @@ class _MyMusicPlayerPageState extends State<MyMusicPlayerPage> {
                 )
               ],
             ),
-            Visibility(
-              visible: Provider.of<MiniWidgetStatusProvider>(context)
-                          .bottomPlayListWidget ==
-                      BottomWidgets.miniPlayer
-                  ? true
-                  : false,
-              child: SmallPlayListWidget(),
-            ),
+            // Visibility(
+            //   visible: Provider.of<MiniWidgetStatusProvider>(context)
+            //               .bottomPlayListWidget ==
+            //           BottomWidgets.miniPlayer
+            //       ? true
+            //       : false,
+            //   child: SmallPlayListWidget(),
+            // ),
           ],
         ),
       ),

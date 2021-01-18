@@ -19,10 +19,10 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<bool> _mockCheckForSession() async {
     bool result = false;
 
-    await Future.delayed(Duration(milliseconds: 2000), () {
-      _user = FirebaseAuth.instance.currentUser;
-      _user != null ? result = true : result = false;
-    });
+    // await Future.delayed(Duration(milliseconds: 2000), () {
+    //   _user = FirebaseAuth.instance.currentUser;
+    //   _user != null ? result = true : result = false;
+    // });
 
     return result;
   }

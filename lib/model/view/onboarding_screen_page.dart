@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:music_minorleague/model/view/style/colors.dart';
+import 'package:music_minorleague/model/view/style/size_config.dart';
 
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 
@@ -30,7 +31,7 @@ class _OnboardingScreenPageState extends State<OnboardingScreenPage> {
       height: 8.0,
       width: isActive ? 24.0 : 16.0,
       decoration: BoxDecoration(
-        color: isActive ? MColors.tomato : MColors.tomato_10,
+        color: isActive ? Color(0xFF5B16D0) : Color(0x1a5B16D0),
         borderRadius: BorderRadius.all(Radius.circular(12)),
       ),
     );
@@ -38,6 +39,7 @@ class _OnboardingScreenPageState extends State<OnboardingScreenPage> {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     return WillPopScope(
       onWillPop: () {
         setState(() {
@@ -77,13 +79,13 @@ class _OnboardingScreenPageState extends State<OnboardingScreenPage> {
                         'Skip',
                         style: TextStyle(
                           color: MColors.black,
-                          fontSize: 20.0,
+                          fontSize: 18.0,
                         ),
                       ),
                     ),
                   ),
                   Container(
-                    height: 600.0,
+                    height: SizeConfig.screenHeight * 0.6,
                     child: PageView(
                       physics: ClampingScrollPhysics(),
                       controller: _pageController,
@@ -94,51 +96,51 @@ class _OnboardingScreenPageState extends State<OnboardingScreenPage> {
                       },
                       children: <Widget>[
                         Padding(
-                          padding: EdgeInsets.all(40.0),
+                          padding: EdgeInsets.all(20.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Center(
                                 child: SvgPicture.asset(
                                   'assets/images/onboarding0.svg',
-                                  height: 300.0,
-                                  width: 300.0,
+                                  height: SizeConfig.screenHeight * 0.3,
+                                  width: SizeConfig.screenHeight * 0.3,
                                 ),
                               ),
                               SizedBox(height: 30.0),
                               Text(
                                 '자신의 음악을\n모두에게 들려주세요.',
-                                style: MTextStyles.bold26black,
+                                style: MTextStyles.bold18Black,
                               ),
                               SizedBox(height: 15.0),
                               Text(
                                 '당신이 만든 음악을 모두에게 들려줄 수 있는 공간입니다.',
-                                style: MTextStyles.regular18black,
+                                style: MTextStyles.regular14BlackColor,
                               ),
                             ],
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.all(40.0),
+                          padding: EdgeInsets.all(20.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Center(
                                 child: SvgPicture.asset(
                                   'assets/images/onboarding1.svg',
-                                  height: 300.0,
-                                  width: 300.0,
+                                  height: SizeConfig.screenHeight * 0.3,
+                                  width: SizeConfig.screenHeight * 0.3,
                                 ),
                               ),
                               SizedBox(height: 30.0),
                               Text(
                                 '저작권에 주의하세요.',
-                                style: MTextStyles.bold26black,
+                                style: MTextStyles.bold18Black,
                               ),
                               SizedBox(height: 15.0),
                               Text(
                                 '기존 가수의 음악 또는 커버곡 등록은 문제될 수 있어요.',
-                                style: MTextStyles.regular18black,
+                                style: MTextStyles.regular14BlackColor,
                               ),
                             ],
                           ),
@@ -151,19 +153,19 @@ class _OnboardingScreenPageState extends State<OnboardingScreenPage> {
                               Center(
                                 child: SvgPicture.asset(
                                   'assets/images/onboarding2.svg',
-                                  height: 300.0,
-                                  width: 300.0,
+                                  height: SizeConfig.screenHeight * 0.3,
+                                  width: SizeConfig.screenHeight * 0.3,
                                 ),
                               ),
                               SizedBox(height: 30.0),
                               Text(
-                                '자신의 음악을\n마음껏 홍보하세요.',
-                                style: MTextStyles.bold26black,
+                                '자신의 음악을 마음껏 홍보하세요.',
+                                style: MTextStyles.bold18Black,
                               ),
                               SizedBox(height: 15.0),
                               Text(
-                                '메이저리그로 가기 위한 발판으로 저희를 활용하세요.',
-                                style: MTextStyles.regular18black,
+                                '메이저리그로 가기 위한 발판으로\n저희를 활용하세요.',
+                                style: MTextStyles.regular14BlackColor,
                               ),
                             ],
                           ),
@@ -194,14 +196,14 @@ class _OnboardingScreenPageState extends State<OnboardingScreenPage> {
                                     'Next',
                                     style: TextStyle(
                                       color: MColors.black,
-                                      fontSize: 22.0,
+                                      fontSize: 18.0,
                                     ),
                                   ),
                                   SizedBox(width: 10.0),
                                   Icon(
                                     Icons.arrow_forward,
                                     color: MColors.black,
-                                    size: 30.0,
+                                    size: 20.0,
                                   ),
                                 ],
                               ),
@@ -216,7 +218,7 @@ class _OnboardingScreenPageState extends State<OnboardingScreenPage> {
         ),
         bottomSheet: _currentPage == _numPages - 1
             ? Container(
-                height: 100.0,
+                height: SizeConfig.screenHeight * 0.1,
                 width: double.infinity,
                 color: Color(0xFF5B16D0),
                 child: GestureDetector(
@@ -225,15 +227,12 @@ class _OnboardingScreenPageState extends State<OnboardingScreenPage> {
                     _navigatorToTabPage();
                   },
                   child: Center(
-                    child: Padding(
-                      padding: EdgeInsets.only(bottom: 30.0),
-                      child: Text(
-                        '시작하기!',
-                        style: TextStyle(
-                          color: MColors.white,
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    child: Text(
+                      '시작하기!',
+                      style: TextStyle(
+                        color: MColors.white,
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),

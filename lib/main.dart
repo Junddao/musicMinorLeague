@@ -24,6 +24,7 @@ void main() async {
   await addAdmob();
   await Firebase.initializeApp();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
   runApp(
     new MyApp(),
   );

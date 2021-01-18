@@ -526,7 +526,8 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
       FirebaseDBHelper.setData(collection, doc, data).whenComplete(
         () {
           EasyLoading.dismiss();
-          return UploadResultDialog.showUploadResultDialog(context, '파일 업로드 성공')
+          return UploadResultDialog.showUploadResultDialog(
+                  context, '파일 등록 신청 완료')
               .then((value) {
             setState(() {
               if (value == true) Navigator.pop(context);
@@ -535,7 +536,7 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
         },
       );
     } else {
-      UploadResultDialog.showUploadResultDialog(context, '파일 업로드 실패')
+      UploadResultDialog.showUploadResultDialog(context, '파일 등록 신청 실패')
           .then((value) {
         setState(() {
           if (value == true) Navigator.pop(context);
