@@ -10,6 +10,7 @@ import 'package:music_minorleague/model/view/style/colors.dart';
 import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 import 'package:music_minorleague/utils/firebase_db_helper.dart';
+import 'package:music_minorleague/utils/play_func.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -61,6 +62,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
 
   Future<void> _signOut() async {
     await FirebaseAuth.instance.signOut().then((value) {
+      PlayMusic.pauseFunc();
       Navigator.of(context)
           .pushNamedAndRemoveUntil("LoginPage", (route) => false);
     });
@@ -82,6 +84,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 ),
                 GestureDetector(
                   onTap: () {
+                    PlayMusic.pauseFunc();
                     Navigator.of(context)
                         .pushNamedAndRemoveUntil("LoginPage", (route) => false);
                   },

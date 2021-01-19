@@ -129,6 +129,12 @@ class _LoungePageState extends State<LoungePage>
   Widget build(BuildContext context) {
     SizeConfig().init(context);
 
+    //page 넘오올때 초기화 해줘야 한다.
+    if (!selectedList.contains(true)) {
+      context.watch<MiniWidgetStatusProvider>().bottomSeletListWidget =
+          BottomWidgets.none;
+    }
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(

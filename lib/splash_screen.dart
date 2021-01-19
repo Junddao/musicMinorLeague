@@ -50,15 +50,15 @@ class _SplashScreenState extends State<SplashScreen> {
     //   '',
     // );
 
-    // 초기에 광고 하나 보여주자
-    AdMobService ams = AdMobService();
-    InterstitialAd newAd = ams.getNewInterstitial();
-    newAd.load();
-    newAd.show(
-      anchorType: AnchorType.bottom,
-      anchorOffset: 0.0,
-      horizontalCenterOffset: 0.0,
-    );
+    // // 초기에 광고 하나 보여주자
+    // AdMobService ams = AdMobService();
+    // InterstitialAd newAd = ams.getNewInterstitial();
+    // newAd.load();
+    // newAd.show(
+    //   anchorType: AnchorType.bottom,
+    //   anchorOffset: 0.0,
+    //   horizontalCenterOffset: 0.0,
+    // );
 
     String collection = FirebaseDBHelper.userCollection;
     String doc = _user.email.substring(0, _user.email.indexOf('@'));

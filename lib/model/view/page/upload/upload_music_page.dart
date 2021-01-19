@@ -375,10 +375,10 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
     return Column(
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text('음악 파일 선택', style: MTextStyles.bold16Black),
-            SizedBox(height: 40),
+            Text('음악 파일 선택 ', style: MTextStyles.bold16Black),
+            Text('(.mp3 파일만 등록가능)', style: MTextStyles.bold10Tomato),
           ],
         ),
         Container(
@@ -445,8 +445,11 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
   }
 
   Future<void> getMusic() async {
-    FilePickerResult result =
-        await FilePicker.platform.pickFiles(type: FileType.audio);
+    FilePickerResult result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['mp3'],
+      // allowMultiple: false,
+    );
 
     if (result != null) {
       _musicPath = result.files.single.path;

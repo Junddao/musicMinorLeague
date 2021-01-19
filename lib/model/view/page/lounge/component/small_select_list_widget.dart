@@ -12,6 +12,7 @@ import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 import 'package:music_minorleague/utils/db_helper.dart';
 import 'package:music_minorleague/utils/firebase_db_helper.dart';
+import 'package:music_minorleague/utils/play_func.dart';
 import 'package:provider/provider.dart';
 
 class SmallSelectListWidget extends StatefulWidget {
@@ -47,13 +48,12 @@ class _SmallSelectListWidgetState extends State<SmallSelectListWidget> {
 
   @override
   Widget build(BuildContext context) {
+    String userId = context.watch<UserProfileProvider>().userProfileData.id;
+
     return Positioned(
       bottom: 10,
-      child: Stack(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: Container(
+      child: userId == 'Guest'
+          ? Container(
               height: 100,
               width: SizeConfig.screenWidth - 20,
               decoration: BoxDecoration(
@@ -69,82 +69,134 @@ class _SmallSelectListWidgetState extends State<SmallSelectListWidget> {
                   ),
                 ],
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        iconSize: 16,
-                        icon: Icon(FontAwesomeIcons.plus),
-                        onPressed: () {
-                          // TODO: 업데이트 하도록 구현해야함
-                          // updateMyMusicList();
-                          getSelectedMusicList();
-                          updateMyMusicListInFirebase().whenComplete(
-                            () => widget._snackBarFunc('내 재생목록에 등록 완료'),
-                          );
-                          context
-                              .read<MiniWidgetStatusProvider>()
-                              .bottomSeletListWidget = BottomWidgets.none;
-                          // .catchError(
-                          //   () => widget._snackBarFunc('등록 실패'),
-                          // );
-                        },
-                      ),
-                      Text(
-                        '찜 목록에 추가',
-                        style: MTextStyles.regular12Black,
-                      ),
-                    ],
-                  ),
-                  VerticalDivider(
-                    thickness: 2,
-                    indent: 5,
-                    endIndent: 5,
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(
-                          iconSize: 14,
-                          icon: Icon(FontAwesomeIcons.play),
-                          onPressed: () {
-                            playSelectMusic();
-                          }),
-                      Text(
-                        '선택 항목 재생',
-                        style: MTextStyles.regular12Black,
-                      ),
-                    ],
-                  ),
-                ],
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('본 기능은 Login 후 사용가능 합니다. 😛'),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        PlayMusic.pauseFunc();
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            "LoginPage", (route) => false);
+                      },
+                      child: Container(
+                          alignment: Alignment.center,
+                          height: 40,
+                          width: 250,
+                          decoration: BoxDecoration(
+                              color: MColors.tomato,
+                              borderRadius: BorderRadius.circular(16),
+                              border:
+                                  Border.all(width: 1, color: MColors.tomato)),
+                          child: Text(
+                            '로그인 페이지로 이동하기',
+                            style: MTextStyles.bold12White,
+                          )),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ),
-          Positioned(
-            left: 10,
-            child: selectedMusicList == null
-                ? SizedBox.shrink()
-                : CircleAvatar(
-                    radius: 13,
-                    backgroundColor: MColors.grey_06,
-                    child: CircleAvatar(
-                      radius: 12,
-                      backgroundColor: MColors.white,
-                      child: Text(
-                        widget._selectedList
-                            .where((element) => element == true)
-                            .length
-                            .toString(),
-                        style: MTextStyles.bold12Black,
+            )
+          : Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Container(
+                    height: 100,
+                    width: SizeConfig.screenWidth - 20,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(4),
                       ),
+                      border: Border.all(color: MColors.black, width: 0.1),
+                      color: MColors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey,
+                          blurRadius: 1.0,
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              iconSize: 16,
+                              icon: Icon(FontAwesomeIcons.plus),
+                              onPressed: () {
+                                // TODO: 업데이트 하도록 구현해야함
+                                // updateMyMusicList();
+                                getSelectedMusicList();
+                                updateMyMusicListInFirebase().whenComplete(
+                                  () => widget._snackBarFunc('내 재생목록에 등록 완료'),
+                                );
+                                context
+                                    .read<MiniWidgetStatusProvider>()
+                                    .bottomSeletListWidget = BottomWidgets.none;
+                                // .catchError(
+                                //   () => widget._snackBarFunc('등록 실패'),
+                                // );
+                              },
+                            ),
+                            Text(
+                              '찜 목록에 추가',
+                              style: MTextStyles.regular12Black,
+                            ),
+                          ],
+                        ),
+                        VerticalDivider(
+                          thickness: 2,
+                          indent: 5,
+                          endIndent: 5,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                                iconSize: 14,
+                                icon: Icon(FontAwesomeIcons.play),
+                                onPressed: () {
+                                  playSelectMusic();
+                                }),
+                            Text(
+                              '선택 항목 재생',
+                              style: MTextStyles.regular12Black,
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-          ),
-        ],
-      ),
+                ),
+                Positioned(
+                  left: 10,
+                  child: selectedMusicList == null
+                      ? SizedBox.shrink()
+                      : CircleAvatar(
+                          radius: 13,
+                          backgroundColor: MColors.grey_06,
+                          child: CircleAvatar(
+                            radius: 12,
+                            backgroundColor: MColors.white,
+                            child: Text(
+                              widget._selectedList
+                                  .where((element) => element == true)
+                                  .length
+                                  .toString(),
+                              style: MTextStyles.bold12Black,
+                            ),
+                          ),
+                        ),
+                ),
+              ],
+            ),
     );
   }
 

@@ -92,6 +92,7 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
   void initState() {
     super.initState();
     selectedMusicList = new List<MusicInfoData>();
+    _selectedList = new List<bool>();
     _initSubscription();
   }
 
@@ -117,6 +118,10 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
   }
 
   _body() {
+    if (!_selectedList.contains(true)) {
+      context.watch<MiniWidgetStatusProvider>().myBottomSelectListWidget =
+          BottomWidgets.none;
+    }
     String userId = context.watch<UserProfileProvider>().userProfileData.id;
     return userId == 'Guest'
         ? Center(
@@ -129,6 +134,7 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
                 ),
                 GestureDetector(
                   onTap: () {
+                    PlayMusic.pauseFunc();
                     Navigator.of(context)
                         .pushNamedAndRemoveUntil("LoginPage", (route) => false);
                   },
