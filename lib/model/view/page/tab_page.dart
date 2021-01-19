@@ -1,6 +1,7 @@
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:music_minorleague/model/provider/thumb_up_provider.dart';
+import 'package:music_minorleague/model/provider/user_profile_provider.dart';
 
 import 'package:music_minorleague/model/view/page/lounge/lounge_page.dart';
 import 'package:music_minorleague/model/view/page/playlist/my_play_list_page.dart';
@@ -10,7 +11,7 @@ import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 import 'package:music_minorleague/tabstates.dart';
 import 'package:flutter/material.dart';
-import 'package:music_minorleague/utils/admob_service.dart';
+
 import 'package:music_minorleague/utils/push_manager.dart';
 
 import 'package:provider/provider.dart';
@@ -118,7 +119,9 @@ class _TabPageState extends State<TabPage> {
 
   void _onItemTapped(int index) {
     if (index == 2) {
-      _settingModalBottomSheet(context, index);
+      context.read<UserProfileProvider>().userProfileData.id == 'Guest'
+          ? showCancelDialog(context)
+          : _settingModalBottomSheet(context, index);
     } else if (index == 3) {
       _noneNaviBarPage('MyMusicPlayerPage');
     } else {
@@ -198,5 +201,55 @@ class _TabPageState extends State<TabPage> {
 
   void _noneNaviBarPage(String page) {
     Navigator.of(context).pushNamed(page);
+  }
+
+  Future<void> showCancelDialog(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14.0)), //this right here
+
+          child: Container(
+            width: 270,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(height: 20),
+                Text(
+                  '잠시만요',
+                  style: MTextStyles.bold16Tomato,
+                ),
+                SizedBox(height: 4),
+                Text('Guest는 음악을 등록할 수 없습니다.',
+                    style: MTextStyles.regular12Grey06),
+                SizedBox(height: 20),
+                Divider(height: 0),
+                Container(
+                  height: 43.5,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: FlatButton(
+                          onPressed: () {
+                            Navigator.pop(context, false);
+                          },
+                          child: Text('확인'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }

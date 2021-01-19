@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:music_minorleague/model/data/default_url.dart';
 import 'package:music_minorleague/model/data/user_profile_data.dart';
 import 'package:music_minorleague/model/provider/user_profile_provider.dart';
 import 'package:music_minorleague/model/view/style/colors.dart';
@@ -27,37 +28,6 @@ class _LoginPageState extends State<LoginPage> {
   final GoogleSignIn _googleSignIn = new GoogleSignIn();
 
   final firestoreinstance = FirebaseFirestore.instance;
-
-  Future<void> signInWithGoogle() async {
-    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-
-    final AuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    final User user = (await _auth.signInWithCredential(credential)).user;
-
-    Map<String, dynamic> userProfileData = {
-      'userName': user.displayName,
-      'photoUrl': user.photoURL,
-      'userEmail': user.email,
-      'id': user.email.substring(0, user.email.indexOf('@')), // id
-      'youtubeUrl': '',
-      'introduce': '',
-      'backgroundPhotoUrl': '',
-    };
-
-    Provider.of<UserProfileProvider>(context, listen: false).userProfileData =
-        UserProfileData.fromMap(userProfileData);
-
-    updateDatabase(userProfileData);
-
-    // Navigator.of(context).pushNamed('TabPage');
-    _navigatorToOnBoardingScreen();
-  }
 
   @override
   void initState() {
@@ -115,29 +85,51 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   SizedBox(height: 10.0),
                   Container(
-                      width: 250.0,
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: RaisedButton(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: new BorderRadius.circular(30.0)),
-                            color: MColors.black,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                Icon(
-                                  FontAwesomeIcons.apple,
-                                  color: MColors.white,
-                                ),
-                                SizedBox(width: 10.0),
-                                Text('Apple 아이디로 로그인',
-                                    style: MTextStyles.bold14White),
-                              ],
-                            ),
-                            onPressed: () async {
-                              await signInWithApple();
-                            }),
-                      )),
+                    width: 250.0,
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: RaisedButton(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(30.0)),
+                          color: MColors.black,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              Icon(
+                                FontAwesomeIcons.apple,
+                                color: MColors.white,
+                              ),
+                              SizedBox(width: 10.0),
+                              Text('Apple 아이디로 로그인',
+                                  style: MTextStyles.bold14White),
+                            ],
+                          ),
+                          onPressed: () async {
+                            await signInWithApple();
+                          }),
+                    ),
+                  ),
+                  SizedBox(height: 10.0),
+                  Container(
+                    width: 250.0,
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: RaisedButton(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(30.0)),
+                          color: MColors.white,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text('Guest로 둘러보기',
+                                  style: MTextStyles.regular12Black),
+                            ],
+                          ),
+                          onPressed: () async {
+                            await signInWithGuest();
+                          }),
+                    ),
+                  ),
                 ],
               ),
             )
@@ -159,12 +151,50 @@ class _LoginPageState extends State<LoginPage> {
     Navigator.of(context).pushNamed('OnBoardingScreenPage');
   }
 
+  Future<void> signInWithGoogle() async {
+    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
+
+    final AuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    final User user = (await _auth.signInWithCredential(credential)).user;
+
+    Map<String, dynamic> userProfileData = {
+      'userName': user.displayName,
+      'photoUrl': user.photoURL,
+      'userEmail': user.email,
+      'id': user.email.substring(0, user.email.indexOf('@')), // id
+      'youtubeUrl': '',
+      'introduce': '',
+      'backgroundPhotoUrl': '',
+    };
+
+    Provider.of<UserProfileProvider>(context, listen: false).userProfileData =
+        UserProfileData.fromMap(userProfileData);
+
+    updateDatabase(userProfileData);
+
+    // Navigator.of(context).pushNamed('TabPage');
+    _navigatorToOnBoardingScreen();
+  }
+
   Future<void> signInWithApple() async {
     final appleIdCredential = await SignInWithApple.getAppleIDCredential(
       scopes: [
         AppleIDAuthorizationScopes.email,
         AppleIDAuthorizationScopes.fullName,
       ],
+      // webAuthenticationOptions: WebAuthenticationOptions(
+      //   // TODO: Set the `clientId` and `redirectUri` arguments to the values you entered in the Apple Developer portal during the setup
+      //   clientId: 'musicMinorleague.jtb.com',
+      //   redirectUri: Uri.parse(
+      //     'https://flutter-sign-in-with-apple-example.glitch.me/callbacks/sign_in_with_apple',
+      //   ),
+      // ),
     );
     final oAuthProvider = OAuthProvider('apple.com');
     final credential = oAuthProvider.credential(
@@ -175,5 +205,42 @@ class _LoginPageState extends State<LoginPage> {
         (await FirebaseAuth.instance.signInWithCredential(credential)).user;
 
     print(credential);
+
+    Map<String, dynamic> userProfileData = {
+      'userName': user.displayName,
+      'photoUrl': user.photoURL,
+      'userEmail': user.email,
+      'id': user.email.substring(0, user.email.indexOf('@')), // id
+      'youtubeUrl': '',
+      'introduce': '',
+      'backgroundPhotoUrl': '',
+    };
+
+    Provider.of<UserProfileProvider>(context, listen: false).userProfileData =
+        UserProfileData.fromMap(userProfileData);
+
+    updateDatabase(userProfileData);
+
+    // Navigator.of(context).pushNamed('TabPage');
+    _navigatorToOnBoardingScreen();
+  }
+
+  signInWithGuest() {
+    Map<String, dynamic> userProfileData = {
+      'userName': 'Guest',
+      'photoUrl': DefaultUrl.default_image_url,
+      'userEmail': '',
+      'id': 'Guest', // id
+      'youtubeUrl': '',
+      'introduce': '',
+      'backgroundPhotoUrl': '',
+    };
+
+    Provider.of<UserProfileProvider>(context, listen: false).userProfileData =
+        UserProfileData.fromMap(userProfileData);
+
+    // updateDatabase(userProfileData);
+
+    Navigator.of(context).pushNamed('TabPage');
   }
 }

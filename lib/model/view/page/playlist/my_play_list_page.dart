@@ -117,49 +117,81 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
   }
 
   _body() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10, right: 10),
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          SingleChildScrollView(
+    String userId = context.watch<UserProfileProvider>().userProfileData.id;
+    return userId == 'Guest'
+        ? Center(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                MySelectButtonsWidget(selectAllMusicFunc: selectAllMusicFunc),
-                mySelectedMusicListWidget(),
+                Text('Login 후 사용가능 합니다. 😛'),
                 SizedBox(
-                  height: 110,
+                  height: 20,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil("LoginPage", (route) => false);
+                  },
+                  child: Container(
+                      alignment: Alignment.center,
+                      height: 40,
+                      width: 250,
+                      decoration: BoxDecoration(
+                          color: MColors.tomato,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(width: 1, color: MColors.tomato)),
+                      child: Text(
+                        '로그인 페이지로 이동하기',
+                        style: MTextStyles.bold12White,
+                      )),
                 ),
               ],
             ),
-          ),
-          Visibility(
-            visible: Provider.of<MiniWidgetStatusProvider>(context)
-                        .bottomPlayListWidget ==
-                    BottomWidgets.miniPlayer
-                ? true
-                : false,
-            child: SmallPlayListWidget(),
-          ),
-          Visibility(
-            visible: Provider.of<MiniWidgetStatusProvider>(context)
-                        .myBottomSelectListWidget ==
-                    BottomWidgets.myMiniSelctList
-                ? true
-                : false,
-            child: MyPlaylistSmallSelectListWidget(
-              musicList: _myMusicList,
-              selectedList: _selectedList,
-              playOrPauseMusicForSelectedListFunc:
-                  playOrPauseMusicForSelectedList,
-              refreshSelectedListAndWidgetFunc:
-                  refreshSelectedListAndWidgetFunc,
+          )
+        : Padding(
+            padding: const EdgeInsets.only(left: 10, right: 10),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      MySelectButtonsWidget(
+                          selectAllMusicFunc: selectAllMusicFunc),
+                      mySelectedMusicListWidget(),
+                      SizedBox(
+                        height: 110,
+                      ),
+                    ],
+                  ),
+                ),
+                Visibility(
+                  visible: Provider.of<MiniWidgetStatusProvider>(context)
+                              .bottomPlayListWidget ==
+                          BottomWidgets.miniPlayer
+                      ? true
+                      : false,
+                  child: SmallPlayListWidget(),
+                ),
+                Visibility(
+                  visible: Provider.of<MiniWidgetStatusProvider>(context)
+                              .myBottomSelectListWidget ==
+                          BottomWidgets.myMiniSelctList
+                      ? true
+                      : false,
+                  child: MyPlaylistSmallSelectListWidget(
+                    musicList: _myMusicList,
+                    selectedList: _selectedList,
+                    playOrPauseMusicForSelectedListFunc:
+                        playOrPauseMusicForSelectedList,
+                    refreshSelectedListAndWidgetFunc:
+                        refreshSelectedListAndWidgetFunc,
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
-    );
+          );
   }
 
   Widget mySelectedMusicListWidget() {

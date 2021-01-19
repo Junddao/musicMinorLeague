@@ -445,7 +445,8 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
   }
 
   Future<void> getMusic() async {
-    FilePickerResult result = await FilePicker.platform.pickFiles();
+    FilePickerResult result =
+        await FilePicker.platform.pickFiles(type: FileType.audio);
 
     if (result != null) {
       _musicPath = result.files.single.path;
