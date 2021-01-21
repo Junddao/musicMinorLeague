@@ -5,15 +5,13 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
-import 'package:music_minorleague/model/data/send_file.dart';
 import 'package:music_minorleague/model/enum/music_approval_enum.dart';
 import 'package:music_minorleague/model/enum/music_type_enum.dart';
 import 'package:music_minorleague/model/provider/user_profile_provider.dart';
+import 'package:music_minorleague/model/view/page/upload/component/upload_dialog.dart';
 import 'package:music_minorleague/model/view/page/upload/component/upload_result_dialog.dart';
 
 import 'package:music_minorleague/model/view/style/colors.dart';
@@ -115,7 +113,8 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
             onPressed: () async {
               // must attach image and music file.
               if (isPlay == true) PlayMusic.pauseFunc();
-              if (_coverImage != null && _musicFile != null) await upload();
+              if (_coverImage != null && _musicFile != null)
+                showSelectMessageBox();
             },
             child: Container(
               height: 30,
@@ -547,5 +546,11 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
         });
       });
     }
+  }
+
+  showSelectMessageBox() async {
+    UploadDialog.showUploadDialog(context).then((value) {
+      if (value == true) upload();
+    });
   }
 }

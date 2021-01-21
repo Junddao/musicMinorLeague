@@ -1,3 +1,4 @@
+import 'package:music_minorleague/model/view/page/email_login/email_login_page.dart';
 import 'package:music_minorleague/model/view/page/login_page.dart';
 import 'package:music_minorleague/model/view/page/music_player/my_music_player_page.dart';
 import 'package:music_minorleague/model/view/page/playlist/my_play_list_page.dart';
@@ -22,6 +23,8 @@ class Routers {
         return CupertinoPageRoute(builder: (_) => RootPage());
       case 'LoginPage':
         return CupertinoPageRoute(builder: (_) => LoginPage());
+      case 'EmailLoginPage':
+        return CupertinoPageRoute(builder: (_) => EmailLoginPage());
       case 'TabPage':
         return CupertinoPageRoute(builder: (_) => TabPage());
       case 'UploadMusicPage':

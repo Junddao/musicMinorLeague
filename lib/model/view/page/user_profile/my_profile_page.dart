@@ -48,12 +48,12 @@ class _MyProfilePageState extends State<MyProfilePage> {
         style: MTextStyles.bold18Black,
       ),
       actions: [
-        // IconButton(
-        //   icon: Icon(Icons.login_outlined),
-        //   onPressed: () {
-        //     _signOut();
-        //   },
-        // )
+        IconButton(
+          icon: Icon(Icons.login_outlined),
+          onPressed: () {
+            _signOut();
+          },
+        )
       ],
       backgroundColor: Colors.transparent,
       elevation: 0.0,

@@ -19,10 +19,10 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<bool> _mockCheckForSession() async {
     bool result = false;
 
-    // await Future.delayed(Duration(milliseconds: 2000), () {
-    //   _user = FirebaseAuth.instance.currentUser;
-    //   _user != null ? result = true : result = false;
-    // });
+    await Future.delayed(Duration(milliseconds: 2000), () {
+      _user = FirebaseAuth.instance.currentUser;
+      _user != null ? result = true : result = false;
+    });
 
     return result;
   }
@@ -48,16 +48,6 @@ class _SplashScreenState extends State<SplashScreen> {
     //   _user.email.substring(0, _user.email.indexOf('@')), // id
     //   '',
     //   '',
-    // );
-
-    // // 초기에 광고 하나 보여주자
-    // AdMobService ams = AdMobService();
-    // InterstitialAd newAd = ams.getNewInterstitial();
-    // newAd.load();
-    // newAd.show(
-    //   anchorType: AnchorType.bottom,
-    //   anchorOffset: 0.0,
-    //   horizontalCenterOffset: 0.0,
     // );
 
     String collection = FirebaseDBHelper.userCollection;

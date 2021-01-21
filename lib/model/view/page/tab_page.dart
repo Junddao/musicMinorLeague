@@ -11,6 +11,7 @@ import 'package:music_minorleague/model/view/style/size_config.dart';
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 import 'package:music_minorleague/tabstates.dart';
 import 'package:flutter/material.dart';
+import 'package:music_minorleague/utils/admob_service.dart';
 
 import 'package:music_minorleague/utils/push_manager.dart';
 
@@ -34,6 +35,16 @@ class _TabPageState extends State<TabPage> {
   void initState() {
     PushManager().registerToken();
     PushManager().listenFirebaseMessaging();
+
+    // 초기에 광고 하나 보여주자
+    AdMobService ams = AdMobService();
+    InterstitialAd newAd = ams.getNewInterstitial();
+    newAd.load();
+    newAd.show(
+      anchorType: AnchorType.bottom,
+      anchorOffset: 0.0,
+      horizontalCenterOffset: 0.0,
+    );
 
     ThumbUpData thumbUpData = new ThumbUpData();
     thumbUpData.todayCnt = 3;

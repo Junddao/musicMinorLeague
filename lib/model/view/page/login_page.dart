@@ -54,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             Positioned(
-              bottom: 100,
+              bottom: 50,
               left: (SizeConfig.screenWidth - 250) / 2,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -67,48 +67,51 @@ class _LoginPageState extends State<LoginPage> {
                         child: RaisedButton(
                           shape: RoundedRectangleBorder(
                               borderRadius: new BorderRadius.circular(30.0)),
-                          color: MColors.white,
+                          color: MColors.tomato,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
                               Icon(
                                 FontAwesomeIcons.google,
-                                color: Color(0xffCE107C),
+                                color: MColors.white,
                               ),
                               SizedBox(width: 10.0),
                               Text('Google 아이디로 로그인',
-                                  style: MTextStyles.bold14Black),
+                                  style: MTextStyles.bold14White),
                             ],
                           ),
                           onPressed: signInWithGoogle,
                         )),
                   ),
                   SizedBox(height: 10.0),
-                  Container(
-                    width: 250.0,
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: RaisedButton(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(30.0)),
-                          color: MColors.black,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              Icon(
-                                FontAwesomeIcons.apple,
-                                color: MColors.white,
-                              ),
-                              SizedBox(width: 10.0),
-                              Text('Apple 아이디로 로그인',
-                                  style: MTextStyles.bold14White),
-                            ],
+                  Platform.isIOS
+                      ? Container(
+                          width: 250.0,
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: RaisedButton(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        new BorderRadius.circular(30.0)),
+                                color: MColors.black,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: <Widget>[
+                                    Icon(
+                                      FontAwesomeIcons.apple,
+                                      color: MColors.white,
+                                    ),
+                                    SizedBox(width: 10.0),
+                                    Text('Apple 아이디로 로그인',
+                                        style: MTextStyles.bold14White),
+                                  ],
+                                ),
+                                onPressed: () async {
+                                  await signInWithApple();
+                                }),
                           ),
-                          onPressed: () async {
-                            await signInWithApple();
-                          }),
-                    ),
-                  ),
+                        )
+                      : SizedBox.shrink(),
                   SizedBox(height: 10.0),
                   Container(
                     width: 250.0,
@@ -119,16 +122,32 @@ class _LoginPageState extends State<LoginPage> {
                               borderRadius: new BorderRadius.circular(30.0)),
                           color: MColors.white,
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
-                              Text('Guest로 둘러보기',
-                                  style: MTextStyles.regular12Black),
+                              Icon(
+                                Icons.email,
+                                color: MColors.black,
+                              ),
+                              SizedBox(width: 10.0),
+                              Text('다른 방법으로 로그인',
+                                  style: MTextStyles.bold14Black),
                             ],
                           ),
                           onPressed: () async {
-                            await signInWithGuest();
+                            await signInwithEmail();
                           }),
                     ),
+                  ),
+                  SizedBox(height: 20.0),
+                  Container(
+                    alignment: Alignment.center,
+                    width: 250.0,
+                    child: InkWell(
+                        onTap: () async {
+                          await signInWithGuest();
+                        },
+                        child: Text('Guest로 둘러보기',
+                            style: MTextStyles.bold12Black__)),
                   ),
                 ],
               ),
@@ -242,5 +261,9 @@ class _LoginPageState extends State<LoginPage> {
     // updateDatabase(userProfileData);
 
     Navigator.of(context).pushNamed('TabPage');
+  }
+
+  signInwithEmail() {
+    Navigator.of(context).pushNamed('EmailLoginPage');
   }
 }
