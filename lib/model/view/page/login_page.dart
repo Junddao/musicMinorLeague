@@ -65,8 +65,8 @@ class _LoginPageState extends State<LoginPage> {
                     child: Align(
                         alignment: Alignment.center,
                         child: RaisedButton(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(30.0)),
+                          // shape: RoundedRectangleBorder(
+                          //     borderRadius: new BorderRadius.circular(30.0)),
                           color: MColors.tomato,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -76,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                                 color: MColors.white,
                               ),
                               SizedBox(width: 10.0),
-                              Text('Google 아이디로 로그인',
+                              Text('Google로 로그인',
                                   style: MTextStyles.bold14White),
                             ],
                           ),
@@ -90,9 +90,9 @@ class _LoginPageState extends State<LoginPage> {
                           child: Align(
                             alignment: Alignment.center,
                             child: RaisedButton(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        new BorderRadius.circular(30.0)),
+                                // shape: RoundedRectangleBorder(
+                                //     borderRadius:
+                                //         new BorderRadius.circular(30.0)),
                                 color: MColors.black,
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
@@ -102,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
                                       color: MColors.white,
                                     ),
                                     SizedBox(width: 10.0),
-                                    Text('Apple 아이디로 로그인',
+                                    Text('Apple로 로그인',
                                         style: MTextStyles.bold14White),
                                   ],
                                 ),
@@ -118,8 +118,8 @@ class _LoginPageState extends State<LoginPage> {
                     child: Align(
                       alignment: Alignment.center,
                       child: RaisedButton(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(30.0)),
+                          // shape: RoundedRectangleBorder(
+                          //     borderRadius: new BorderRadius.circular(30.0)),
                           color: MColors.white,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -226,8 +226,8 @@ class _LoginPageState extends State<LoginPage> {
     print(credential);
 
     Map<String, dynamic> userProfileData = {
-      'userName': user.displayName,
-      'photoUrl': user.photoURL,
+      'userName': user.displayName ?? 'empty',
+      'photoUrl': user.photoURL ?? '',
       'userEmail': user.email,
       'id': user.email.substring(0, user.email.indexOf('@')), // id
       'youtubeUrl': '',
