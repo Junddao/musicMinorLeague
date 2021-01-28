@@ -5,6 +5,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:music_minorleague/model/data/default_url.dart';
@@ -456,12 +457,15 @@ class _MyProfileModifyPageState extends State<MyProfileModifyPage> {
       status: 'uploading...',
       maskType: EasyLoadingMaskType.black,
     );
-
-    uploadBackgroundImageFile().then((value) async {
-      uploadImageFile().then((value) {
-        updateDatabase();
+    try {
+      uploadBackgroundImageFile().then((value) {
+        uploadImageFile();
       });
-    });
+    } catch (Exception) {
+      EasyLoading.dismiss();
+      Scaffold.of(context).showSnackBar(SnackBar(
+          duration: Duration(seconds: 2), content: Text('업로드에 실패하였습니다.')));
+    }
   }
 
   Future<void> uploadImageFile() async {
@@ -469,16 +473,20 @@ class _MyProfileModifyPageState extends State<MyProfileModifyPage> {
         .userProfileData
         .id;
     String filename = 'profileImage';
+    if (_profileImage != null) {
+      ref = FirebaseStorage.instance.ref().child(_userId).child(filename);
 
-    ref = FirebaseStorage.instance.ref().child(_userId).child(filename);
+      UploadTask uploadTask = ref.putFile(_profileImage);
 
-    UploadTask uploadTask = ref.putFile(_profileImage);
-
-    await uploadTask.then((TaskSnapshot snapshot) {
-      snapshot.ref.getDownloadURL().then((fileUrl) {
-        _imageFileUrl = fileUrl;
+      await uploadTask.then((TaskSnapshot snapshot) {
+        snapshot.ref.getDownloadURL().then((fileUrl) {
+          _imageFileUrl = fileUrl;
+          updateDatabase();
+        });
       });
-    });
+    } else {
+      updateDatabase();
+    }
   }
 
   Future<void> uploadBackgroundImageFile() async {
@@ -486,16 +494,16 @@ class _MyProfileModifyPageState extends State<MyProfileModifyPage> {
         .userProfileData
         .id;
     String filename = 'backgroundImage';
+    if (_profileBackgroundImage != null) {
+      ref = FirebaseStorage.instance.ref().child(_userId).child(filename);
+      UploadTask uploadTask = ref.putFile(_profileBackgroundImage);
 
-    ref = FirebaseStorage.instance.ref().child(_userId).child(filename);
-
-    UploadTask uploadTask = ref.putFile(_profileBackgroundImage);
-
-    await uploadTask.then((TaskSnapshot snapshot) {
-      snapshot.ref.getDownloadURL().then((fileUrl) {
-        _backgroundImageFileUrl = fileUrl;
+      await uploadTask.then((TaskSnapshot snapshot) {
+        snapshot.ref.getDownloadURL().then((fileUrl) {
+          _backgroundImageFileUrl = fileUrl;
+        });
       });
-    });
+    }
   }
 
   updateDatabase() {

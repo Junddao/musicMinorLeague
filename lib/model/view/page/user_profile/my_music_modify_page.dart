@@ -229,7 +229,7 @@ class _MyMusicModifyPageState extends State<MyMusicModifyPage> {
         .child(_myMusicList[index].musicFileName)
         .delete()
         .then((value) {
-      print('image delete complete!');
+      print('music delete complete!');
     });
 
     Provider.of<MiniWidgetStatusProvider>(context, listen: false)

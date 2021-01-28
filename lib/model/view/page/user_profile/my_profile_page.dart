@@ -286,7 +286,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                 height: 40,
                               ),
                               Container(
-                                height: 40,
+                                // height: 40,
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -294,7 +294,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                     Row(
                                       children: [
                                         Container(
-                                          width: 70,
+                                          // width: 70,
                                           child: Column(
                                             children: [
                                               Text(
@@ -308,8 +308,11 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                             ],
                                           ),
                                         ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
                                         Container(
-                                          width: 70,
+                                          // width: 70,
                                           child: Column(
                                             children: [
                                               Text(

@@ -32,234 +32,152 @@ class _SmallPlayerWidgetState extends State<SmallPlayerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (Provider.of<MiniWidgetStatusProvider>(context, listen: false)
-            .bMinButtonClick ==
-        true) {
-      return Positioned(
-        bottom: 30,
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
-              child: Container(
-                height: 0,
-                width: SizeConfig.screenWidth - 20,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(16),
+    return Positioned(
+      bottom: 10,
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 15),
+            child: Container(
+              height: 100,
+              width: SizeConfig.screenWidth - 20,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(16),
+                ),
+                border: Border.all(color: MColors.black, width: 0.2),
+                color: MColors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey,
+                    blurRadius: 3.0,
                   ),
-                  border: Border.all(color: MColors.black, width: 0.2),
-                  color: MColors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey,
-                      blurRadius: 3.0,
-                    ),
-                  ],
-                ),
-                child: Center(child: Text('empty!')),
+                ],
               ),
-            ),
-            Positioned(
-              right: 10,
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    Provider.of<MiniWidgetStatusProvider>(context,
-                                listen: false)
-                            .bMinButtonClick =
-                        !Provider.of<MiniWidgetStatusProvider>(context,
-                                listen: false)
-                            .bMinButtonClick;
-                  });
+              child: Column(
+                children: [
+                  Container(
+                    height: 50,
+                    child: StreamBuilder(
+                        stream: PlayMusic.getCurrentStream(),
+                        builder: (context, currentSnapshot) {
+                          final Playing playing = currentSnapshot.data;
+                          final Metas metas = playing?.audio?.audio?.metas;
 
-                  // Provider.of<MiniWidgetStatusProvider>(context, listen: false)
-                  //     .bottomPlayListWidget = LoungeBottomWidgets.none;
-                },
-                child: CircleAvatar(
-                  radius: 15,
-                  backgroundColor: MColors.white,
-                  foregroundColor: MColors.tomato,
-                  child: Icon(Icons.arrow_circle_up_outlined),
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    } else {
-      return Positioned(
-        bottom: 10,
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 15),
-              child: Container(
-                height: 100,
-                width: SizeConfig.screenWidth - 20,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(16),
-                  ),
-                  border: Border.all(color: MColors.black, width: 0.2),
-                  color: MColors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey,
-                      blurRadius: 3.0,
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    Container(
-                      height: 50,
-                      child: StreamBuilder(
-                          stream: PlayMusic.getCurrentStream(),
-                          builder: (context, currentSnapshot) {
-                            final Playing playing = currentSnapshot.data;
-                            final Metas metas = playing?.audio?.audio?.metas;
-
-                            final String currentMusicId =
-                                playing?.audio?.audio?.metas?.id;
-                            return StreamBuilder(
-                                stream: PlayMusic.isPlayingFunc(),
-                                builder: (context, playingSnapshot) {
-                                  final isPlaying = playingSnapshot.data;
-                                  return ListTile(
-                                    leading: ClipOval(
-                                      // borderRadius:
-                                      //     BorderRadius.circular(4.0),
-                                      child: playing == null
-                                          ? CircularProgressIndicator()
-                                          : ExtendedImage.network(
-                                              metas?.image?.path ??
-                                                  'https://cdn.pixabay.com/photo/2018/03/04/09/51/space-3197611_1280.jpg',
-                                              cache: true,
-                                              width: 50,
-                                              height: 50,
-                                              fit: BoxFit.cover,
-                                              clearMemoryCacheWhenDispose: true,
-                                            ),
-                                    ),
-                                    title: InkWell(
-                                      onTap: () {
-                                        Navigator.of(context)
-                                            .pushNamed('MyMusicPlayerPage');
-                                      },
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            metas?.title ?? '',
-                                            style: MTextStyles.bold12Grey06,
+                          final String currentMusicId =
+                              playing?.audio?.audio?.metas?.id;
+                          return StreamBuilder(
+                              stream: PlayMusic.isPlayingFunc(),
+                              builder: (context, playingSnapshot) {
+                                final isPlaying = playingSnapshot.data;
+                                return ListTile(
+                                  leading: ClipOval(
+                                    // borderRadius:
+                                    //     BorderRadius.circular(4.0),
+                                    child: playing == null
+                                        ? CircularProgressIndicator()
+                                        : ExtendedImage.network(
+                                            metas?.image?.path ??
+                                                'https://cdn.pixabay.com/photo/2018/03/04/09/51/space-3197611_1280.jpg',
+                                            cache: true,
+                                            width: 50,
+                                            height: 50,
+                                            fit: BoxFit.cover,
+                                            clearMemoryCacheWhenDispose: true,
                                           ),
-                                          SizedBox(
-                                            width: 6,
-                                          ),
-                                          Text(
-                                            metas?.artist ?? '',
-                                            maxLines: 1,
-                                            style:
-                                                MTextStyles.regular10WarmGrey,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    trailing: Wrap(
+                                  ),
+                                  title: InkWell(
+                                    onTap: () {
+                                      Navigator.of(context)
+                                          .pushNamed('MyMusicPlayerPage');
+                                    },
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        IconButton(
-                                          icon: Icon(
-                                            Icons.skip_previous,
-                                          ),
-                                          iconSize: 20,
-                                          onPressed: () {
-                                            PlayMusic.previous();
-                                          },
+                                        Text(
+                                          metas?.title ?? '',
+                                          style: MTextStyles.bold12Grey06,
                                         ),
-                                        IconButton(
-                                            iconSize: 10,
-                                            icon: Icon(isPlaying == true
-                                                ? FontAwesomeIcons.pause
-                                                : FontAwesomeIcons.play),
-                                            color: isPlaying == true
-                                                ? MColors.black
-                                                : MColors.warm_grey,
-                                            onPressed: () {
-                                              setState(() {
-                                                PlayMusic.playOrPauseFunc();
-                                              });
-                                            }),
-                                        IconButton(
-                                          icon: Icon(
-                                            Icons.skip_next,
-                                          ),
-                                          iconSize: 20,
-                                          onPressed: () {
-                                            PlayMusic.next();
-                                          },
+                                        SizedBox(
+                                          width: 6,
+                                        ),
+                                        Text(
+                                          metas?.artist ?? '',
+                                          maxLines: 1,
+                                          style: MTextStyles.regular10WarmGrey,
                                         ),
                                       ],
                                     ),
-                                  );
-                                });
+                                  ),
+                                  trailing: Wrap(
+                                    children: [
+                                      IconButton(
+                                        icon: Icon(
+                                          Icons.skip_previous,
+                                        ),
+                                        iconSize: 20,
+                                        onPressed: () {
+                                          PlayMusic.previous();
+                                        },
+                                      ),
+                                      IconButton(
+                                          iconSize: 10,
+                                          icon: Icon(isPlaying == true
+                                              ? FontAwesomeIcons.pause
+                                              : FontAwesomeIcons.play),
+                                          color: isPlaying == true
+                                              ? MColors.black
+                                              : MColors.warm_grey,
+                                          onPressed: () {
+                                            setState(() {
+                                              PlayMusic.playOrPauseFunc();
+                                            });
+                                          }),
+                                      IconButton(
+                                        icon: Icon(
+                                          Icons.skip_next,
+                                        ),
+                                        iconSize: 20,
+                                        onPressed: () {
+                                          PlayMusic.next();
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              });
+                        }),
+                  ),
+                  SizedBox(
+                    height: 40,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 15, right: 15),
+                      child: StreamBuilder(
+                          stream: PlayMusic.getSongLengthStream(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return SizedBox.shrink();
+                            }
+
+                            final RealtimePlayingInfos infos = snapshot.data;
+                            position = infos.currentPosition;
+                            musicLength = infos.duration;
+                            return PositionSeekWidget(
+                                position: position,
+                                infos: infos,
+                                musicLength: musicLength);
                           }),
                     ),
-                    SizedBox(
-                      height: 40,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 15, right: 15),
-                        child: StreamBuilder(
-                            stream: PlayMusic.getSongLengthStream(),
-                            builder: (context, snapshot) {
-                              if (!snapshot.hasData) {
-                                return SizedBox.shrink();
-                              }
-
-                              final RealtimePlayingInfos infos = snapshot.data;
-                              position = infos.currentPosition;
-                              musicLength = infos.duration;
-                              return PositionSeekWidget(
-                                  position: position,
-                                  infos: infos,
-                                  musicLength: musicLength);
-                            }),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-            Positioned(
-              right: 10,
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    Provider.of<MiniWidgetStatusProvider>(context,
-                                listen: false)
-                            .bMinButtonClick =
-                        !Provider.of<MiniWidgetStatusProvider>(context,
-                                listen: false)
-                            .bMinButtonClick;
-                  });
-
-                  // Provider.of<MiniWidgetStatusProvider>(context, listen: false)
-                  //     .bottomPlayListWidget = LoungeBottomWidgets.none;
-                },
-                child: CircleAvatar(
-                  radius: 15,
-                  backgroundColor: MColors.white,
-                  foregroundColor: MColors.brownish_grey,
-                  child: Icon(Icons.arrow_circle_down_outlined),
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    }
+          ),
+        ],
+      ),
+    );
   }
 }

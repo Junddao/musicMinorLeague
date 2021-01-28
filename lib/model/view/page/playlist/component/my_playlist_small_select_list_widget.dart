@@ -51,7 +51,7 @@ class _MyPlaylistSmallSelectListWidget
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      bottom: 10,
+      bottom: 1,
       child: Stack(
         children: [
           Padding(
@@ -65,12 +65,12 @@ class _MyPlaylistSmallSelectListWidget
                 ),
                 border: Border.all(color: MColors.black, width: 0.1),
                 color: MColors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey,
-                    blurRadius: 1.0,
-                  ),
-                ],
+                // boxShadow: [
+                //   BoxShadow(
+                //     color: Colors.grey,
+                //     blurRadius: 1.0,
+                //   ),
+                // ],
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -158,8 +158,6 @@ class _MyPlaylistSmallSelectListWidget
   }
 
   playSelectMusic() {
-    Provider.of<MiniWidgetStatusProvider>(context, listen: false)
-        .myBottomSelectListWidget = BottomWidgets.none;
     widget._playOrPauseMusicForSelectedListFunc();
 
     // playOrPauseMusicForSelectedList();

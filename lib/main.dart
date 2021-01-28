@@ -11,6 +11,7 @@ import 'package:music_minorleague/route.dart';
 import 'package:music_minorleague/splash_screen.dart';
 import 'package:music_minorleague/tabstates.dart';
 import 'package:flutter/material.dart';
+
 import 'package:music_minorleague/utils/admob_service.dart';
 import 'package:provider/provider.dart';
 
@@ -19,41 +20,17 @@ import 'model/provider/user_profile_provider.dart';
 import 'model/view/style/colors.dart';
 import 'model/view/style/custom_animation.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await addAdmob();
+
   await Firebase.initializeApp();
+
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   runApp(
     new MyApp(),
   );
   configLoading();
-}
-
-Future<void> addAdmob() async {
-  AdMobService ams = new AdMobService();
-  // final admobAppId = FlutterAdmobAppOpen.testAppId;
-  // final appAppOpenAdUnitId = FlutterAdmobAppOpen.testAppOpenAdId;
-  final admobAppId = ams.getAdMobID();
-  final appAppOpenAdUnitId = ams.getAppOpenAdId();
-
-  MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
-    keywords: <String>['flutterio', 'beautiful apps'],
-    contentUrl: 'https://flutter.io',
-    birthday: DateTime.now(),
-    childDirected: false,
-    designedForFamilies: false,
-    gender:
-        MobileAdGender.male, // or MobileAdGender.female, MobileAdGender.unknown
-    testDevices: <String>[], // Android emulators are considered test devices
-  );
-
-  await FlutterAdmobAppOpen.instance.initialize(
-    appId: admobAppId,
-    appAppOpenAdUnitId: appAppOpenAdUnitId,
-    targetingInfo: targetingInfo,
-  );
 }
 
 void configLoading() {
@@ -108,6 +85,7 @@ class MyApp extends StatelessWidget {
         // initialRoute: '/',
         onGenerateRoute: Routers.generateRoute,
         home: SplashScreen(),
+        // home: TestPage(),
         builder: EasyLoading.init(),
       ),
     );

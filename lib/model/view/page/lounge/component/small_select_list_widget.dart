@@ -51,7 +51,7 @@ class _SmallSelectListWidgetState extends State<SmallSelectListWidget> {
     String userId = context.watch<UserProfileProvider>().userProfileData.id;
 
     return Positioned(
-      bottom: 10,
+      bottom: 1,
       child: userId == 'Guest'
           ? Container(
               height: 100,
@@ -62,12 +62,12 @@ class _SmallSelectListWidgetState extends State<SmallSelectListWidget> {
                 ),
                 border: Border.all(color: MColors.black, width: 0.1),
                 color: MColors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey,
-                    blurRadius: 1.0,
-                  ),
-                ],
+                // boxShadow: [
+                //   BoxShadow(
+                //     color: Colors.grey,
+                //     blurRadius: 1.0,
+                //   ),
+                // ],
               ),
               child: Center(
                 child: Column(
@@ -210,8 +210,6 @@ class _SmallSelectListWidgetState extends State<SmallSelectListWidget> {
   }
 
   playSelectMusic() {
-    Provider.of<MiniWidgetStatusProvider>(context, listen: false)
-        .bottomSeletListWidget = BottomWidgets.none;
     widget._playOrPauseMusicForSelectedListFunc();
   }
 

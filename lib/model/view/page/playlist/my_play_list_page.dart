@@ -118,10 +118,10 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
   }
 
   _body() {
-    if (!_selectedList.contains(true)) {
-      context.watch<MiniWidgetStatusProvider>().myBottomSelectListWidget =
-          BottomWidgets.none;
-    }
+    // if (!_selectedList.contains(true)) {
+    //   context.watch<MiniWidgetStatusProvider>().myBottomSelectListWidget =
+    //       BottomWidgets.none;
+    // }
     String userId = context.watch<UserProfileProvider>().userProfileData.id;
     return userId == 'Guest'
         ? Center(
@@ -182,8 +182,9 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
                 ),
                 Visibility(
                   visible: Provider.of<MiniWidgetStatusProvider>(context)
-                              .myBottomSelectListWidget ==
-                          BottomWidgets.myMiniSelctList
+                                  .myBottomSelectListWidget ==
+                              BottomWidgets.myMiniSelctList &&
+                          _selectedList.contains(true)
                       ? true
                       : false,
                   child: MyPlaylistSmallSelectListWidget(
@@ -454,6 +455,8 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
       PlayMusic.clearAudioPlayer();
       PlayMusic.makeNewPlayer();
       PlayMusic.playListFunc(selectedMusicList).then((value) {
+        context.read<MiniWidgetStatusProvider>().myBottomSelectListWidget =
+            BottomWidgets.none;
         context.read<MiniWidgetStatusProvider>().bottomPlayListWidget =
             BottomWidgets.miniPlayer;
       });

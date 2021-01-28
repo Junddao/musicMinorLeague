@@ -25,7 +25,16 @@ class PlayMusic {
           image: MetasImage.network(currentMusicData.imagePath),
           extra: currentMusicData.toMap(),
         ));
-    _assetsAudioPlayer.open(audio, showNotification: true);
+    _assetsAudioPlayer.open(
+      audio,
+      showNotification: true,
+      playInBackground: PlayInBackground.enabled,
+      audioFocusStrategy: AudioFocusStrategy.request(
+          resumeAfterInterruption: true, resumeOthersPlayersAfterDone: true),
+      headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplug,
+      autoStart: true,
+      notificationSettings: NotificationSettings(),
+    );
   }
 
   static Future<void> playFileFunc(String filePath) {
@@ -51,6 +60,12 @@ class PlayMusic {
       ),
       loopMode: LoopMode.playlist,
       showNotification: true,
+      playInBackground: PlayInBackground.enabled,
+      audioFocusStrategy: AudioFocusStrategy.request(
+          resumeAfterInterruption: true, resumeOthersPlayersAfterDone: true),
+      headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplug,
+      autoStart: true,
+      notificationSettings: NotificationSettings(),
     );
   }
 

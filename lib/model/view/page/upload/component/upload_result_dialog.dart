@@ -22,10 +22,10 @@ class UploadResultDialog {
                   msg,
                   style: TextStyle(
                       color: const Color(0xff000000),
-                      fontWeight: FontWeight.w600,
-                      fontFamily: "AppleSDGothicNeo",
+                      fontWeight: FontWeight.w400,
+                      fontFamily: "NotoSansCJKkr",
                       fontStyle: FontStyle.normal,
-                      fontSize: 17.0),
+                      fontSize: 13.0),
                 ),
                 SizedBox(height: 2),
                 // Text(

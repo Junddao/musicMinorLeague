@@ -129,11 +129,11 @@ class _LoungePageState extends State<LoungePage>
   Widget build(BuildContext context) {
     SizeConfig().init(context);
 
-    //page 넘오올때 초기화 해줘야 한다.
-    if (!selectedList.contains(true)) {
-      context.watch<MiniWidgetStatusProvider>().bottomSeletListWidget =
-          BottomWidgets.none;
-    }
+    // page 넘오올때 초기화 해줘야 한다.
+    // if (!selectedList.contains(true)) {
+    //   context.watch<MiniWidgetStatusProvider>().bottomSeletListWidget =
+    //       BottomWidgets.none;
+    // }
 
     return Scaffold(
       key: _scaffoldKey,
@@ -236,8 +236,9 @@ class _LoungePageState extends State<LoungePage>
           ),
           Visibility(
             visible: Provider.of<MiniWidgetStatusProvider>(context)
-                        .bottomSeletListWidget ==
-                    BottomWidgets.miniSelectList
+                            .bottomSeletListWidget ==
+                        BottomWidgets.miniSelectList &&
+                    selectedList.contains(true)
                 ? true
                 : false,
             child: SmallSelectListWidget(
@@ -546,6 +547,8 @@ class _LoungePageState extends State<LoungePage>
       PlayMusic.clearAudioPlayer();
       PlayMusic.makeNewPlayer();
       PlayMusic.playListFunc(selectedMusicList).then((value) {
+        context.read<MiniWidgetStatusProvider>().bottomSeletListWidget =
+            BottomWidgets.none;
         context.read<MiniWidgetStatusProvider>().bottomPlayListWidget =
             BottomWidgets.miniPlayer;
       });
