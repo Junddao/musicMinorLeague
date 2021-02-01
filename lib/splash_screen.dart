@@ -32,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    addAdmob();
+    
 
     _mockCheckForSession().then((value) async {
       if (value == true)
@@ -43,30 +43,6 @@ class _SplashScreenState extends State<SplashScreen> {
     });
   }
 
-  Future<void> addAdmob() async {
-    AdMobService ams = new AdMobService();
-    // final admobAppId = FlutterAdmobAppOpen.testAppId;
-    // final appAppOpenAdUnitId = FlutterAdmobAppOpen.testAppOpenAdId;
-    final admobAppId = ams.getAdMobID();
-    final appAppOpenAdUnitId = ams.getAppOpenAdId();
-
-    MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
-      keywords: <String>['flutterio', 'beautiful apps'],
-      contentUrl: 'https://flutter.io',
-      birthday: DateTime.now(),
-      childDirected: false,
-      designedForFamilies: false,
-      gender: MobileAdGender
-          .male, // or MobileAdGender.female, MobileAdGender.unknown
-      testDevices: <String>[], // Android emulators are considered test devices
-    );
-
-    await FlutterAdmobAppOpen.instance.initialize(
-      appId: admobAppId,
-      appAppOpenAdUnitId: appAppOpenAdUnitId,
-      targetingInfo: targetingInfo,
-    );
-  }
 
   void _navigatorToHome() {
     // UserProfileData userProfileData = new UserProfileData(
