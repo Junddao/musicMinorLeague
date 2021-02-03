@@ -151,12 +151,12 @@ class _LoungePageState extends State<LoungePage>
   }
 
   _buildThisWeekNewPage() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10, right: 10),
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          SingleChildScrollView(
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 10, right: 10),
+          child: SingleChildScrollView(
             physics: ScrollPhysics(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -226,31 +226,31 @@ class _LoungePageState extends State<LoungePage>
               ],
             ),
           ),
-          Visibility(
-            visible: Provider.of<MiniWidgetStatusProvider>(context)
-                        .bottomPlayListWidget ==
-                    BottomWidgets.miniPlayer
-                ? true
-                : false,
-            child: SmallPlayListWidget(),
+        ),
+        Visibility(
+          visible: Provider.of<MiniWidgetStatusProvider>(context)
+                      .bottomPlayListWidget ==
+                  BottomWidgets.miniPlayer
+              ? true
+              : false,
+          child: SmallPlayListWidget(),
+        ),
+        Visibility(
+          visible: Provider.of<MiniWidgetStatusProvider>(context)
+                          .bottomSeletListWidget ==
+                      BottomWidgets.miniSelectList &&
+                  selectedList.contains(true)
+              ? true
+              : false,
+          child: SmallSelectListWidget(
+            musicList: musicList,
+            selectedList: selectedList,
+            snackBarFunc: showAndHideSnackBar,
+            playOrPauseMusicForSelectedListFunc:
+                playOrPauseMusicForSelectedList,
           ),
-          Visibility(
-            visible: Provider.of<MiniWidgetStatusProvider>(context)
-                            .bottomSeletListWidget ==
-                        BottomWidgets.miniSelectList &&
-                    selectedList.contains(true)
-                ? true
-                : false,
-            child: SmallSelectListWidget(
-              musicList: musicList,
-              selectedList: selectedList,
-              snackBarFunc: showAndHideSnackBar,
-              playOrPauseMusicForSelectedListFunc:
-                  playOrPauseMusicForSelectedList,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -558,6 +558,11 @@ class _LoungePageState extends State<LoungePage>
   void playOrpauseMusic(MusicInfoData musicInfoData, String currentPlayingId) {
     if (currentPlayingId == musicInfoData.id) {
       PlayMusic.playOrPauseFunc();
+      if (context.read<MiniWidgetStatusProvider>().bottomPlayListWidget ==
+          BottomWidgets.none) {
+        context.read<MiniWidgetStatusProvider>().bottomPlayListWidget =
+            BottomWidgets.miniPlayer;
+      }
     } else {
       PlayMusic.stopFunc().whenComplete(() {
         PlayMusic.clearAudioPlayer();

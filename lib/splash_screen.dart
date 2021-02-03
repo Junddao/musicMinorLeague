@@ -1,11 +1,6 @@
-import 'package:firebase_admob/firebase_admob.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_admob_app_open/flutter_admob_app_open.dart';
-
 import 'package:music_minorleague/model/view/style/textstyles.dart';
 import 'package:flutter/material.dart';
-import 'package:music_minorleague/utils/admob_service.dart';
 import 'package:music_minorleague/utils/firebase_db_helper.dart';
 import 'package:provider/provider.dart';
 import 'model/data/user_profile_data.dart';
@@ -32,7 +27,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    
 
     _mockCheckForSession().then((value) async {
       if (value == true)
@@ -42,7 +36,6 @@ class _SplashScreenState extends State<SplashScreen> {
       }
     });
   }
-
 
   void _navigatorToHome() {
     // UserProfileData userProfileData = new UserProfileData(

@@ -51,11 +51,11 @@ class _SmallSelectListWidgetState extends State<SmallSelectListWidget> {
     String userId = context.watch<UserProfileProvider>().userProfileData.id;
 
     return Positioned(
-      bottom: 1,
+      bottom: 0,
       child: userId == 'Guest'
           ? Container(
               height: 100,
-              width: SizeConfig.screenWidth - 20,
+              width: SizeConfig.screenWidth,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(
                   Radius.circular(4),
@@ -107,7 +107,7 @@ class _SmallSelectListWidgetState extends State<SmallSelectListWidget> {
                   padding: const EdgeInsets.only(top: 10),
                   child: Container(
                     height: 100,
-                    width: SizeConfig.screenWidth - 20,
+                    width: SizeConfig.screenWidth,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(
                         Radius.circular(4),

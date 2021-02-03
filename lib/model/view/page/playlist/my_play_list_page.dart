@@ -154,12 +154,12 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
               ],
             ),
           )
-        : Padding(
-            padding: const EdgeInsets.only(left: 10, right: 10),
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                SingleChildScrollView(
+        : Stack(
+            fit: StackFit.expand,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -172,32 +172,32 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
                     ],
                   ),
                 ),
-                Visibility(
-                  visible: Provider.of<MiniWidgetStatusProvider>(context)
-                              .bottomPlayListWidget ==
-                          BottomWidgets.miniPlayer
-                      ? true
-                      : false,
-                  child: SmallPlayListWidget(),
+              ),
+              Visibility(
+                visible: Provider.of<MiniWidgetStatusProvider>(context)
+                            .bottomPlayListWidget ==
+                        BottomWidgets.miniPlayer
+                    ? true
+                    : false,
+                child: SmallPlayListWidget(),
+              ),
+              Visibility(
+                visible: Provider.of<MiniWidgetStatusProvider>(context)
+                                .myBottomSelectListWidget ==
+                            BottomWidgets.myMiniSelctList &&
+                        _selectedList.contains(true)
+                    ? true
+                    : false,
+                child: MyPlaylistSmallSelectListWidget(
+                  musicList: _myMusicList,
+                  selectedList: _selectedList,
+                  playOrPauseMusicForSelectedListFunc:
+                      playOrPauseMusicForSelectedList,
+                  refreshSelectedListAndWidgetFunc:
+                      refreshSelectedListAndWidgetFunc,
                 ),
-                Visibility(
-                  visible: Provider.of<MiniWidgetStatusProvider>(context)
-                                  .myBottomSelectListWidget ==
-                              BottomWidgets.myMiniSelctList &&
-                          _selectedList.contains(true)
-                      ? true
-                      : false,
-                  child: MyPlaylistSmallSelectListWidget(
-                    musicList: _myMusicList,
-                    selectedList: _selectedList,
-                    playOrPauseMusicForSelectedListFunc:
-                        playOrPauseMusicForSelectedList,
-                    refreshSelectedListAndWidgetFunc:
-                        refreshSelectedListAndWidgetFunc,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           );
   }
 
@@ -466,6 +466,11 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
   void playOrpauseMusic(MusicInfoData musicInfoData, String currentPlayingId) {
     if (currentPlayingId == musicInfoData.id) {
       PlayMusic.playOrPauseFunc();
+      if (context.read<MiniWidgetStatusProvider>().bottomPlayListWidget ==
+          BottomWidgets.none) {
+        context.read<MiniWidgetStatusProvider>().bottomPlayListWidget =
+            BottomWidgets.miniPlayer;
+      }
     } else {
       PlayMusic.stopFunc().whenComplete(() {
         PlayMusic.clearAudioPlayer();

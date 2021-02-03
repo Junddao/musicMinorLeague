@@ -78,6 +78,7 @@ class _TabPageState extends State<TabPage> {
 
             child: new BottomNavigationBar(
               onTap: _onItemTapped,
+              elevation: 10,
               type: BottomNavigationBarType.fixed,
               currentIndex: value.selectedIndex,
               items: <BottomNavigationBarItem>[

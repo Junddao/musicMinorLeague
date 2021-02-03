@@ -131,8 +131,8 @@ class FirebaseDBHelper {
   static Stream<QuerySnapshot> getDataStream(String collection) {
     return firestoreinstance
         .collection(collection)
-        .where('approval',
-            isEqualTo: EnumToString.convertToString(MusicApprovalEnum.approval))
+        // .where('approval',
+        //     isEqualTo: EnumToString.convertToString(MusicApprovalEnum.approval))
         // .orderBy('favorite', descending: true)
         .snapshots();
   }

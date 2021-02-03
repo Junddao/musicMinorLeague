@@ -3,6 +3,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:music_minorleague/model/data/user_profile_data.dart';
+import 'package:music_minorleague/model/enum/lounge_bottom_widget_enum.dart';
 import 'package:music_minorleague/model/provider/mini_widget_status_provider.dart';
 
 import 'package:music_minorleague/model/view/style/colors.dart';
@@ -34,20 +35,22 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      bottom: 1,
+      bottom: 0,
       child: Stack(
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 15),
             child: Container(
                 height: 100,
-                width: SizeConfig.screenWidth - 20,
+                width: SizeConfig.screenWidth,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(4),
-                  ),
-                  border: Border.all(color: MColors.black, width: 0.1),
-                  color: MColors.white,
+                  // borderRadius: BorderRadius.only(
+                  //   topLeft: Radius.circular(8),
+                  //   topRight: Radius.circular(8),
+                  // ),
+                  // border: Border.all(color: MColors.black, width: 1),
+
+                  color: MColors.kakao_yellow,
                   // boxShadow: [
                   //   BoxShadow(
                   //     color: Colors.grey,
@@ -162,6 +165,20 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget> {
                                           iconSize: 20,
                                           onPressed: () {
                                             PlayMusic.next();
+                                          },
+                                        ),
+                                        IconButton(
+                                          icon: Icon(
+                                            Icons.close,
+                                          ),
+                                          iconSize: 20,
+                                          onPressed: () {
+                                            PlayMusic.stopFunc();
+                                            context
+                                                    .read<
+                                                        MiniWidgetStatusProvider>()
+                                                    .bottomPlayListWidget =
+                                                BottomWidgets.none;
                                           },
                                         ),
                                       ],

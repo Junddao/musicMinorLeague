@@ -183,8 +183,8 @@ class _LoginPageState extends State<LoginPage> {
     final User user = (await _auth.signInWithCredential(credential)).user;
 
     Map<String, dynamic> userProfileData = {
-      'userName': user.displayName,
-      'photoUrl': user.photoURL,
+      'userName': user.displayName ?? 'empty',
+      'photoUrl': user.photoURL ?? '',
       'userEmail': user.email,
       'id': user.email.substring(0, user.email.indexOf('@')), // id
       'youtubeUrl': '',

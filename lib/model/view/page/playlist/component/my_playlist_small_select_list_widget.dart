@@ -51,14 +51,14 @@ class _MyPlaylistSmallSelectListWidget
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      bottom: 1,
+      bottom: 0,
       child: Stack(
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child: Container(
               height: 100,
-              width: SizeConfig.screenWidth - 20,
+              width: SizeConfig.screenWidth,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(
                   Radius.circular(4),

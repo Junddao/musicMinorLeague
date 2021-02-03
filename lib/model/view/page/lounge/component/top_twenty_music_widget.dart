@@ -145,10 +145,10 @@ class _TopTwentyMusicWidgetState extends State<TopTwentyMusicWidget> {
                                             Positioned(
                                               right: 10,
                                               bottom: 10,
-                                              child: InkWell(
+                                              child: GestureDetector(
                                                 child: Container(
-                                                  width: 20,
-                                                  height: 20,
+                                                  width: 25,
+                                                  height: 25,
                                                   decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(

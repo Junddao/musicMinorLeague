@@ -530,7 +530,9 @@ class _UploadMusicPageState extends State<UploadMusicPage> {
         () {
           EasyLoading.dismiss();
           return UploadResultDialog.showUploadResultDialog(
-                  context, '파일 등록 신청을 완료했습니다.\n2시간 안에 등록될 꺼에요.')
+                  // context, '파일 등록 신청을 완료했습니다.\n2시간 안에 등록될 꺼에요.')
+                  context,
+                  '파일 등록을 완료했습니다.')
               .then((value) {
             setState(() {
               if (value == true) Navigator.pop(context);
