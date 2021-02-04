@@ -15,7 +15,7 @@ class _SplashScreenState extends State<SplashScreen> {
   User _user;
   Future<bool> _mockCheckForSession() async {
     bool result = false;
-
+    // FirebaseAuth.instance.signOut();
     await Future.delayed(Duration(milliseconds: 2000), () {
       _user = FirebaseAuth.instance.currentUser;
       _user != null ? result = true : result = false;
@@ -42,13 +42,13 @@ class _SplashScreenState extends State<SplashScreen> {
     //   _user.displayName,
     //   _user.photoURL,
     //   _user.email,
-    //   _user.email.substring(0, _user.email.indexOf('@')), // id
+    //   _user.email, // id
     //   '',
     //   '',
     // );
 
     String collection = FirebaseDBHelper.userCollection;
-    String doc = _user.email.substring(0, _user.email.indexOf('@'));
+    String doc = _user.email;
 
     FirebaseDBHelper.getData(collection, doc).then((value) {
       Provider.of<UserProfileProvider>(context, listen: false).userProfileData =

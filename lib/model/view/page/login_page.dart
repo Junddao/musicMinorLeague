@@ -159,8 +159,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   updateDatabase(Map<String, dynamic> userProfileData) {
-    String doc = userProfileData['userEmail']
-        .substring(0, userProfileData['userEmail'].indexOf('@'));
+    String doc = userProfileData['userEmail'];
     FirebaseDBHelper.setData(
         FirebaseDBHelper.userCollection, doc, userProfileData);
     // firestoreinstance.collection('User').doc(_id).set(data);
@@ -182,20 +181,32 @@ class _LoginPageState extends State<LoginPage> {
 
     final User user = (await _auth.signInWithCredential(credential)).user;
 
-    Map<String, dynamic> userProfileData = {
-      'userName': user.displayName ?? 'empty',
-      'photoUrl': user.photoURL ?? '',
-      'userEmail': user.email,
-      'id': user.email.substring(0, user.email.indexOf('@')), // id
-      'youtubeUrl': '',
-      'introduce': '',
-      'backgroundPhotoUrl': '',
-    };
+    String collection = FirebaseDBHelper.userCollection;
+    String doc = user.email;
 
-    Provider.of<UserProfileProvider>(context, listen: false).userProfileData =
-        UserProfileData.fromMap(userProfileData);
+    FirebaseDBHelper.getData(collection, doc).then((value) {
+      if (value.exists == true) {
+        Provider.of<UserProfileProvider>(context, listen: false)
+            .userProfileData = UserProfileData.fromMap(value.data());
 
-    updateDatabase(userProfileData);
+        // updateDatabase(value.data());
+      } else {
+        Map<String, dynamic> userProfileData = {
+          'userName': user.displayName ?? 'empty',
+          'photoUrl': user.photoURL ?? '',
+          'userEmail': user.email,
+          'id': user.email, // id
+          'youtubeUrl': '',
+          'introduce': '',
+          'backgroundPhotoUrl': '',
+        };
+
+        Provider.of<UserProfileProvider>(context, listen: false)
+            .userProfileData = UserProfileData.fromMap(userProfileData);
+
+        updateDatabase(userProfileData);
+      }
+    });
 
     // Navigator.of(context).pushNamed('TabPage');
     _navigatorToOnBoardingScreen();
@@ -225,20 +236,32 @@ class _LoginPageState extends State<LoginPage> {
 
     print(credential);
 
-    Map<String, dynamic> userProfileData = {
-      'userName': user.displayName ?? 'empty',
-      'photoUrl': user.photoURL ?? '',
-      'userEmail': user.email,
-      'id': user.email.substring(0, user.email.indexOf('@')), // id
-      'youtubeUrl': '',
-      'introduce': '',
-      'backgroundPhotoUrl': '',
-    };
+    String collection = FirebaseDBHelper.userCollection;
+    String doc = user.email;
 
-    Provider.of<UserProfileProvider>(context, listen: false).userProfileData =
-        UserProfileData.fromMap(userProfileData);
+    FirebaseDBHelper.getData(collection, doc).then((value) {
+      if (value.exists == true) {
+        Provider.of<UserProfileProvider>(context, listen: false)
+            .userProfileData = UserProfileData.fromMap(value.data());
 
-    updateDatabase(userProfileData);
+        // updateDatabase(value.data());
+      } else {
+        Map<String, dynamic> userProfileData = {
+          'userName': user.displayName ?? 'empty',
+          'photoUrl': user.photoURL ?? '',
+          'userEmail': user.email,
+          'id': user.email, // id
+          'youtubeUrl': '',
+          'introduce': '',
+          'backgroundPhotoUrl': '',
+        };
+
+        Provider.of<UserProfileProvider>(context, listen: false)
+            .userProfileData = UserProfileData.fromMap(userProfileData);
+
+        updateDatabase(userProfileData);
+      }
+    });
 
     // Navigator.of(context).pushNamed('TabPage');
     _navigatorToOnBoardingScreen();
