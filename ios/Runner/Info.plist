@@ -40,13 +40,13 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppleMusicUsageDescription</key>
-	<string>Used to get audio for asset audio player plugin</string>
+	<string>등록한 음악을 듣기 위해 활용하니다.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>사진을 찍을 수 있게 되며 공유할 수 있게 됩니다.</string>
+	<string>음악의 커버 사진, 프로필 사진 등록을 위한 사진 촬영에 활용합니다..</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Used to capture audio for image picker plugin</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>카메라 롤에서 선택한 사진들을 올려 공유할 수 았습니다.</string>
+	<string>카메라 롤에서 선택한 사진들은 등록하는 음악의 커버 사진, 프로필 사진에 활용합니다.</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>

@@ -100,6 +100,7 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
+        navigatorObservers: [HeroController()],
         title: 'MusicMinorLeague',
         theme: ThemeData(
           primaryColor: Colors.white,

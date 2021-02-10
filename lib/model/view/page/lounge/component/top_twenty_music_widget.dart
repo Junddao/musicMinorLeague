@@ -23,7 +23,19 @@ class TopTwentyMusicWidget extends StatefulWidget {
   _TopTwentyMusicWidgetState createState() => _TopTwentyMusicWidgetState();
 }
 
-class _TopTwentyMusicWidgetState extends State<TopTwentyMusicWidget> {
+class _TopTwentyMusicWidgetState extends State<TopTwentyMusicWidget>
+    with SingleTickerProviderStateMixin {
+  AnimationController _controller;
+  @override
+  void initState() {
+    _controller = AnimationController(
+        vsync: this,
+        duration: Duration(seconds: 1),
+        lowerBound: 0.0,
+        upperBound: 1.0);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final itemSize = 120.0;
@@ -136,8 +148,44 @@ class _TopTwentyMusicWidgetState extends State<TopTwentyMusicWidget> {
                                                         item.imagePath,
                                                         fit: BoxFit.cover,
                                                         cache: true,
-                                                        clearMemoryCacheWhenDispose:
-                                                            true,
+                                                        loadStateChanged:
+                                                            (ExtendedImageState
+                                                                state) {
+                                                          switch (state
+                                                              .extendedImageLoadState) {
+                                                            case LoadState
+                                                                .loading:
+                                                              return SizedBox
+                                                                  .shrink();
+                                                              break;
+                                                            case LoadState
+                                                                .completed:
+                                                              _controller
+                                                                  .forward();
+                                                              return FadeTransition(
+                                                                opacity:
+                                                                    _controller,
+                                                                child:
+                                                                    ExtendedRawImage(
+                                                                  image: state
+                                                                      .extendedImageInfo
+                                                                      ?.image,
+
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                  // scale: 1.0,
+                                                                ),
+                                                              );
+                                                              break;
+                                                            case LoadState
+                                                                .failed:
+                                                              _controller
+                                                                  .reset();
+                                                              return Image.asset(
+                                                                  'assets/images/default_cover_Image.jpg');
+                                                              break;
+                                                          }
+                                                        },
                                                       )),
                                             Container(
                                               color: const Color(0x66000000),

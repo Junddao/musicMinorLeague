@@ -30,8 +30,10 @@ class MyPlayListPage extends StatefulWidget {
   _MyPlayListPageState createState() => _MyPlayListPageState();
 }
 
-class _MyPlayListPageState extends State<MyPlayListPage> {
+class _MyPlayListPageState extends State<MyPlayListPage>
+    with SingleTickerProviderStateMixin {
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
+  AnimationController _controller;
 
   AssetsAudioPlayer _assetsAudioPlayer;
   final List<StreamSubscription> _subscriptions = [];
@@ -90,6 +92,11 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
 
   @override
   void initState() {
+    _controller = AnimationController(
+        vsync: this,
+        duration: Duration(seconds: 1),
+        lowerBound: 0.0,
+        upperBound: 1.0);
     super.initState();
     selectedMusicList = new List<MusicInfoData>();
     _selectedList = new List<bool>();
@@ -309,8 +316,35 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
                                                 width: 50,
                                                 height: 50,
                                                 fit: BoxFit.cover,
-                                                clearMemoryCacheWhenDispose:
-                                                    true,
+                                                loadStateChanged:
+                                                    (ExtendedImageState state) {
+                                                  switch (state
+                                                      .extendedImageLoadState) {
+                                                    case LoadState.loading:
+                                                      return SizedBox.shrink();
+                                                      break;
+                                                    case LoadState.completed:
+                                                      _controller.forward();
+                                                      return FadeTransition(
+                                                        opacity: _controller,
+                                                        child: ExtendedRawImage(
+                                                          image: state
+                                                              .extendedImageInfo
+                                                              ?.image,
+                                                          width: 50,
+                                                          height: 50,
+                                                          fit: BoxFit.cover,
+                                                          // scale: 1.0,
+                                                        ),
+                                                      );
+                                                      break;
+                                                    case LoadState.failed:
+                                                      _controller.reset();
+                                                      return Image.asset(
+                                                          'assets/images/default_cover_Image.jpg');
+                                                      break;
+                                                  }
+                                                },
                                               ),
                                             ),
                                           ),
@@ -464,22 +498,25 @@ class _MyPlayListPageState extends State<MyPlayListPage> {
   }
 
   void playOrpauseMusic(MusicInfoData musicInfoData, String currentPlayingId) {
-    if (currentPlayingId == musicInfoData.id) {
-      PlayMusic.playOrPauseFunc();
-      if (context.read<MiniWidgetStatusProvider>().bottomPlayListWidget ==
-          BottomWidgets.none) {
+    if (context.read<MiniWidgetStatusProvider>().bottomPlayListWidget ==
+        BottomWidgets.none) {
+      PlayMusic.makeNewPlayer();
+      PlayMusic.playUrlFunc(musicInfoData).then((value) {
         context.read<MiniWidgetStatusProvider>().bottomPlayListWidget =
             BottomWidgets.miniPlayer;
-      }
-    } else {
-      PlayMusic.stopFunc().whenComplete(() {
-        PlayMusic.clearAudioPlayer();
-        PlayMusic.makeNewPlayer();
-        PlayMusic.playUrlFunc(musicInfoData).then((value) {
-          context.read<MiniWidgetStatusProvider>().bottomPlayListWidget =
-              BottomWidgets.miniPlayer;
-        });
       });
+    } else {
+      if (currentPlayingId == musicInfoData.id) {
+        PlayMusic.playOrPauseFunc();
+      } else {
+        PlayMusic.stopFunc().whenComplete(() {
+          PlayMusic.clearAudioPlayer();
+          PlayMusic.makeNewPlayer();
+          PlayMusic.playUrlFunc(musicInfoData).then((value) {
+            setState(() {});
+          });
+        });
+      }
     }
   }
 }

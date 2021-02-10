@@ -30,7 +30,26 @@ class Routers {
       case 'UploadMusicPage':
         return CupertinoPageRoute(builder: (_) => UploadMusicPage());
       case 'MyMusicPlayerPage':
-        return CupertinoPageRoute(builder: (_) => MyMusicPlayerPage());
+        // return CupertinoPageRoute(builder: (_) => MyMusicPlayerPage());
+        return PageRouteBuilder(
+          transitionDuration: Duration(milliseconds: 500),
+          pageBuilder: (BuildContext context, Animation<double> animation,
+              Animation<double> secondaryAnimation) {
+            return MyMusicPlayerPage();
+          },
+          transitionsBuilder: (BuildContext context,
+              Animation<double> animation,
+              Animation<double> secondaryAnimation,
+              Widget child) {
+            return Align(
+              child: child,
+              // child: FadeTransition(
+              //   opacity: animation,
+              //   child: child,
+              // ),
+            );
+          },
+        );
       case 'MyPlayListPage':
         return CupertinoPageRoute(builder: (_) => MyPlayListPage());
       case 'MyProfileModifyPage':

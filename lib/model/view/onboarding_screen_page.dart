@@ -85,7 +85,7 @@ class _OnboardingScreenPageState extends State<OnboardingScreenPage> {
                     ),
                   ),
                   Container(
-                    height: SizeConfig.screenHeight * 0.6,
+                    height: SizeConfig.screenHeight * 0.7,
                     child: PageView(
                       physics: ClampingScrollPhysics(),
                       controller: _pageController,
@@ -217,15 +217,15 @@ class _OnboardingScreenPageState extends State<OnboardingScreenPage> {
           ),
         ),
         bottomSheet: _currentPage == _numPages - 1
-            ? Container(
-                height: SizeConfig.screenHeight * 0.1,
-                width: double.infinity,
-                color: Color(0xFF5B16D0),
-                child: GestureDetector(
-                  onTap: () {
-                    print('Get started');
-                    _navigatorToTabPage();
-                  },
+            ? GestureDetector(
+                onTap: () {
+                  print('Get started');
+                  _navigatorToTabPage();
+                },
+                child: Container(
+                  height: SizeConfig.screenHeight * 0.1,
+                  width: double.infinity,
+                  color: Color(0xFF5B16D0),
                   child: Center(
                     child: Text(
                       '시작하기!',

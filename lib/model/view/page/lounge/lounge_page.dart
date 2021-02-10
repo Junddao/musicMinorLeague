@@ -40,6 +40,7 @@ class LoungePage extends StatefulWidget {
 class _LoungePageState extends State<LoungePage>
     with SingleTickerProviderStateMixin {
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
+  AnimationController _controller;
 
   bool isTabThisWeekMusicListItem;
 
@@ -61,6 +62,11 @@ class _LoungePageState extends State<LoungePage>
 
   @override
   void initState() {
+    _controller = AnimationController(
+        vsync: this,
+        duration: Duration(seconds: 1),
+        lowerBound: 0.0,
+        upperBound: 1.0);
     super.initState();
 
     // tabController = TabController(vsync: this, length: 2);
@@ -143,8 +149,17 @@ class _LoungePageState extends State<LoungePage>
           '라운지',
           style: MTextStyles.bold18Black,
         ),
+        centerTitle: false,
         backgroundColor: Colors.transparent,
         elevation: 0.0,
+        // actions: [
+        //   IconButton(
+        //     icon: Icon(Icons.search),
+        //     onPressed: () {
+
+        //     },
+        //   ),
+        // ],
       ),
       body: _buildThisWeekNewPage(),
     );
@@ -364,8 +379,35 @@ class _LoungePageState extends State<LoungePage>
                                               width: 50,
                                               height: 50,
                                               fit: BoxFit.cover,
-                                              clearMemoryCacheWhenDispose:
-                                                  false,
+                                              loadStateChanged:
+                                                  (ExtendedImageState state) {
+                                                switch (state
+                                                    .extendedImageLoadState) {
+                                                  case LoadState.loading:
+                                                    return SizedBox.shrink();
+                                                    break;
+                                                  case LoadState.completed:
+                                                    _controller.forward();
+                                                    return FadeTransition(
+                                                      opacity: _controller,
+                                                      child: ExtendedRawImage(
+                                                        image: state
+                                                            .extendedImageInfo
+                                                            ?.image,
+                                                        width: 50,
+                                                        height: 50,
+                                                        fit: BoxFit.cover,
+                                                        // scale: 1.0,
+                                                      ),
+                                                    );
+                                                    break;
+                                                  case LoadState.failed:
+                                                    _controller.reset();
+                                                    return Image.asset(
+                                                        'assets/images/default_cover_Image.jpg');
+                                                    break;
+                                                }
+                                              },
                                             ),
                                           ),
                                         ),
@@ -446,26 +488,7 @@ class _LoungePageState extends State<LoungePage>
                                                         selectedList[index] ==
                                                                 true
                                                             ? Colors.white
-                                                            : MColors.grey_06)
-                                                // child: Icon(
-                                                //     Icons.thumb_up_alt_outlined,
-                                                //     size: 15,
-                                                //     color:
-                                                //         selectedList[index] ==
-                                                //                 true
-                                                //             ? Colors.white
-                                                //             : MColors.grey_06),
-                                                // child: FlareActor(
-                                                //     'assets/icons/thumb.flr',
-                                                //     alignment: Alignment.center,
-                                                //     fit: BoxFit.cover,
-                                                //     animation:
-                                                //         selectedThumbIndex ==
-                                                //                 index
-                                                //             ? "click"
-                                                //             : "idle",
-                                                //     ),
-                                                ),
+                                                            : MColors.grey_06)),
                                             SizedBox(
                                               width: 20,
                                               child: Text(
@@ -556,22 +579,27 @@ class _LoungePageState extends State<LoungePage>
   }
 
   void playOrpauseMusic(MusicInfoData musicInfoData, String currentPlayingId) {
-    if (currentPlayingId == musicInfoData.id) {
-      PlayMusic.playOrPauseFunc();
-      if (context.read<MiniWidgetStatusProvider>().bottomPlayListWidget ==
-          BottomWidgets.none) {
+    if (context.read<MiniWidgetStatusProvider>().bottomPlayListWidget ==
+        BottomWidgets.none) {
+      PlayMusic.makeNewPlayer();
+      PlayMusic.playUrlFunc(musicInfoData).then((value) {
         context.read<MiniWidgetStatusProvider>().bottomPlayListWidget =
             BottomWidgets.miniPlayer;
-      }
-    } else {
-      PlayMusic.stopFunc().whenComplete(() {
-        PlayMusic.clearAudioPlayer();
-        PlayMusic.makeNewPlayer();
-        PlayMusic.playUrlFunc(musicInfoData).then((value) {
-          context.read<MiniWidgetStatusProvider>().bottomPlayListWidget =
-              BottomWidgets.miniPlayer;
-        });
       });
+    } else {
+      if (currentPlayingId == musicInfoData.id) {
+        PlayMusic.playOrPauseFunc();
+      } else {
+        PlayMusic.stopFunc().whenComplete(() {
+          PlayMusic.clearAudioPlayer();
+          PlayMusic.makeNewPlayer();
+          PlayMusic.playUrlFunc(musicInfoData).then((value) {
+            setState(() {});
+            // context.read<MiniWidgetStatusProvider>().bottomPlayListWidget =
+            //     BottomWidgets.miniPlayer;
+          });
+        });
+      }
     }
   }
 
