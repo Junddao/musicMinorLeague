@@ -2,6 +2,7 @@ import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:music_minorleague/model/provider/thumb_up_provider.dart';
 import 'package:music_minorleague/model/provider/user_profile_provider.dart';
+import 'package:music_minorleague/model/view/page/artist_news/artist_news_page.dart';
 
 import 'package:music_minorleague/model/view/page/lounge/lounge_page.dart';
 import 'package:music_minorleague/model/view/page/playlist/my_play_list_page.dart';
@@ -27,7 +28,8 @@ class _TabPageState extends State<TabPage> {
     LoungePage(),
     MyPlayListPage(),
     SizedBox.shrink(), // empty widget
-    SizedBox.shrink(), // empty widget
+    ArtistNewsPage(),
+    // SizedBox.shrink(), // empty widget
     MyProfilePage(),
   ];
 
@@ -37,14 +39,14 @@ class _TabPageState extends State<TabPage> {
     PushManager().listenFirebaseMessaging();
 
     // 초기에 광고 하나 보여주자
-    AdMobService ams = AdMobService();
-    InterstitialAd newAd = ams.getNewInterstitial();
-    newAd.load();
-    newAd.show(
-      anchorType: AnchorType.bottom,
-      anchorOffset: 0.0,
-      horizontalCenterOffset: 0.0,
-    );
+    // AdMobService ams = AdMobService();
+    // InterstitialAd newAd = ams.getNewInterstitial();
+    // newAd.load();
+    // newAd.show(
+    //   anchorType: AnchorType.bottom,
+    //   anchorOffset: 0.0,
+    //   horizontalCenterOffset: 0.0,
+    // );
 
     ThumbUpData thumbUpData = new ThumbUpData();
     thumbUpData.todayCnt = 3;
@@ -109,10 +111,10 @@ class _TabPageState extends State<TabPage> {
 
                 BottomNavigationBarItem(
                   icon: Icon(
-                    Icons.music_note_rounded,
+                    Icons.chrome_reader_mode_outlined,
                     size: 20,
                   ),
-                  label: '플레이어',
+                  label: '아티스트 뉴스',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(
@@ -134,9 +136,11 @@ class _TabPageState extends State<TabPage> {
       context.read<UserProfileProvider>().userProfileData.id == 'Guest'
           ? showCancelDialog(context)
           : _settingModalBottomSheet(context, index);
-    } else if (index == 3) {
-      _noneNaviBarPage('MyMusicPlayerPage');
-    } else {
+    }
+    // else if (index == 3) {
+    //   _noneNaviBarPage('MyMusicPlayerPage');
+    // }
+    else {
       Provider.of<TabStates>(context, listen: false).selectedIndex = index;
     }
   }

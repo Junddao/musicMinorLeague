@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
+import 'package:music_minorleague/model/data/user_profile_data.dart';
 import 'package:music_minorleague/model/enum/music_approval_enum.dart';
 import 'package:music_minorleague/model/enum/music_type_enum.dart';
 import 'package:music_minorleague/model/provider/user_profile_provider.dart';
@@ -165,5 +166,17 @@ class FirebaseDBHelper {
     }
 
     return musicList;
+  }
+
+  static List<UserProfileData> getUserDatabase(QuerySnapshot qs) {
+    List<UserProfileData> userList = new List<UserProfileData>();
+    for (int idx = 0; idx < qs.docs.length; idx++) {
+      UserProfileData userInfoData =
+          UserProfileData.fromMap(qs.docs[idx].data());
+
+      userList.add(userInfoData);
+    }
+
+    return userList;
   }
 }
