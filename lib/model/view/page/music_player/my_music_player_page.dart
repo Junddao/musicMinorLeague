@@ -50,7 +50,6 @@ class _MyMusicPlayerPageState extends State<MyMusicPlayerPage>
         "Player",
         style: MTextStyles.bold16Black,
       ),
-      centerTitle: true,
       leading: IconButton(
         icon: Icon(
           Icons.arrow_back_ios,

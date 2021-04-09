@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'package:music_minorleague/model/view/page/artist_news/component/artist_news_banner_widget.dart';
+import 'package:music_minorleague/model/view/style/textstyles.dart';
 
 import 'component/important_artist_widget.dart';
 
@@ -19,7 +18,24 @@ class _ArtistNewsPageState extends State<ArtistNewsPage> {
   }
 
   _appBar() {
-    return AppBar();
+    return AppBar(
+      automaticallyImplyLeading: false,
+      title: Text(
+        '아티스트 목록',
+        style: MTextStyles.bold18Black,
+      ),
+
+      backgroundColor: Colors.transparent,
+      elevation: 0.0,
+      // actions: [
+      //   IconButton(
+      //     icon: Icon(Icons.search),
+      //     onPressed: () {
+
+      //     },
+      //   ),
+      // ],
+    );
   }
 
   _body() {
@@ -28,7 +44,7 @@ class _ArtistNewsPageState extends State<ArtistNewsPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ArtistNewsBannerWidget(),
+          // ArtistNewsBannerWidget(),
           ImportantArtistWidget(),
         ],
       ),

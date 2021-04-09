@@ -15,10 +15,14 @@ class _ImportantArtistWidgetState extends State<ImportantArtistWidget> {
   Widget build(BuildContext context) {
     String collection = FirebaseDBHelper.allMusicCollection;
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 10.0, top: 40, bottom: 12.0),
-          child: Text('좋은 음악을 만드는 아티스트', style: MTextStyles.bold18Black),
+          child: Text(
+            '좋은 음악을 만드는 아티스트',
+            style: MTextStyles.bold16Black2,
+          ),
         ),
         //get artist name in music data
         StreamBuilder(
@@ -109,7 +113,24 @@ class _ImportantArtistWidgetState extends State<ImportantArtistWidget> {
                                         ],
                                       ),
                                       FlatButton(
-                                        onPressed: null,
+                                        onPressed: () {
+                                          String collection =
+                                              FirebaseDBHelper.userCollection;
+                                          String doc = liArtistInfo[index].id;
+
+                                          FirebaseDBHelper.getData(
+                                                  collection, doc)
+                                              .then((value) {
+                                            UserProfileData
+                                                otherUserProfileData =
+                                                UserProfileData.fromMap(
+                                                    value.data());
+                                            Navigator.of(context).pushNamed(
+                                                'OtherUserProfilePage',
+                                                arguments:
+                                                    otherUserProfileData);
+                                          });
+                                        },
                                         child: Container(
                                           height: 30,
                                           width: 80,

@@ -49,24 +49,24 @@ class _LoginPageState extends State<LoginPage> {
               decoration: BoxDecoration(
                 image: DecorationImage(
                   fit: BoxFit.fitHeight,
-                  image: AssetImage('assets/images/loginImage.jpeg'),
+                  image: AssetImage('assets/images/loginImage.jpg'),
                 ),
               ),
             ),
             Positioned(
               bottom: 50,
-              left: (SizeConfig.screenWidth - 250) / 2,
+              left: (SizeConfig.screenWidth - SizeConfig.screenWidth * 0.7) / 2,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   SizedBox(height: 10.0),
                   Container(
-                    width: 250.0,
+                    width: SizeConfig.screenWidth * 0.7,
                     child: Align(
                         alignment: Alignment.center,
                         child: RaisedButton(
-                          // shape: RoundedRectangleBorder(
-                          //     borderRadius: new BorderRadius.circular(30.0)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(30.0)),
                           color: MColors.tomato,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -86,13 +86,13 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(height: 10.0),
                   Platform.isIOS
                       ? Container(
-                          width: 250.0,
+                          width: SizeConfig.screenWidth * 0.7,
                           child: Align(
                             alignment: Alignment.center,
                             child: RaisedButton(
-                                // shape: RoundedRectangleBorder(
-                                //     borderRadius:
-                                //         new BorderRadius.circular(30.0)),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        new BorderRadius.circular(30.0)),
                                 color: MColors.black,
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
@@ -114,12 +114,12 @@ class _LoginPageState extends State<LoginPage> {
                       : SizedBox.shrink(),
                   SizedBox(height: 10.0),
                   Container(
-                    width: 250.0,
+                    width: SizeConfig.screenWidth * 0.7,
                     child: Align(
                       alignment: Alignment.center,
                       child: RaisedButton(
-                          // shape: RoundedRectangleBorder(
-                          //     borderRadius: new BorderRadius.circular(30.0)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(30.0)),
                           color: MColors.white,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -147,7 +147,7 @@ class _LoginPageState extends State<LoginPage> {
                           await signInWithGuest();
                         },
                         child: Text('Guest로 둘러보기',
-                            style: MTextStyles.bold12Black__)),
+                            style: MTextStyles.bold12White)),
                   ),
                 ],
               ),

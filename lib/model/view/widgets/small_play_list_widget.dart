@@ -216,31 +216,31 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget>
                     height: 50,
                     fit: BoxFit.cover,
                     clearMemoryCacheWhenDispose: true,
-                    // loadStateChanged: (ExtendedImageState state) {
-                    //   switch (state.extendedImageLoadState) {
-                    //     case LoadState.loading:
-                    //       return SizedBox.shrink();
-                    //       break;
-                    //     case LoadState.completed:
-                    //       _controller.forward();
-                    //       return FadeTransition(
-                    //         opacity: _controller,
-                    //         child: ExtendedRawImage(
-                    //           image: state.extendedImageInfo?.image,
-                    //           width: 50,
-                    //           height: 50,
-                    //           fit: BoxFit.cover,
-                    //           // scale: 1.0,
-                    //         ),
-                    //       );
-                    //       break;
-                    //     case LoadState.failed:
-                    //       _controller.reset();
-                    //       return Image.asset(
-                    //           'assets/images/default_cover_Image.jpg');
-                    //       break;
-                    //   }
-                    // },
+                    loadStateChanged: (ExtendedImageState state) {
+                      switch (state.extendedImageLoadState) {
+                        case LoadState.loading:
+                          return SizedBox.shrink();
+                          break;
+                        case LoadState.completed:
+                          _controller.forward();
+                          return FadeTransition(
+                            opacity: _controller,
+                            child: ExtendedRawImage(
+                              image: state.extendedImageInfo?.image,
+                              width: 50,
+                              height: 50,
+                              fit: BoxFit.cover,
+                              // scale: 1.0,
+                            ),
+                          );
+                          break;
+                        case LoadState.failed:
+                          _controller.reset();
+                          return Image.asset(
+                              'assets/images/default_cover_Image.jpg');
+                          break;
+                      }
+                    },
                   ),
                 ),
         ),
@@ -255,11 +255,13 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget>
           children: [
             Text(
               metas?.title ?? '',
+              maxLines: 1,
               style: MTextStyles.bold12Grey06,
+              overflow: TextOverflow.ellipsis,
             ),
-            SizedBox(
-              width: 6,
-            ),
+            // SizedBox(
+            //   width: 6,
+            // ),
             Text(
               metas?.artist ?? '',
               maxLines: 1,
@@ -274,17 +276,17 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget>
             icon: Icon(
               Icons.skip_previous,
             ),
-            iconSize: 20,
+            // iconSize: 20,
             onPressed: () {
               PlayMusic.previous();
             },
           ),
           IconButton(
-              iconSize: 10,
+              // iconSize: 10,
               icon: Icon(isPlaying == true
                   ? FontAwesomeIcons.pause
                   : FontAwesomeIcons.play),
-              color: isPlaying == true ? MColors.black : MColors.warm_grey,
+              color: isPlaying == true ? MColors.black : MColors.black,
               onPressed: () {
                 PlayMusic.playOrPauseFunc();
               }),
@@ -292,7 +294,7 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget>
             icon: Icon(
               Icons.skip_next,
             ),
-            iconSize: 20,
+            // iconSize: 20,
             onPressed: () {
               PlayMusic.next();
             },
@@ -301,7 +303,7 @@ class _SmallPlayListWidgetState extends State<SmallPlayListWidget>
             icon: Icon(
               Icons.close,
             ),
-            iconSize: 20,
+            // iconSize: 20,
             onPressed: () {
               PlayMusic.stopFunc();
               PlayMusic.clearAudioPlayer();

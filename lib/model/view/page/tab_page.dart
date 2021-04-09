@@ -114,7 +114,7 @@ class _TabPageState extends State<TabPage> {
                     Icons.chrome_reader_mode_outlined,
                     size: 20,
                   ),
-                  label: '아티스트 뉴스',
+                  label: '아티스트 소식',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(

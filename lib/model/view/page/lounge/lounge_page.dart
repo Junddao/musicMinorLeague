@@ -7,6 +7,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:music_minorleague/model/data/banner_data.dart';
 import 'package:music_minorleague/model/data/music_info_data.dart';
 import 'package:music_minorleague/model/data/user_profile_data.dart';
 import 'package:music_minorleague/model/enum/lounge_bottom_widget_enum.dart';
@@ -15,6 +16,7 @@ import 'package:music_minorleague/model/enum/music_type_enum.dart';
 import 'package:music_minorleague/model/provider/mini_widget_status_provider.dart';
 import 'package:music_minorleague/model/provider/now_play_music_provider.dart';
 import 'package:music_minorleague/model/provider/thumb_up_provider.dart';
+import 'package:music_minorleague/model/view/page/lounge/component/artist_news_banner_widget.dart';
 
 import 'package:music_minorleague/model/view/page/lounge/component/select_buttons_widget.dart';
 import 'package:music_minorleague/model/view/page/user_profile/other_user_profile_page.dart';
@@ -61,6 +63,11 @@ class _LoungePageState extends State<LoungePage>
   List<LoungeMusicTypeEnum> typeOfMusicList;
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
   void initState() {
     _controller = AnimationController(
         vsync: this,
@@ -79,8 +86,6 @@ class _LoungePageState extends State<LoungePage>
     _typeOfMusic = LoungeMusicTypeEnum.all;
     typeOfMusicList = List.generate(LoungeMusicTypeEnum.values.length,
         (index) => LoungeMusicTypeEnum.values[index]);
-
-    // _initSubscription();
   }
 
   _initSubscription() {
@@ -149,7 +154,7 @@ class _LoungePageState extends State<LoungePage>
           '라운지',
           style: MTextStyles.bold18Black,
         ),
-        centerTitle: false,
+
         backgroundColor: Colors.transparent,
         elevation: 0.0,
         // actions: [
@@ -176,6 +181,7 @@ class _LoungePageState extends State<LoungePage>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                ArtistNewsBannerWidget(),
                 StreamBuilder(
                   stream: FirebaseDBHelper.getDataStream(
                       FirebaseDBHelper.allMusicCollection),
@@ -211,10 +217,7 @@ class _LoungePageState extends State<LoungePage>
                       const EdgeInsets.only(left: 20.0, top: 40, bottom: 12.0),
                   child: Text(
                     '최신음악',
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: MColors.blackColor),
+                    style: MTextStyles.bold16Black,
                   ),
                 ),
                 SingleChildScrollView(
